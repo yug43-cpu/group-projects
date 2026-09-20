@@ -9,7 +9,7 @@ A collection of projects developed collaboratively by our team as part of our le
 * **03** — [Project Name](./03_PROJECT)
 * **04** — [Project Name](./04_PROJECT)
 
-> Each project        is organized in its own folder with the required source code, resources, and documentation.
+> Each project is organized in its own folder with the required source code, resources, and documentation.
 
 ---
 
