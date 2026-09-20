@@ -3,7 +3,9 @@
 A collection of projects developed collaboratively by our team as part of our learning, practice, and academic work.
 
 ## 📂 Projects
+## 📂 Repo
 
+* **>>** — [html](./01_Daily_Tracker)
 * **01** — [Daily Tracker](./01_Daily_Tracker)
 * **02** — [Project Name](./02_PROJECT)
 * **03** — [Project Name](./03_PROJECT)
