@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Goals - Daily Tracker</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/goals.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                Daily Tracker
+            </div>
+
+            <nav>
+
+                <a href="dashboard.html">
+                    🏠 Dashboard
+                </a>
+
+                <a href="tasks.html">
+                    ✅ Tasks
+                </a>
+
+                <a href="goals.html" class="active">
+                    🎯 Goals
+                </a>
+
+                <a href="#">
+                    📚 Study
+                </a>
+
+                <a href="#">
+                    📝 Journal
+                </a>
+
+                <a href="#">
+                    📅 Calendar
+                </a>
+
+                <a href="#">
+                    📈 Statistics
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <a href="#">
+                    ⚙️ Settings
+                </a>
+
+                <a href="login.html">
+                    🚪 Logout
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- Main Content -->
+
+        <main class="main-content">
+
+            <!-- Topbar -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>
+                        My Goals 🎯
+                    </h1>
+
+                    <p>
+                        Set goals and track your progress.
+                    </p>
+
+                </div>
+
+                <div class="date">
+
+                    <div id="currentDate"></div>
+                    <div id="currentTime"></div>
+
+                </div>
+
+            </header>
+
+
+            <!-- Summary Cards -->
+
+            <section class="summary-cards">
+
+                <div class="card">
+
+                    <h3>
+                        Total Goals
+                    </h3>
+
+                    <p class="number" id="totalGoals">
+                        0
+                    </p>
+
+                    <span>
+                        All goals
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Active
+                    </h3>
+
+                    <p class="number" id="activeGoals">
+                        0
+                    </p>
+
+                    <span>
+                        In progress
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Completed
+                    </h3>
+
+                    <p class="number" id="completedGoals">
+                        0
+                    </p>
+
+                    <span>
+                        Finished
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Average Progress
+                    </h3>
+
+                    <p class="number" id="averageProgress">
+                        0%
+                    </p>
+
+                    <span>
+                        Overall
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- Goals Section -->
+
+            <section class="dashboard-section goals-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Your Goals
+                        </h2>
+
+                        <p>
+                            Track your long-term progress.
+                        </p>
+
+                    </div>
+
+                    <button id="openGoalModal">
+                        + Add Goal
+                    </button>
+
+                </div>
+
+
+                <!-- Filters -->
+
+                <div class="goal-filters">
+
+                    <button
+                        class="filter-btn active"
+                        data-filter="all"
+                    >
+                        All
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="active"
+                    >
+                        Active
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="completed"
+                    >
+                        Completed
+                    </button>
+
+                </div>
+
+
+                <!-- Goal List -->
+
+                <div
+                    class="goal-list"
+                    id="goalList"
+                >
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            🎯
+                        </div>
+
+                        <h3>
+                            No goals yet
+                        </h3>
+
+                        <p>
+                            Create your first goal to get started.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- Add Goal Modal -->
+
+    <div
+        class="goal-modal"
+        id="goalModal"
+    >
+
+        <div class="goal-modal-box">
+
+            <div class="goal-modal-header">
+
+                <h2>
+                    Add New Goal
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeGoalModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="goalForm">
+
+                <div class="input-group">
+
+                    <label for="goalName">
+                        Goal Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="goalName"
+                        placeholder="e.g. Complete C++ Course"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="goalProgress">
+                        Progress (%)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="goalProgress"
+                        placeholder="e.g. 50"
+                        min="0"
+                        max="100"
+                        value="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="goalDeadline">
+                        Deadline
+                    </label>
+
+                    <input
+                        type="date"
+                        id="goalDeadline"
+                    >
+
+                </div>
+
+
+                <div class="task-modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelGoal"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit">
+                        Add Goal
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Edit Goal Modal -->
+
+    <div
+        class="goal-modal"
+        id="editGoalModal"
+    >
+
+        <div class="goal-modal-box">
+
+            <div class="goal-modal-header">
+
+                <h2>
+                    Edit Goal
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeEditGoalModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="editGoalForm">
+
+                <div class="input-group">
+
+                    <label for="editGoalName">
+                        Goal Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editGoalName"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="editGoalProgress">
+                        Progress (%)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="editGoalProgress"
+                        min="0"
+                        max="100"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="editGoalDeadline">
+                        Deadline
+                    </label>
+
+                    <input
+                        type="date"
+                        id="editGoalDeadline"
+                    >
+
+                </div>
+
+
+                <div class="task-modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelEditGoal"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit">
+                        Save Changes
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- JavaScript -->
+
+    <script src="js/goals-page.js"></script>
+
+</body>
+
+</html>

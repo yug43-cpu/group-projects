@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Calendar - Daily Tracker</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/calendar.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                Daily Tracker
+            </div>
+
+            <nav>
+
+                <a href="dashboard.html">
+                    🏠 Dashboard
+                </a>
+
+                <a href="tasks.html">
+                    ✅ Tasks
+                </a>
+
+                <a href="goals.html">
+                    🎯 Goals
+                </a>
+
+                <a href="study.html">
+                    📚 Study
+                </a>
+
+                <a href="journal.html">
+                    📝 Journal
+                </a>
+
+                <a href="calendar.html" class="active">
+                    📅 Calendar
+                </a>
+
+                <a href="#">
+                    📈 Statistics
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <a href="#">
+                    ⚙️ Settings
+                </a>
+
+                <a href="login.html">
+                    🚪 Logout
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div>
+                    <h1>Calendar 📅</h1>
+
+                    <p>
+                        View your tasks, study sessions and journal entries by date.
+                    </p>
+                </div>
+
+                <div class="date">
+                    <div id="currentDate"></div>
+                    <div id="currentTime"></div>
+                </div>
+
+            </header>
+
+
+            <!-- Calendar -->
+
+            <section class="calendar-section">
+
+                <div class="calendar-header">
+
+                    <button id="previousMonth">
+                        ←
+                    </button>
+
+                    <h2 id="currentMonth">
+                        September 2026
+                    </h2>
+
+                    <button id="nextMonth">
+                        →
+                    </button>
+
+                </div>
+
+
+                <div class="calendar-weekdays">
+
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+
+                </div>
+
+
+                <div
+                    class="calendar-grid"
+                    id="calendarGrid"
+                >
+                </div>
+
+            </section>
+
+
+            <!-- Graphs -->
+
+            <section class="graph-section">
+
+                <div class="graph-header">
+
+                    <h2>
+                        Monthly Activity 📊
+                    </h2>
+
+                    <p>
+                        Overview of your study, tasks and journal activity.
+                    </p>
+
+                </div>
+
+
+                <div class="graphs-grid">
+
+                    <div class="graph-card">
+
+                        <h3>
+                            📚 Study Time
+                        </h3>
+
+                        <p>
+                            Study minutes per day
+                        </p>
+
+                        <div class="chart-wrapper">
+
+                            <canvas
+                                id="studyChart"
+                            ></canvas>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="graph-card">
+
+                        <h3>
+                            ✅ Completed Tasks
+                        </h3>
+
+                        <p>
+                            Completed tasks per day
+                        </p>
+
+                        <div class="chart-wrapper">
+
+                            <canvas
+                                id="taskChart"
+                            ></canvas>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="graph-card">
+
+                        <h3>
+                            📝 Journal Entries
+                        </h3>
+
+                        <p>
+                            Journal entries per day
+                        </p>
+
+                        <div class="chart-wrapper">
+
+                            <canvas
+                                id="journalChart"
+                            ></canvas>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Selected Date Activity -->
+
+            <section class="selected-date-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2 id="selectedDateTitle">
+                            Today's Activity
+                        </h2>
+
+                        <p>
+                            Activities recorded for the selected date.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="activity-list"
+                    id="activityList"
+                >
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            📅
+                        </div>
+
+                        <h3>
+                            No activity
+                        </h3>
+
+                        <p>
+                            No tasks, study sessions or journal entries found.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="js/calendar-page.js"></script>
+
+</body>
+</html>

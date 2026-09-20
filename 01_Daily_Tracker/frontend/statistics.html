@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Statistics - Daily Tracker</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/statistics.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                Daily Tracker
+            </div>
+
+            <nav>
+
+                <a href="dashboard.html">
+                    🏠 Dashboard
+                </a>
+
+                <a href="tasks.html">
+                    ✅ Tasks
+                </a>
+
+                <a href="goals.html">
+                    🎯 Goals
+                </a>
+
+                <a href="study.html">
+                    📚 Study
+                </a>
+
+                <a href="journal.html">
+                    📝 Journal
+                </a>
+
+                <a href="calendar.html">
+                    📅 Calendar
+                </a>
+
+                <a href="statistics.html" class="active">
+                    📈 Statistics
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <a href="#">
+                    ⚙️ Settings
+                </a>
+
+                <a href="login.html">
+                    🚪 Logout
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- Main Content -->
+
+        <main class="main-content">
+
+            <!-- Topbar -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>
+                        Statistics 📈
+                    </h1>
+
+                    <p>
+                        Track your overall productivity and progress.
+                    </p>
+
+                </div>
+
+                <div class="date">
+
+                    <div id="currentDate"></div>
+
+                    <div id="currentTime"></div>
+
+                </div>
+
+            </header>
+
+
+            <!-- Summary Cards -->
+
+            <section class="summary-cards">
+
+                <div class="stat-card">
+
+                    <h3>
+                        Total Tasks
+                    </h3>
+
+                    <div
+                        class="stat-number"
+                        id="totalTasks"
+                    >
+                        0
+                    </div>
+
+                    <p>
+                        All tasks
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Completed Tasks
+                    </h3>
+
+                    <div
+                        class="stat-number"
+                        id="completedTasks"
+                    >
+                        0
+                    </div>
+
+                    <p>
+                        Completed
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Study Time
+                    </h3>
+
+                    <div
+                        class="stat-number"
+                        id="totalStudy"
+                    >
+                        0
+                    </div>
+
+                    <p>
+                        Total minutes
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Journal Entries
+                    </h3>
+
+                    <div
+                        class="stat-number"
+                        id="totalJournals"
+                    >
+                        0
+                    </div>
+
+                    <p>
+                        Total entries
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Task Progress -->
+
+            <section class="statistics-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Task Progress
+                        </h2>
+
+                        <p>
+                            Your overall task completion progress.
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="percentage"
+                        id="taskPercentage"
+                    >
+                        0%
+                    </div>
+
+                </div>
+
+
+                <div class="progress-container">
+
+                    <div
+                        class="progress-bar"
+                        id="taskProgressBar"
+                    ></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Weekly Statistics -->
+
+            <section class="statistics-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Weekly Overview 📊
+                        </h2>
+
+                        <p>
+                            Your activity during the last 7 days.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="weekly-grid">
+
+                    <div class="weekly-card">
+
+                        <div class="weekly-icon">
+                            📚
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Study Time
+                            </h3>
+
+                            <p id="weeklyStudy">
+                                0 minutes
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="weekly-card">
+
+                        <div class="weekly-icon">
+                            ✅
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Completed Tasks
+                            </h3>
+
+                            <p id="weeklyTasks">
+                                0
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="weekly-card">
+
+                        <div class="weekly-icon">
+                            📝
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Journal Entries
+                            </h3>
+
+                            <p id="weeklyJournals">
+                                0
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="weekly-card">
+
+                        <div class="weekly-icon">
+                            🎯
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Active Goals
+                            </h3>
+
+                            <p id="activeGoals">
+                                0
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Monthly Statistics -->
+
+            <section class="statistics-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            This Month 📅
+                        </h2>
+
+                        <p>
+                            Your activity during the current month.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="monthly-grid">
+
+                    <div class="monthly-card">
+
+                        <h3>
+                            Study Sessions
+                        </h3>
+
+                        <div
+                            class="monthly-number"
+                            id="monthlyStudySessions"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <div class="monthly-card">
+
+                        <h3>
+                            Study Minutes
+                        </h3>
+
+                        <div
+                            class="monthly-number"
+                            id="monthlyStudyMinutes"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <div class="monthly-card">
+
+                        <h3>
+                            Completed Tasks
+                        </h3>
+
+                        <div
+                            class="monthly-number"
+                            id="monthlyCompletedTasks"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <div class="monthly-card">
+
+                        <h3>
+                            Journal Entries
+                        </h3>
+
+                        <div
+                            class="monthly-number"
+                            id="monthlyJournals"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Productivity -->
+
+            <section class="statistics-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Productivity Summary
+                        </h2>
+
+                        <p>
+                            Quick overview of your current data.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="productivity-list">
+
+                    <div class="productivity-item">
+
+                        <span>
+                            Task Completion Rate
+                        </span>
+
+                        <strong id="taskRate">
+                            0%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="productivity-item">
+
+                        <span>
+                            Total Goals
+                        </span>
+
+                        <strong id="totalGoals">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="productivity-item">
+
+                        <span>
+                            Completed Goals
+                        </span>
+
+                        <strong id="completedGoals">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="productivity-item">
+
+                        <span>
+                            Average Goal Progress
+                        </span>
+
+                        <strong id="averageGoalProgress">
+                            0%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="js/statistics-page.js"></script>
+
+</body>
+
+</html>

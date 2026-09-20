@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Study - Daily Tracker</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/study-page.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                Daily Tracker
+            </div>
+
+            <nav>
+
+                <a href="dashboard.html">
+                    🏠 Dashboard
+                </a>
+
+                <a href="tasks.html">
+                    ✅ Tasks
+                </a>
+
+                <a href="goals.html">
+                    🎯 Goals
+                </a>
+
+                <a href="study.html" class="active">
+                    📚 Study
+                </a>
+
+                <a href="#">
+                    📝 Journal
+                </a>
+
+                <a href="#">
+                    📅 Calendar
+                </a>
+
+                <a href="#">
+                    📈 Statistics
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <a href="#">
+                    ⚙️ Settings
+                </a>
+
+                <a href="login.html">
+                    🚪 Logout
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- Main Content -->
+
+        <main class="main-content">
+
+            <!-- Topbar -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>
+                        Study 📚
+                    </h1>
+
+                    <p>
+                        Track your study sessions and time.
+                    </p>
+
+                </div>
+
+                <div class="date">
+
+                    <div id="currentDate"></div>
+                    <div id="currentTime"></div>
+
+                </div>
+
+            </header>
+
+
+            <!-- Summary Cards -->
+
+            <section class="summary-cards">
+
+                <div class="card">
+
+                    <h3>
+                        Today's Study
+                    </h3>
+
+                    <p class="number" id="todayStudyTime">
+                        0m
+                    </p>
+
+                    <span>
+                        Total time
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Sessions
+                    </h3>
+
+                    <p class="number" id="todaySessions">
+                        0
+                    </p>
+
+                    <span>
+                        Today
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Subjects
+                    </h3>
+
+                    <p class="number" id="totalSubjects">
+                        0
+                    </p>
+
+                    <span>
+                        Studied
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Total Study
+                    </h3>
+
+                    <p class="number" id="totalStudyTime">
+                        0m
+                    </p>
+
+                    <span>
+                        All sessions
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- Study Section -->
+
+            <section class="dashboard-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Study Sessions
+                        </h2>
+
+                        <p>
+                            Record and manage your study time.
+                        </p>
+
+                    </div>
+
+                    <button id="openStudyModal">
+                        + Add Session
+                    </button>
+
+                </div>
+
+
+                <!-- Filters -->
+
+                <div class="study-filters">
+
+                    <button
+                        class="filter-btn active"
+                        data-filter="today"
+                    >
+                        Today
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="all"
+                    >
+                        All Sessions
+                    </button>
+
+                </div>
+
+
+                <!-- Study List -->
+
+                <div
+                    class="study-list"
+                    id="studyList"
+                >
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            📚
+                        </div>
+
+                        <h3>
+                            No study sessions yet
+                        </h3>
+
+                        <p>
+                            Add your first study session to start tracking.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- Add / Edit Study Modal -->
+
+    <div
+        class="study-modal"
+        id="studyModal"
+    >
+
+        <div class="study-modal-box">
+
+            <div class="study-modal-header">
+
+                <h2 id="studyModalTitle">
+                    Add Study Session
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeStudyModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="studyForm">
+
+                <div class="input-group">
+
+                    <label for="studySubject">
+                        Subject
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studySubject"
+                        placeholder="e.g. C++, Python, DSA"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="studyDuration">
+                        Duration (minutes)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="studyDuration"
+                        placeholder="e.g. 60"
+                        min="1"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="studyDate">
+                        Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="studyDate"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="study-modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelStudy"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit">
+                        Save Session
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- JavaScript -->
+
+    <script src="js/study-page.js"></script>
+
+</body>
+
+</html>

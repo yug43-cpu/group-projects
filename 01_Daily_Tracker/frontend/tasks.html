@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Tasks - Daily Tracker</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tasks.css">
+
+</head>
+
+
+<body>
+
+    <div class="tasks-page">
+
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                Daily Tracker
+            </div>
+
+
+            <nav>
+
+                <a href="dashboard.html">
+                    🏠 Dashboard
+                </a>
+
+                <a href="tasks.html" class="active">
+                    ✅ Tasks
+                </a>
+
+                <a href="#">
+                    🎯 Goals
+                </a>
+
+                <a href="#">
+                    📚 Study
+                </a>
+
+                <a href="#">
+                    📝 Journal
+                </a>
+
+                <a href="#">
+                    📅 Calendar
+                </a>
+
+                <a href="#">
+                    📈 Statistics
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <a href="#">
+                    ⚙️ Settings
+                </a>
+
+                <a href="login.html">
+                    🚪 Logout
+                </a>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- Main Content -->
+
+        <main class="main-content">
+
+
+            <!-- Topbar -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>
+                        My Tasks
+                    </h1>
+
+                    <p>
+                        Manage your daily tasks and stay productive.
+                    </p>
+
+                </div>
+
+
+                <div class="date">
+
+                    <div id="currentDate"></div>
+                    <div id="currentTime"></div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- Task Summary -->
+
+            <section class="task-summary">
+
+
+                <div class="summary-card">
+
+                    <span>
+                        Total Tasks
+                    </span>
+
+                    <strong id="totalTasks">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <span>
+                        Completed
+                    </span>
+
+                    <strong id="completedTasks">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <span>
+                        Pending
+                    </span>
+
+                    <strong id="pendingTasks">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <span>
+                        Progress
+                    </span>
+
+                    <strong id="taskProgressText">
+                        0%
+                    </strong>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- Task Section -->
+
+            <section class="tasks-section">
+
+
+                <!-- Header -->
+
+                <div class="tasks-header">
+
+                    <div>
+
+                        <h2>
+                            Today's Tasks
+                        </h2>
+
+                        <p>
+                            Complete your tasks to improve your progress.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="openTaskModal"
+                    >
+                        + Add Task
+                    </button>
+
+                </div>
+
+
+
+                <!-- Progress -->
+
+                <div class="progress-container">
+
+                    <div class="progress-info">
+
+                        <span>
+                            Today's Progress
+                        </span>
+
+                        <strong id="progressPercent">
+                            0%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress-bar">
+
+                        <div
+                            class="progress"
+                            id="taskProgress"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Filters -->
+
+                <div class="task-controls">
+
+                    <button
+                        class="filter-btn active"
+                        data-filter="all"
+                    >
+                        All
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="pending"
+                    >
+                        Pending
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-filter="completed"
+                    >
+                        Completed
+                    </button>
+
+                </div>
+
+
+
+                <!-- Task List -->
+
+                <div
+                    class="task-list"
+                    id="taskList"
+                >
+
+                    <!-- Tasks will appear here -->
+
+                </div>
+
+
+                <!-- Empty State -->
+
+                <div
+                    class="empty-state"
+                    id="emptyState"
+                >
+
+                    <div class="empty-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        No tasks yet
+                    </h3>
+
+                    <p>
+                        Add your first task to get started.
+                    </p>
+
+                </div>
+
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+
+    <!-- Add Task Modal -->
+
+    <div
+        class="task-modal"
+        id="taskModal"
+    >
+
+        <div class="task-modal-box">
+
+
+            <div class="task-modal-header">
+
+                <h2>
+                    Add New Task
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeTaskModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="taskForm">
+
+
+                <div class="input-group">
+
+                    <label for="taskName">
+                        Task Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="taskName"
+                        placeholder="Enter task name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="taskPriority">
+                        Priority
+                    </label>
+
+                    <select id="taskPriority">
+
+                        <option value="Low">
+                            Low
+                        </option>
+
+                        <option
+                            value="Medium"
+                            selected
+                        >
+                            Medium
+                        </option>
+
+                        <option value="High">
+                            High
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="taskDueTime">
+                        Due Time
+                    </label>
+
+                    <input
+                        type="time"
+                        id="taskDueTime"
+                    >
+
+                </div>
+
+
+                <div class="task-modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelTask"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit">
+                        Add Task
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Edit Task Modal -->
+
+    <div
+        class="task-modal"
+        id="editTaskModal"
+    >
+
+        <div class="task-modal-box">
+
+
+            <div class="task-modal-header">
+
+                <h2>
+                    Edit Task
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeEditTaskModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="editTaskForm">
+
+
+                <div class="input-group">
+
+                    <label for="editTaskName">
+                        Task Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editTaskName"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="editTaskPriority">
+                        Priority
+                    </label>
+
+                    <select id="editTaskPriority">
+
+                        <option value="Low">
+                            Low
+                        </option>
+
+                        <option
+                            value="Medium"
+                            selected
+                        >
+                            Medium
+                        </option>
+
+                        <option value="High">
+                            High
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="editTaskDueTime">
+                        Due Time
+                    </label>
+
+                    <input
+                        type="time"
+                        id="editTaskDueTime"
+                    >
+
+                </div>
+
+
+                <div class="task-modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelEditTask"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit">
+                        Save Changes
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <script src="js/tasks-page.js"></script>
+
+</body>
+
+</html>

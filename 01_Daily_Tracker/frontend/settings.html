@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Settings - Daily Tracker</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/settings.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                Daily Tracker
+            </div>
+
+            <nav>
+
+                <a href="dashboard.html">
+                    🏠 Dashboard
+                </a>
+
+                <a href="tasks.html">
+                    ✅ Tasks
+                </a>
+
+                <a href="goals.html">
+                    🎯 Goals
+                </a>
+
+                <a href="study.html">
+                    📚 Study
+                </a>
+
+                <a href="journal.html">
+                    📝 Journal
+                </a>
+
+                <a href="calendar.html">
+                    📅 Calendar
+                </a>
+
+                <a href="statistics.html">
+                    📈 Statistics
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <a href="settings.html" class="active">
+                    ⚙️ Settings
+                </a>
+
+                <a href="login.html">
+                    🚪 Logout
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- Main Content -->
+
+        <main class="main-content">
+
+            <!-- Topbar -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>
+                        Settings ⚙️
+                    </h1>
+
+                    <p>
+                        Manage your Daily Tracker settings.
+                    </p>
+
+                </div>
+
+                <div class="date">
+
+                    <div id="currentDate"></div>
+
+                    <div id="currentTime"></div>
+
+                </div>
+
+            </header>
+
+
+            <!-- Profile -->
+
+            <section class="settings-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Profile
+                        </h2>
+
+                        <p>
+                            Manage your basic profile information.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="profileForm">
+
+                    <div class="input-group">
+
+                        <label for="profileName">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="profileName"
+                            placeholder="Enter your name"
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="profileEmail">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="profileEmail"
+                            placeholder="Enter your email"
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Save Profile
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- Appearance -->
+
+            <section class="settings-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Appearance
+                        </h2>
+
+                        <p>
+                            Customize the appearance of the application.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <div>
+
+                        <h3>
+                            Theme
+                        </h3>
+
+                        <p>
+                            Choose between dark and light mode.
+                        </p>
+
+                    </div>
+
+
+                    <select id="themeSelect">
+
+                        <option value="dark">
+                            Dark
+                        </option>
+
+                        <option value="light">
+                            Light
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </section>
+
+
+            <!-- Change Password -->
+
+            <section class="settings-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Change Password
+                        </h2>
+
+                        <p>
+                            Update your account password.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="passwordForm">
+
+                    <div class="input-group">
+
+                        <label for="currentPassword">
+                            Current Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="currentPassword"
+                            placeholder="Enter current password"
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="newPassword">
+                            New Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="newPassword"
+                            placeholder="Enter new password"
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="confirmPassword">
+                            Confirm New Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Confirm new password"
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Change Password
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- Account -->
+
+            <section class="settings-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Account
+                        </h2>
+
+                        <p>
+                            Manage your account.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="account-actions">
+
+                    <button
+                        id="logoutButton"
+                        class="logout-btn"
+                    >
+                        🚪 Logout
+                    </button>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="js/settings-page.js"></script>
+
+</body>
+
+</html>

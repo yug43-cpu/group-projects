@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dashboard - Daily Tracker</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="dashboard">
+
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                Daily Tracker
+            </div>
+
+
+            <nav>
+
+                <a
+                    href="#"
+                    class="active"
+                >
+                    🏠 Dashboard
+                </a>
+
+
+                <a href="tasks.html">
+                    ✅ Tasks
+                </a>
+
+
+                <a href="goals.html">
+                    🎯 Goals
+                </a>
+
+
+                <a href="study.html">
+                    📚 Study
+                </a>
+
+
+                <a href="journal.html">
+                    📝 Journal
+                </a>
+
+
+                <a href="calendar.html">
+                    📅 Calendar
+                </a>
+
+
+                <a href="statistics.html">
+                    📈 Statistics
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <a href="settings.html">
+                    ⚙️ Settings
+                </a>
+
+
+                <a href="login.html">
+                    🚪 Logout
+                </a>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- Main Content -->
+
+        <main class="main-content">
+
+
+            <!-- Topbar -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>
+                        HOME 🏡
+                    </h1>
+
+                    <p>
+                        Let's make today productive.
+                    </p>
+
+                </div>
+
+
+                <!-- Current Date & Time -->
+
+                <div class="date">
+
+                    <div id="currentDate"></div>
+
+                    <div id="currentTime"></div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- Summary Cards -->
+
+            <section class="summary-cards">
+
+
+                <div class="card">
+
+                    <h3>
+                        Tasks
+                    </h3>
+
+                    <p
+                        class="number"
+                        id="taskCount"
+                    >
+                        0/0
+                    </p>
+
+                    <span>
+                        Completed
+                    </span>
+
+                </div>
+
+
+
+                <div class="card">
+
+                    <h3>
+                        Study
+                    </h3>
+
+                    <p
+                        class="number"
+                        id="totalStudyTime"
+                    >
+                        0m
+                    </p>
+
+                    <span>
+                        Today
+                    </span>
+
+                </div>
+
+
+
+                <div class="card">
+
+                    <h3>
+                        Goals
+                    </h3>
+
+                    <p class="number">
+                        3
+                    </p>
+
+                    <span>
+                        Active
+                    </span>
+
+                </div>
+
+
+
+                <div class="card">
+
+                    <h3>
+                        Streak
+                    </h3>
+
+                    <p class="number">
+                        🔥 8
+                    </p>
+
+                    <span>
+                        Days
+                    </span>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- Today's Progress -->
+
+            <section class="dashboard-section">
+
+
+                <div class="section-header">
+
+                    <h2>
+                        Today's Progress
+                    </h2>
+
+                    <span id="taskProgressText">
+                        0%
+                    </span>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div
+                        class="progress"
+                        id="taskProgress"
+                    ></div>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- Today's Tasks -->
+
+            <section class="dashboard-section">
+
+
+                <div class="section-header">
+
+                    <h2>
+                        Today's Tasks
+                    </h2>
+
+
+                    <button>
+                        + Add Task
+                    </button>
+
+                </div>
+
+
+                <div class="task-list">
+
+
+                    <div class="task completed">
+
+                        <input
+                            type="checkbox"
+                            checked
+                        >
+
+                        <div class="task-info">
+
+                            <span>
+                                Complete C++ Study
+                            </span>
+
+                            <small>
+                                Priority: High
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="task completed">
+
+                        <input
+                            type="checkbox"
+                            checked
+                        >
+
+                        <div class="task-info">
+
+                            <span>
+                                College Work
+                            </span>
+
+                            <small>
+                                Priority: Medium
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="task">
+
+                        <input
+                            type="checkbox"
+                        >
+
+                        <div class="task-info">
+
+                            <span>
+                                Practice Python
+                            </span>
+
+                            <small>
+                                Priority: Medium
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="task">
+
+                        <input
+                            type="checkbox"
+                        >
+
+                        <div class="task-info">
+
+                            <span>
+                                GitHub Work
+                            </span>
+
+                            <small>
+                                Priority: Low
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- Bottom Grid -->
+
+            <div class="bottom-grid">
+
+
+                <!-- Study Today -->
+
+                <section class="dashboard-section">
+
+                    <div class="section-header">
+
+                        <h2>
+                            Study Today
+                        </h2>
+
+                        <button id="openStudyModal">
+                            + Add Session
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="study-info"
+                        id="studyList"
+                    >
+
+                        <div>
+
+                            <span>
+                                No study sessions yet
+                            </span>
+
+                            <strong>
+                                0m
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- Goals -->
+
+                <section class="dashboard-section">
+
+
+                    <div class="section-header">
+
+                        <h2>
+                            Goals
+                        </h2>
+
+
+                        <button>
+                            + Add Goal
+                        </button>
+
+                    </div>
+
+
+                    <div class="study-info">
+
+
+                        <div>
+
+                            <span>
+                                Complete C++ Course
+                            </span>
+
+                            <strong>
+                                70%
+                            </strong>
+
+                        </div>
+
+
+
+                        <div>
+
+                            <span>
+                                Learn Python
+                            </span>
+
+                            <strong>
+                                45%
+                            </strong>
+
+                        </div>
+
+
+
+                        <div>
+
+                            <span>
+                                Build Daily Tracker
+                            </span>
+
+                            <strong>
+                                30%
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+            </div>
+
+
+        </main>
+
+
+    </div>
+
+
+
+    <!-- Add Task Modal -->
+
+    <div
+        class="task-modal"
+        id="taskModal"
+    >
+
+
+        <div class="task-modal-box">
+
+
+            <div class="task-modal-header">
+
+                <h2>
+                    Add New Task
+                </h2>
+
+
+                <button
+                    type="button"
+                    id="closeTaskModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+
+            <form id="taskForm">
+
+
+                <div class="input-group">
+
+                    <label for="taskName">
+                        Task Name
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="taskName"
+                        placeholder="Enter task name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="input-group">
+
+                    <label for="taskPriority">
+                        Priority
+                    </label>
+
+
+                    <select id="taskPriority">
+
+                        <option value="Low">
+                            Low
+                        </option>
+
+                        <option
+                            value="Medium"
+                            selected
+                        >
+                            Medium
+                        </option>
+
+                        <option value="High">
+                            High
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="input-group">
+
+                    <label for="taskDueTime">
+                        Due Time
+                    </label>
+
+
+                    <input
+                        type="time"
+                        id="taskDueTime"
+                    >
+
+                </div>
+
+
+
+                <div class="task-modal-actions">
+
+
+                    <button
+                        type="button"
+                        id="cancelTask"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button type="submit">
+                        Add Task
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- Edit Task Modal -->
+
+    <div
+        class="task-modal"
+        id="editTaskModal"
+    >
+
+
+        <div class="task-modal-box">
+
+
+            <div class="task-modal-header">
+
+                <h2>
+                    Edit Task
+                </h2>
+
+
+                <button
+                    type="button"
+                    id="closeEditTaskModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+
+            <form id="editTaskForm">
+
+
+                <div class="input-group">
+
+                    <label for="editTaskName">
+                        Task Name
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="editTaskName"
+                        placeholder="Enter task name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="input-group">
+
+                    <label for="editTaskPriority">
+                        Priority
+                    </label>
+
+
+                    <select id="editTaskPriority">
+
+                        <option value="Low">
+                            Low
+                        </option>
+
+                        <option
+                            value="Medium"
+                            selected
+                        >
+                            Medium
+                        </option>
+
+                        <option value="High">
+                            High
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="input-group">
+
+                    <label for="editTaskDueTime">
+                        Due Time
+                    </label>
+
+
+                    <input
+                        type="time"
+                        id="editTaskDueTime"
+                    >
+
+                </div>
+
+
+
+                <div class="task-modal-actions">
+
+
+                    <button
+                        type="button"
+                        id="cancelEditTask"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button type="submit">
+                        Save Changes
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- Add Study Session Modal -->
+
+    <div
+        class="task-modal"
+        id="studyModal"
+    >
+
+        <div class="task-modal-box">
+
+            <div class="task-modal-header">
+
+                <h2>
+                    Add Study Session
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeStudyModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="studyForm">
+
+
+                <div class="input-group">
+
+                    <label for="studySubject">
+                        Subject
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studySubject"
+                        placeholder="e.g. C++, Python, DSA"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="studyDuration">
+                        Duration (minutes)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="studyDuration"
+                        placeholder="e.g. 60"
+                        min="1"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="task-modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelStudy"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit">
+                        Add Session
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- JavaScript -->
+
+    <script src="js/tasks.js"></script>
+
+    <script src="js/dashboard.js"></script>
+
+    <script src="js/study.js"></script>
+
+
+</body>
+
+</html>
