@@ -1,0 +1,424 @@
+/* ================================
+   Settings Page
+================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #0b1120;
+    color: #f8fafc;
+    font-family: Arial, sans-serif;
+}
+
+
+/* ================================
+   Layout
+================================ */
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* ================================
+   Sidebar
+================================ */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 250px;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #0f172a;
+    border-right: 1px solid #1e293b;
+
+    z-index: 100;
+}
+
+.logo {
+    padding: 25px 22px;
+
+    font-size: 21px;
+    font-weight: bold;
+
+    color: #f8fafc;
+
+    border-bottom: 1px solid #1e293b;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+
+    padding: 20px 12px;
+}
+
+.sidebar nav a,
+.sidebar-bottom a {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    padding: 12px 14px;
+
+    color: #94a3b8;
+    text-decoration: none;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+
+    transition: 0.2s;
+}
+
+.sidebar nav a:hover,
+.sidebar-bottom a:hover {
+    background: #1e293b;
+    color: #f8fafc;
+}
+
+.sidebar nav a.active,
+.sidebar-bottom a.active {
+    background: #2563eb;
+    color: white;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+
+    padding: 12px;
+}
+
+
+/* ================================
+   Main Content
+================================ */
+
+.main-content {
+    width: calc(100% - 250px);
+
+    margin-left: 250px;
+
+    padding: 30px;
+
+    min-height: 100vh;
+}
+
+
+/* ================================
+   Topbar
+================================ */
+
+.topbar {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 30px;
+}
+
+.topbar h1 {
+    margin: 0 0 6px;
+
+    font-size: 28px;
+}
+
+.topbar p {
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+}
+
+.date {
+    text-align: right;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+}
+
+#currentTime {
+    margin-top: 4px;
+
+    color: #f8fafc;
+}
+
+
+/* ================================
+   Settings Section
+================================ */
+
+.settings-section {
+    background: #111827;
+
+    border: 1px solid #1e293b;
+
+    border-radius: 14px;
+
+    padding: 24px;
+
+    margin-bottom: 24px;
+}
+
+
+/* ================================
+   Section Header
+================================ */
+
+.section-header {
+    margin-bottom: 22px;
+}
+
+.section-header h2 {
+    margin: 0 0 6px;
+
+    font-size: 20px;
+}
+
+.section-header p {
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+
+/* ================================
+   Input Groups
+================================ */
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #cbd5e1;
+
+    font-size: 13px;
+}
+
+.input-group input,
+.setting-row select {
+    width: 100%;
+
+    background: #0f172a;
+
+    border: 1px solid #334155;
+
+    color: #f8fafc;
+
+    padding: 11px 13px;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    font-family: inherit;
+}
+
+.input-group input:focus,
+.setting-row select:focus {
+    border-color: #2563eb;
+}
+
+
+/* ================================
+   Buttons
+================================ */
+
+.primary-btn {
+    border: none;
+
+    background: #2563eb;
+
+    color: white;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition: 0.2s;
+}
+
+.primary-btn:hover {
+    background: #1d4ed8;
+}
+
+
+/* ================================
+   Setting Row
+================================ */
+
+.setting-row {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 16px;
+
+    background: #0f172a;
+
+    border: 1px solid #1e293b;
+
+    border-radius: 10px;
+}
+
+.setting-row h3 {
+    margin: 0 0 5px;
+
+    font-size: 14px;
+}
+
+.setting-row p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+.setting-row select {
+    width: 150px;
+
+    cursor: pointer;
+}
+
+
+/* ================================
+   Account Actions
+================================ */
+
+.account-actions {
+    display: flex;
+
+    align-items: center;
+}
+
+.logout-btn {
+    border: 1px solid #7f1d1d;
+
+    background: #450a0a;
+
+    color: #fca5a5;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition: 0.2s;
+}
+
+.logout-btn:hover {
+    background: #7f1d1d;
+
+    color: white;
+}
+
+
+/* ================================
+   Responsive
+================================ */
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 220px;
+    }
+
+    .main-content {
+        width: calc(100% - 220px);
+
+        margin-left: 220px;
+
+        padding: 20px;
+    }
+
+    .topbar {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+    .date {
+        text-align: left;
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .dashboard {
+        display: block;
+    }
+
+    .sidebar {
+        position: relative;
+
+        width: 100%;
+
+        height: auto;
+    }
+
+    .main-content {
+        width: 100%;
+
+        margin-left: 0;
+
+        padding: 20px;
+    }
+
+    .sidebar-bottom {
+        margin-top: 10px;
+    }
+
+    .setting-row {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .setting-row select {
+        width: 100%;
+    }
+
+}

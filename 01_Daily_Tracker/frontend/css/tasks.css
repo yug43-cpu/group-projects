@@ -1,0 +1,1105 @@
+/* ==================================================
+   TASKS PAGE
+================================================== */
+
+
+/* ==================================================
+   Page
+================================================== */
+
+body {
+    background: #0b1120;
+    color: #f8fafc;
+}
+
+.tasks-page {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* ==================================================
+   Sidebar
+================================================== */
+
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+
+    background: rgba(15, 23, 42, 0.95);
+
+    border-right: 1px solid rgba(148, 163, 184, 0.12);
+
+    padding: 25px 15px;
+
+    display: flex;
+    flex-direction: column;
+
+    flex-shrink: 0;
+
+    position: sticky;
+    top: 0;
+
+    height: 100vh;
+
+    box-shadow:
+        8px 0 30px rgba(0, 0, 0, 0.15);
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+
+    padding: 0 12px;
+    margin-bottom: 35px;
+
+    color: #ffffff;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.sidebar a {
+    color: #94a3b8;
+
+    text-decoration: none;
+
+    padding: 12px 13px;
+
+    border-radius: 9px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.sidebar a:hover {
+    background: rgba(37, 99, 235, 0.10);
+
+    color: #ffffff;
+
+    transform: translateX(3px);
+}
+
+.sidebar a.active {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 5px 18px rgba(37, 99, 235, 0.25);
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+/* ==================================================
+   Main Content
+================================================== */
+
+.main-content {
+    flex: 1;
+
+    width: 100%;
+
+    max-width: 1450px;
+
+    padding: 35px;
+}
+
+
+/* ==================================================
+   Topbar
+================================================== */
+
+.topbar {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 30px;
+}
+
+.topbar h1 {
+    color: #ffffff;
+
+    font-size: 28px;
+
+    margin-bottom: 6px;
+}
+
+.topbar p {
+    color: #94a3b8;
+
+    font-size: 14px;
+}
+
+.date {
+    color: #94a3b8;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    text-align: right;
+}
+
+
+/* ==================================================
+   Summary Cards
+================================================== */
+
+.task-summary {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-bottom: 25px;
+}
+
+.summary-card {
+    background: linear-gradient(
+        145deg,
+        #1e293b,
+        #172033
+    );
+
+    border: 1px solid rgba(148, 163, 184, 0.12);
+
+    border-radius: 14px;
+
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.summary-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background: #2563eb;
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+
+    border-color:
+        rgba(96, 165, 250, 0.3);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.summary-card span {
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+.summary-card strong {
+    color: #ffffff;
+
+    font-size: 25px;
+}
+
+
+/* ==================================================
+   Tasks Section
+================================================== */
+
+.tasks-section {
+    background: linear-gradient(
+        145deg,
+        #1e293b,
+        #172033
+    );
+
+    border: 1px solid rgba(148, 163, 184, 0.12);
+
+    border-radius: 14px;
+
+    padding: 24px;
+}
+
+
+/* ==================================================
+   Tasks Header
+================================================== */
+
+.tasks-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 25px;
+}
+
+.tasks-header h2 {
+    color: #ffffff;
+
+    font-size: 19px;
+
+    margin-bottom: 6px;
+}
+
+.tasks-header p {
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+#openTaskModal {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color: #ffffff;
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 10px 15px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 15px rgba(37, 99, 235, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+#openTaskModal:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.28);
+}
+
+
+/* ==================================================
+   Progress
+================================================== */
+
+.progress-container {
+    margin-bottom: 25px;
+}
+
+.progress-info {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 9px;
+}
+
+.progress-info span {
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+.progress-info strong {
+    color: #60a5fa;
+
+    font-size: 13px;
+}
+
+.progress-bar {
+    width: 100%;
+
+    height: 9px;
+
+    background: #0f172a;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.progress {
+    width: 0;
+
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        #2563eb,
+        #60a5fa
+    );
+
+    border-radius: 20px;
+
+    transition:
+        width 0.4s ease;
+
+    box-shadow:
+        0 0 12px rgba(37, 99, 235, 0.35);
+}
+
+
+/* ==================================================
+   Filters
+================================================== */
+
+.task-controls {
+    display: flex;
+
+    gap: 8px;
+
+    margin-bottom: 20px;
+
+    padding-bottom: 15px;
+
+    border-bottom:
+        1px solid rgba(148, 163, 184, 0.10);
+}
+
+.filter-btn {
+    background: #111827;
+
+    color: #94a3b8;
+
+    border: 1px solid #263449;
+
+    border-radius: 7px;
+
+    padding: 7px 12px;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.filter-btn:hover {
+    background: #1e293b;
+
+    color: #ffffff;
+}
+
+.filter-btn.active {
+    background: #2563eb;
+
+    border-color: #2563eb;
+
+    color: #ffffff;
+}
+
+
+/* ==================================================
+   Task List
+================================================== */
+
+.task-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+/* ==================================================
+   Task Item
+================================================== */
+
+.task-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px;
+
+    background: #111827;
+
+    border: 1px solid rgba(148, 163, 184, 0.08);
+
+    border-radius: 10px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.task-item:hover {
+    background: #162033;
+
+    border-color:
+        rgba(96, 165, 250, 0.20);
+
+    transform: translateX(2px);
+}
+
+.task-checkbox {
+    width: 17px;
+    height: 17px;
+
+    flex-shrink: 0;
+
+    accent-color: #2563eb;
+
+    cursor: pointer;
+}
+
+.task-content {
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.task-name {
+    color: #f8fafc;
+
+    font-size: 14px;
+
+    word-break: break-word;
+}
+
+.task-details {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    align-items: center;
+}
+
+.priority {
+    font-size: 11px;
+
+    padding: 3px 7px;
+
+    border-radius: 5px;
+}
+
+.priority-high {
+    background: rgba(239, 68, 68, 0.12);
+
+    color: #f87171;
+}
+
+.priority-medium {
+    background: rgba(234, 179, 8, 0.12);
+
+    color: #facc15;
+}
+
+.priority-low {
+    background: rgba(34, 197, 94, 0.12);
+
+    color: #4ade80;
+}
+
+.due-time {
+    color: #64748b;
+
+    font-size: 11px;
+}
+
+
+/* Completed */
+
+.task-item.completed {
+    opacity: 0.65;
+}
+
+.task-item.completed .task-name {
+    color: #64748b;
+
+    text-decoration: line-through;
+}
+
+
+/* ==================================================
+   Task Actions
+================================================== */
+
+.task-actions {
+    display: flex;
+
+    gap: 6px;
+
+    flex-shrink: 0;
+}
+
+.task-action-btn {
+    padding: 6px 10px;
+
+    border-radius: 6px;
+
+    border: 1px solid #334155;
+
+    background: #1e293b;
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.task-action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.edit-btn {
+    color: #60a5fa;
+}
+
+.edit-btn:hover {
+    background: #1e3a5f;
+
+    border-color: #3b82f6;
+}
+
+.delete-btn {
+    color: #f87171;
+}
+
+.delete-btn:hover {
+    background: #3a1f1f;
+
+    border-color: #7f1d1d;
+}
+
+
+/* ==================================================
+   Empty State
+================================================== */
+
+.empty-state {
+    display: none;
+
+    text-align: center;
+
+    padding: 55px 20px;
+
+    color: #64748b;
+}
+
+.empty-state.show {
+    display: block;
+}
+
+.empty-icon {
+    width: 55px;
+    height: 55px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+
+    background: rgba(37, 99, 235, 0.10);
+
+    color: #60a5fa;
+
+    font-size: 22px;
+}
+
+.empty-state h3 {
+    color: #cbd5e1;
+
+    font-size: 16px;
+
+    margin-bottom: 7px;
+}
+
+.empty-state p {
+    font-size: 13px;
+}
+
+
+/* ==================================================
+   Modal
+================================================== */
+
+.task-modal {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 20px;
+
+    background:
+        rgba(2, 6, 23, 0.78);
+
+    backdrop-filter: blur(5px);
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1000;
+}
+
+.task-modal.active {
+    display: flex;
+
+    animation: fadeIn 0.2s ease;
+}
+
+.task-modal-box {
+    width: 100%;
+
+    max-width: 450px;
+
+    background: linear-gradient(
+        145deg,
+        #1e293b,
+        #172033
+    );
+
+    border:
+        1px solid rgba(148, 163, 184, 0.18);
+
+    border-radius: 15px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.45);
+
+    animation: modalOpen 0.25s ease;
+}
+
+
+/* Modal Header */
+
+.task-modal-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+.task-modal-header h2 {
+    color: #ffffff;
+
+    font-size: 20px;
+}
+
+.task-modal-header button {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(148, 163, 184, 0.08);
+
+    border:
+        1px solid rgba(148, 163, 184, 0.10);
+
+    border-radius: 7px;
+
+    color: #94a3b8;
+
+    font-size: 24px;
+
+    cursor: pointer;
+}
+
+.task-modal-header button:hover {
+    background: rgba(148, 163, 184, 0.15);
+
+    color: #ffffff;
+}
+
+
+/* ==================================================
+   Form
+================================================== */
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+
+    color: #e2e8f0;
+
+    margin-bottom: 8px;
+
+    font-size: 13px;
+}
+
+.input-group input,
+.input-group select {
+    display: block;
+
+    width: 100%;
+
+    height: 44px;
+
+    padding: 0 14px;
+
+    background: #0f172a;
+
+    color: #ffffff;
+
+    border: 1px solid #334155;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #3b82f6;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(59, 130, 246, 0.12);
+}
+
+.input-group input::placeholder {
+    color: #64748b;
+}
+
+
+/* ==================================================
+   Modal Buttons
+================================================== */
+
+.task-modal-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 25px;
+}
+
+.task-modal-actions button {
+    min-width: 100px;
+
+    height: 40px;
+
+    padding: 0 16px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.task-modal-actions button:hover {
+    transform: translateY(-1px);
+}
+
+#cancelTask,
+#cancelEditTask {
+    background: #334155;
+
+    color: #ffffff;
+}
+
+#cancelTask:hover,
+#cancelEditTask:hover {
+    background: #475569;
+}
+
+.task-modal-actions button[type="submit"] {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color: #ffffff;
+}
+
+.task-modal-actions button[type="submit"]:hover {
+    background: linear-gradient(
+        135deg,
+        #3b82f6,
+        #2563eb
+    );
+}
+
+
+/* ==================================================
+   Animations
+================================================== */
+
+@keyframes fadeIn {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+@keyframes modalOpen {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(10px)
+            scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* ==================================================
+   Tablet
+================================================== */
+
+@media (max-width: 1000px) {
+
+    .sidebar {
+        width: 210px;
+    }
+
+    .main-content {
+        padding: 25px;
+    }
+
+    .task-summary {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* ==================================================
+   Mobile
+================================================== */
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 70px;
+
+        padding: 20px 8px;
+    }
+
+    .logo {
+        font-size: 0;
+
+        padding: 0;
+
+        text-align: center;
+    }
+
+    .logo::before {
+        content: "DT";
+
+        font-size: 18px;
+
+        color: #ffffff;
+    }
+
+    .sidebar a {
+        font-size: 0;
+
+        text-align: center;
+
+        padding: 12px 8px;
+    }
+
+    .main-content {
+        padding: 20px 15px;
+    }
+
+    .topbar {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 10px;
+    }
+
+    .date {
+        text-align: left;
+    }
+
+    .task-summary {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+    .tasks-section {
+        padding: 18px;
+    }
+
+    .tasks-header {
+        align-items: flex-start;
+    }
+
+    .task-item {
+        align-items: flex-start;
+    }
+
+    .task-actions {
+        flex-direction: column;
+    }
+
+    .task-modal {
+        padding: 15px;
+    }
+
+    .task-modal-box {
+        padding: 20px;
+    }
+
+    .task-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .task-modal-actions button {
+        width: 100%;
+    }
+
+}
+
+
+/* ==================================================
+   Small Mobile
+================================================== */
+
+@media (max-width: 450px) {
+
+    .main-content {
+        padding: 15px 10px;
+    }
+
+    .topbar h1 {
+        font-size: 23px;
+    }
+
+    .tasks-section {
+        padding: 15px;
+    }
+
+    .tasks-header h2 {
+        font-size: 17px;
+    }
+
+    #openTaskModal {
+        padding: 8px 10px;
+
+        font-size: 12px;
+    }
+
+    .task-controls {
+        overflow-x: auto;
+    }
+
+    .filter-btn {
+        white-space: nowrap;
+    }
+
+}
