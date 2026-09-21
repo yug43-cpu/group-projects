@@ -11,6 +11,7 @@ body {
     background: #0b1120;
     color: #f8fafc;
     font-family: Arial, sans-serif;
+    transition: background 0.2s, color 0.2s;
 }
 
 
@@ -349,6 +350,84 @@ body {
     background: #7f1d1d;
 
     color: white;
+}
+
+
+/* ================================
+   Light Theme
+================================ */
+
+body.light-theme {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+body.light-theme .sidebar {
+    background: #ffffff;
+    border-right-color: #cbd5e1;
+}
+
+body.light-theme .logo {
+    color: #0f172a;
+    border-bottom-color: #cbd5e1;
+}
+
+body.light-theme .sidebar nav a,
+body.light-theme .sidebar-bottom a {
+    color: #475569;
+}
+
+body.light-theme .sidebar nav a:hover,
+body.light-theme .sidebar-bottom a:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+body.light-theme .sidebar nav a.active,
+body.light-theme .sidebar-bottom a.active {
+    background: #2563eb;
+    color: white;
+}
+
+body.light-theme .topbar p {
+    color: #64748b;
+}
+
+body.light-theme #currentTime {
+    color: #0f172a;
+}
+
+body.light-theme .date {
+    color: #64748b;
+}
+
+body.light-theme .settings-section {
+    background: #ffffff;
+    border-color: #cbd5e1;
+}
+
+body.light-theme .section-header p {
+    color: #64748b;
+}
+
+body.light-theme .input-group label {
+    color: #334155;
+}
+
+body.light-theme .input-group input,
+body.light-theme .setting-row select {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+body.light-theme .setting-row {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+body.light-theme .setting-row p {
+    color: #64748b;
 }
 
 

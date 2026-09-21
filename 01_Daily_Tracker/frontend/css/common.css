@@ -1,0 +1,160 @@
+/* =================================
+   Daily Tracker - Common Layout
+================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* =================================
+   Main Layout
+================================= */
+
+.dashboard,
+.tasks-page {
+    min-height: 100vh;
+}
+
+/* =================================
+   Common Sidebar
+================================= */
+
+.sidebar {
+    
+    height: 100vh;
+    flex-shrink: 0;
+}
+
+/* =================================
+   Common Main Content
+================================= */
+
+.main-content {
+    
+    padding: 30px !important;
+    min-height: 100vh;
+}
+
+/* =================================
+   Common Topbar
+================================= */
+
+.topbar {
+    margin-bottom: 30px;
+}
+
+.topbar h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+}
+
+.topbar p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* =================================
+   Common Date
+================================= */
+
+.date {
+    font-size: 14px;
+}
+
+/* =================================
+   Common Sections
+================================= */
+
+.dashboard-section,
+.tasks-section,
+.settings-section,
+.calendar-section,
+.statistics-section {
+    border-radius: 14px;
+}
+
+/* =================================
+   Common Section Header
+================================= */
+
+.section-header h2 {
+    font-size: 20px;
+}
+
+/* =================================
+   Common Summary Cards
+================================= */
+
+.summary-cards,
+.task-summary {
+    gap: 20px;
+}
+
+/* =================================
+   Tablet
+================================= */
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 220px !important;
+    }
+
+    .main-content {
+        width: calc(100% - 220px) !important;
+        margin-left: 220px !important;
+        padding: 20px !important;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .date {
+        text-align: left;
+    }
+}
+
+/* =================================
+   Mobile
+================================= */
+
+@media (max-width: 550px) {
+
+    .dashboard,
+    .tasks-page {
+        display: block;
+    }
+
+    .sidebar {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 20px !important;
+    }
+
+    .sidebar-bottom {
+        margin-top: 10px;
+    }
+
+    .setting-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .setting-row select {
+        width: 100%;
+    }
+}

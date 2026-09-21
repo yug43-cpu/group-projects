@@ -1,13 +1,3 @@
-/* ==================================================
-   DAILY TRACKER - DASHBOARD
-   Complete Dashboard Design
-================================================== */
-
-
-/* ==================================================
-   Global Dashboard
-================================================== */
-
 body {
     background: #0b1120;
     color: #f8fafc;
@@ -17,11 +7,6 @@ body {
     display: flex;
     min-height: 100vh;
 }
-
-
-/* ==================================================
-   Sidebar
-================================================== */
 
 .sidebar {
     width: 240px;
@@ -38,9 +23,6 @@ body {
     box-shadow: 8px 0 30px rgba(0, 0, 0, 0.15);
 }
 
-
-/* Logo */
-
 .logo {
     font-size: 22px;
     font-weight: 700;
@@ -48,9 +30,6 @@ body {
     margin-bottom: 35px;
     color: #ffffff;
 }
-
-
-/* Navigation */
 
 .sidebar nav {
     display: flex;
@@ -78,18 +57,10 @@ body {
 }
 
 .sidebar a.active {
-    background: linear-gradient(
-        135deg,
-        #2563eb,
-        #1d4ed8
-    );
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: #ffffff;
-    box-shadow:
-        0 5px 18px rgba(37, 99, 235, 0.25);
+    box-shadow: 0 5px 18px rgba(37, 99, 235, 0.25);
 }
-
-
-/* Sidebar Bottom */
 
 .sidebar-bottom {
     margin-top: auto;
@@ -98,22 +69,12 @@ body {
     gap: 7px;
 }
 
-
-/* ==================================================
-   Main Content
-================================================== */
-
 .main-content {
     flex: 1;
     width: 100%;
     padding: 35px;
     max-width: 1450px;
 }
-
-
-/* ==================================================
-   Topbar
-================================================== */
 
 .topbar {
     display: flex;
@@ -134,11 +95,6 @@ body {
     font-size: 14px;
 }
 
-
-/* ==================================================
-   Top Right Area
-================================================== */
-
 .topbar-right {
     display: flex;
     align-items: center;
@@ -148,11 +104,10 @@ body {
 
 
 /* ==================================================
-   Streak & Reminder
+   Streak
 ================================================== */
 
-.streak-mini,
-.reminder-mini {
+.streak-mini {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -167,40 +122,333 @@ body {
         transform 0.2s ease;
 }
 
-.streak-mini:hover,
-.reminder-mini:hover {
+.streak-mini:hover {
     background: #162033;
     border-color: rgba(96, 165, 250, 0.25);
     transform: translateY(-1px);
 }
 
-
-/* Mini Icons */
-
-.streak-icon,
-.reminder-icon {
+.streak-icon {
     font-size: 19px;
     line-height: 1;
 }
 
-
-/* Mini Text */
-
-.streak-mini strong,
-.reminder-mini strong {
+.streak-mini strong {
     display: block;
     color: #f8fafc;
     font-size: 14px;
     line-height: 1.2;
 }
 
-.streak-mini small,
-.reminder-mini small {
+.streak-mini small {
     display: block;
     margin-top: 2px;
     color: #64748b;
     font-size: 10px;
     white-space: nowrap;
+}
+
+
+/* ==================================================
+   REMINDER BELL + DROPDOWN
+================================================== */
+
+.reminder-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.reminder-bell {
+    position: relative;
+    width: 44px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    background: #111827;
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 10px;
+
+    color: #ffffff;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.reminder-bell:hover {
+    background: #162033;
+    border-color: rgba(96, 165, 250, 0.25);
+    transform: translateY(-1px);
+}
+
+.reminder-bell:active {
+    transform: translateY(0);
+}
+
+.reminder-bell span {
+    font-size: 19px;
+    line-height: 1;
+}
+
+.reminder-bell strong {
+    position: absolute;
+
+    top: -3px;
+    right: -3px;
+
+    min-width: 15px;
+    height: 15px;
+
+    padding: 0 3px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #2563eb;
+    border: 2px solid #0b1120;
+    border-radius: 50%;
+
+    color: #ffffff;
+
+    font-size: 8px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+
+/* ==================================================
+   Reminder Dropdown
+================================================== */
+
+.reminder-dropdown {
+    display: none;
+
+    position: absolute;
+
+    top: calc(100% + 10px);
+    right: 0;
+
+    width: 330px;
+
+    background: linear-gradient(
+        145deg,
+        #1e293b,
+        #172033
+    );
+
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 13px;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.40);
+
+    overflow: hidden;
+
+    z-index: 1100;
+}
+
+.reminder-dropdown.show {
+    display: block;
+    animation: reminderDropdownOpen 0.18s ease;
+}
+
+.reminder-dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 15px 16px;
+
+    border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+}
+
+.reminder-dropdown-header h3 {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.reminder-dropdown-header small {
+    color: #64748b;
+    font-size: 10px;
+}
+
+.add-reminder-button {
+    width: 31px;
+    height: 31px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    border: none;
+    border-radius: 8px;
+
+    color: #ffffff;
+
+    font-size: 20px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.add-reminder-button:hover {
+    background: linear-gradient(
+        135deg,
+        #3b82f6,
+        #2563eb
+    );
+
+    transform: translateY(-1px);
+}
+
+.reminder-list {
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.reminder-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.reminder-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.reminder-list::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 10px;
+}
+
+.reminder-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding: 12px 10px;
+
+    background: #111827;
+
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    border-radius: 9px;
+
+    margin-bottom: 7px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.reminder-item:last-child {
+    margin-bottom: 0;
+}
+
+.reminder-item:hover {
+    background: #162033;
+    border-color: rgba(96, 165, 250, 0.20);
+    transform: translateX(2px);
+}
+
+.reminder-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.reminder-item-text {
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 500;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.reminder-item-time {
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+.delete-reminder {
+    width: 30px;
+    height: 30px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    background: rgba(127, 29, 29, 0.35);
+
+    border: 1px solid rgba(248, 113, 113, 0.15);
+    border-radius: 7px;
+
+    color: #fca5a5;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.delete-reminder:hover {
+    background: rgba(153, 27, 27, 0.55);
+    border-color: rgba(248, 113, 113, 0.30);
+    transform: translateY(-1px);
+}
+
+.no-reminders {
+    padding: 28px 15px;
+
+    text-align: center;
+
+    color: #64748b;
+    font-size: 12px;
+}
+
+@keyframes reminderDropdownOpen {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
@@ -219,8 +467,7 @@ body {
     border: 1px solid rgba(148, 163, 184, 0.14);
     border-radius: 12px;
     text-align: right;
-    box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     transition:
         border-color 0.2s ease,
         transform 0.2s ease;
@@ -231,9 +478,6 @@ body {
     transform: translateY(-1px);
 }
 
-
-/* TODAY */
-
 .date-label {
     display: block;
     margin-bottom: 3px;
@@ -243,18 +487,12 @@ body {
     letter-spacing: 1.5px;
 }
 
-
-/* Date */
-
 .current-date {
     color: #cbd5e1;
     font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
 }
-
-
-/* Time */
 
 .current-time {
     margin-top: 2px;
@@ -273,18 +511,13 @@ body {
 
 .summary-cards {
     display: grid;
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
     margin-bottom: 25px;
 }
 
 .card {
-    background: linear-gradient(
-        145deg,
-        #1e293b,
-        #172033
-    );
+    background: linear-gradient(145deg, #1e293b, #172033);
     border: 1px solid rgba(148, 163, 184, 0.12);
     border-radius: 14px;
     padding: 22px;
@@ -310,8 +543,7 @@ body {
 .card:hover {
     transform: translateY(-4px);
     border-color: rgba(96, 165, 250, 0.3);
-    box-shadow:
-        0 12px 30px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
 .card h3 {
@@ -339,11 +571,7 @@ body {
 ================================================== */
 
 .dashboard-section {
-    background: linear-gradient(
-        145deg,
-        #1e293b,
-        #172033
-    );
+    background: linear-gradient(145deg, #1e293b, #172033);
     border: 1px solid rgba(148, 163, 184, 0.12);
     border-radius: 14px;
     padding: 22px;
@@ -355,12 +583,8 @@ body {
 
 .dashboard-section:hover {
     border-color: rgba(148, 163, 184, 0.20);
-    box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
-
-
-/* Section Header */
 
 .section-header {
     display: flex;
@@ -377,17 +601,8 @@ body {
     font-weight: 600;
 }
 
-
-/* ==================================================
-   Buttons
-================================================== */
-
 .section-header button {
-    background: linear-gradient(
-        135deg,
-        #2563eb,
-        #1d4ed8
-    );
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: #ffffff;
     border: none;
     border-radius: 8px;
@@ -395,8 +610,7 @@ body {
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    box-shadow:
-        0 5px 15px rgba(37, 99, 235, 0.18);
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.18);
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease,
@@ -404,14 +618,9 @@ body {
 }
 
 .section-header button:hover {
-    background: linear-gradient(
-        135deg,
-        #3b82f6,
-        #2563eb
-    );
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     transform: translateY(-2px);
-    box-shadow:
-        0 8px 20px rgba(37, 99, 235, 0.28);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.28);
 }
 
 .section-header button:active {
@@ -435,15 +644,13 @@ body {
 .progress {
     width: 0;
     height: 100%;
-    background: linear-gradient(
-        90deg,
-        #2563eb,
-        #60a5fa
-    );
+    background: linear-gradient(90deg, #2563eb, #60a5fa);
     border-radius: 20px;
-    transition: width 0.4s ease;
-    box-shadow:
-        0 0 12px rgba(37, 99, 235, 0.35);
+
+    transition:
+        width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.35);
 }
 
 
@@ -478,9 +685,6 @@ body {
     transform: translateX(2px);
 }
 
-
-/* Checkbox */
-
 .task > input[type="checkbox"] {
     width: 17px;
     height: 17px;
@@ -488,9 +692,6 @@ body {
     cursor: pointer;
     accent-color: #2563eb;
 }
-
-
-/* Task Info */
 
 .task-info {
     flex: 1;
@@ -510,9 +711,6 @@ body {
     color: #64748b;
     font-size: 12px;
 }
-
-
-/* Completed Task */
 
 .task.completed {
     opacity: 0.75;
@@ -551,9 +749,6 @@ body {
     transform: translateY(-1px);
 }
 
-
-/* Edit */
-
 .edit-task {
     background: #263449;
     color: #93c5fd;
@@ -564,9 +759,6 @@ body {
     background: #334155;
     border-color: #475569;
 }
-
-
-/* Delete */
 
 .delete-task {
     background: rgba(127, 29, 29, 0.35);
@@ -586,8 +778,7 @@ body {
 
 .bottom-grid {
     display: grid;
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
 }
 
@@ -617,9 +808,6 @@ body {
     color: #94a3b8;
 }
 
-
-/* Study Session */
-
 .study-session {
     display: flex;
     align-items: center;
@@ -640,12 +828,8 @@ body {
     background: #162033;
     border-color: rgba(96, 165, 250, 0.20);
     transform: translateY(-2px);
-    box-shadow:
-        0 7px 20px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.18);
 }
-
-
-/* Study Information */
 
 .study-session-info {
     display: flex;
@@ -666,9 +850,6 @@ body {
     font-size: 12px;
     font-weight: 500;
 }
-
-
-/* Study Buttons */
 
 .study-session-actions {
     display: flex;
@@ -695,9 +876,6 @@ body {
     transform: translateY(-1px);
 }
 
-
-/* Study Edit */
-
 .study-session-actions .edit-study {
     color: #60a5fa;
 }
@@ -706,9 +884,6 @@ body {
     border-color: #3b82f6;
     background: #1e3a5f;
 }
-
-
-/* Study Delete */
 
 .study-session-actions .delete-study {
     color: #f87171;
@@ -719,28 +894,18 @@ body {
     background: #3a1f1f;
 }
 
-
-/* No Study Session */
-
 #studyList > div:first-child:has(span) {
     min-height: 55px;
 }
 
-
-/* ==================================================
-   Goals
-================================================== */
-
-.bottom-grid .dashboard-section:last-child
-.study-info > div {
+.bottom-grid .dashboard-section:last-child .study-info > div {
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
         transform 0.2s ease;
 }
 
-.bottom-grid .dashboard-section:last-child
-.study-info > div:hover {
+.bottom-grid .dashboard-section:last-child .study-info > div:hover {
     background: #162033;
     border-color: rgba(96, 165, 250, 0.20);
     transform: translateX(2px);
@@ -770,27 +935,16 @@ body {
     animation: modalBackground 0.2s ease;
 }
 
-
-/* Modal Box */
-
 .task-modal-box {
     width: 100%;
     max-width: 450px;
-    background: linear-gradient(
-        145deg,
-        #1e293b,
-        #172033
-    );
+    background: linear-gradient(145deg, #1e293b, #172033);
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 15px;
     padding: 25px;
-    box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
     animation: modalOpen 0.25s ease;
 }
-
-
-/* Modal Header */
 
 .task-modal-header {
     display: flex;
@@ -869,8 +1023,7 @@ body {
 .task-modal .input-group input:focus,
 .task-modal .input-group select:focus {
     border-color: #3b82f6;
-    box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.12);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
 }
 
 
@@ -905,44 +1058,30 @@ body {
     transform: translateY(-1px);
 }
 
-
-/* Cancel */
-
 #cancelTask,
 #cancelEditTask,
-#cancelStudy {
+#cancelStudy,
+#cancelReminder {
     background: #334155;
     color: #ffffff;
 }
 
 #cancelTask:hover,
 #cancelEditTask:hover,
-#cancelStudy:hover {
+#cancelStudy:hover,
+#cancelReminder:hover {
     background: #475569;
 }
 
-
-/* Submit */
-
 .task-modal-actions button[type="submit"] {
-    background: linear-gradient(
-        135deg,
-        #2563eb,
-        #1d4ed8
-    );
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: #ffffff;
-    box-shadow:
-        0 5px 15px rgba(37, 99, 235, 0.18);
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.18);
 }
 
 .task-modal-actions button[type="submit"]:hover {
-    background: linear-gradient(
-        135deg,
-        #3b82f6,
-        #2563eb
-    );
-    box-shadow:
-        0 7px 20px rgba(37, 99, 235, 0.28);
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow: 0 7px 20px rgba(37, 99, 235, 0.28);
 }
 
 
@@ -953,16 +1092,12 @@ body {
 @keyframes modalOpen {
     from {
         opacity: 0;
-        transform:
-            translateY(10px)
-            scale(0.98);
+        transform: translateY(10px) scale(0.98);
     }
 
     to {
         opacity: 1;
-        transform:
-            translateY(0)
-            scale(1);
+        transform: translateY(0) scale(1);
     }
 }
 
@@ -978,7 +1113,7 @@ body {
 
 
 /* ==================================================
-   Responsive - Tablet
+   Responsive Tablet
 ================================================== */
 
 @media (max-width: 1000px) {
@@ -992,16 +1127,14 @@ body {
     }
 
     .summary-cards {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .topbar-right {
         gap: 8px;
     }
 
-    .streak-mini,
-    .reminder-mini {
+    .streak-mini {
         min-width: 90px;
         padding: 7px 9px;
     }
@@ -1009,11 +1142,15 @@ body {
     .date-time-card {
         min-width: 155px;
     }
+
+    .reminder-dropdown {
+        width: 320px;
+    }
 }
 
 
 /* ==================================================
-   Responsive - Mobile
+   Responsive Mobile
 ================================================== */
 
 @media (max-width: 700px) {
@@ -1118,11 +1255,16 @@ body {
     .task-modal-actions button {
         width: 100%;
     }
+
+    .reminder-dropdown {
+        width: 310px;
+        max-width: calc(100vw - 30px);
+    }
 }
 
 
 /* ==================================================
-   Responsive - Small Mobile
+   Responsive Small Mobile
 ================================================== */
 
 @media (max-width: 450px) {
@@ -1139,11 +1281,15 @@ body {
         width: 100%;
     }
 
-    .streak-mini,
-    .reminder-mini {
+    .streak-mini {
         min-width: 0;
         flex: 1;
         padding: 8px;
+    }
+
+    .reminder-bell {
+        width: 44px;
+        height: 42px;
     }
 
     .date-time-card {
@@ -1155,6 +1301,17 @@ body {
     .current-date,
     .current-time {
         text-align: left;
+    }
+
+    .reminder-dropdown {
+        position: fixed;
+
+        top: 75px;
+        right: 10px;
+        left: 10px;
+
+        width: auto;
+        max-width: none;
     }
 
     .dashboard-section {

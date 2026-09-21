@@ -1103,3 +1103,64 @@ body {
     }
 
 }
+/* =================================
+   Task Action Buttons
+================================= */
+
+.task-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.task-actions button {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+    transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+/* Edit Button */
+
+.edit-btn {
+    background: rgba(59, 130, 246, 0.12);
+    color: #3b82f6;
+}
+
+.edit-btn:hover {
+    background: rgba(59, 130, 246, 0.22);
+    transform: translateY(-2px);
+}
+
+.edit-btn:active {
+    transform: scale(0.92);
+}
+
+/* Delete Button */
+
+.delete-btn {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+}
+
+.delete-btn:hover {
+    background: rgba(239, 68, 68, 0.22);
+    transform: translateY(-2px);
+}
+
+.delete-btn:active {
+    transform: scale(0.92);
+}
+
+/* Click animation */
+
+.task-actions button:active {
+    transition: transform 0.08s ease;
+}
