@@ -26,21 +26,15 @@ body {
 .sidebar {
     width: 240px;
     min-height: 100vh;
-
     background: rgba(15, 23, 42, 0.95);
     border-right: 1px solid rgba(148, 163, 184, 0.12);
-
     padding: 25px 15px;
-
     display: flex;
     flex-direction: column;
-
     flex-shrink: 0;
-
     position: sticky;
     top: 0;
     height: 100vh;
-
     box-shadow: 8px 0 30px rgba(0, 0, 0, 0.15);
 }
 
@@ -50,10 +44,8 @@ body {
 .logo {
     font-size: 22px;
     font-weight: 700;
-
     padding: 0 12px;
     margin-bottom: 35px;
-
     color: #ffffff;
 }
 
@@ -69,14 +61,10 @@ body {
 .sidebar a {
     color: #94a3b8;
     text-decoration: none;
-
     padding: 12px 13px;
-
     border-radius: 9px;
-
     display: flex;
     align-items: center;
-
     transition:
         background 0.2s ease,
         color 0.2s ease,
@@ -86,7 +74,6 @@ body {
 .sidebar a:hover {
     background: rgba(37, 99, 235, 0.10);
     color: #ffffff;
-
     transform: translateX(3px);
 }
 
@@ -96,9 +83,7 @@ body {
         #2563eb,
         #1d4ed8
     );
-
     color: #ffffff;
-
     box-shadow:
         0 5px 18px rgba(37, 99, 235, 0.25);
 }
@@ -108,7 +93,6 @@ body {
 
 .sidebar-bottom {
     margin-top: auto;
-
     display: flex;
     flex-direction: column;
     gap: 7px;
@@ -122,9 +106,7 @@ body {
 .main-content {
     flex: 1;
     width: 100%;
-
     padding: 35px;
-
     max-width: 1450px;
 }
 
@@ -137,16 +119,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     margin-bottom: 30px;
 }
 
 .topbar h1 {
     font-size: 28px;
     font-weight: 700;
-
     margin-bottom: 6px;
-
     color: #ffffff;
 }
 
@@ -155,13 +134,136 @@ body {
     font-size: 14px;
 }
 
-.date {
-    color: #94a3b8;
 
+/* ==================================================
+   Top Right Area
+================================================== */
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+
+/* ==================================================
+   Streak & Reminder
+================================================== */
+
+.streak-mini,
+.reminder-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+    padding: 8px 10px;
+    background: #111827;
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 10px;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.streak-mini:hover,
+.reminder-mini:hover {
+    background: #162033;
+    border-color: rgba(96, 165, 250, 0.25);
+    transform: translateY(-1px);
+}
+
+
+/* Mini Icons */
+
+.streak-icon,
+.reminder-icon {
+    font-size: 19px;
+    line-height: 1;
+}
+
+
+/* Mini Text */
+
+.streak-mini strong,
+.reminder-mini strong {
+    display: block;
+    color: #f8fafc;
     font-size: 14px;
-    line-height: 1.7;
+    line-height: 1.2;
+}
 
+.streak-mini small,
+.reminder-mini small {
+    display: block;
+    margin-top: 2px;
+    color: #64748b;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+
+/* ==================================================
+   Professional Date & Time Card
+================================================== */
+
+.date-time-card {
+    min-width: 175px;
+    padding: 10px 14px;
+    background: linear-gradient(
+        145deg,
+        rgba(30, 41, 59, 0.95),
+        rgba(23, 32, 51, 0.95)
+    );
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 12px;
     text-align: right;
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.12);
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.date-time-card:hover {
+    border-color: rgba(96, 165, 250, 0.25);
+    transform: translateY(-1px);
+}
+
+
+/* TODAY */
+
+.date-label {
+    display: block;
+    margin-bottom: 3px;
+    color: #64748b;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+
+/* Date */
+
+.current-date {
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+
+/* Time */
+
+.current-time {
+    margin-top: 2px;
+    color: #ffffff;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+    white-space: nowrap;
 }
 
 
@@ -171,12 +273,9 @@ body {
 
 .summary-cards {
     display: grid;
-
     grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
+        repeat(3, minmax(0, 1fr));
     gap: 18px;
-
     margin-bottom: 25px;
 }
 
@@ -186,16 +285,11 @@ body {
         #1e293b,
         #172033
     );
-
     border: 1px solid rgba(148, 163, 184, 0.12);
-
     border-radius: 14px;
-
     padding: 22px;
-
     position: relative;
     overflow: hidden;
-
     transition:
         transform 0.25s ease,
         border-color 0.25s ease,
@@ -204,50 +298,38 @@ body {
 
 .card::before {
     content: "";
-
     position: absolute;
-
     top: 0;
     left: 0;
-
     width: 100%;
     height: 2px;
-
     background: #2563eb;
-
     opacity: 0.8;
 }
 
 .card:hover {
     transform: translateY(-4px);
-
     border-color: rgba(96, 165, 250, 0.3);
-
     box-shadow:
         0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
 .card h3 {
     color: #94a3b8;
-
     font-size: 13px;
     font-weight: 500;
-
     margin-bottom: 12px;
 }
 
 .card .number {
     color: #ffffff;
-
     font-size: 26px;
     font-weight: 700;
-
     margin-bottom: 5px;
 }
 
 .card span {
     color: #64748b;
-
     font-size: 12px;
 }
 
@@ -262,15 +344,10 @@ body {
         #1e293b,
         #172033
     );
-
     border: 1px solid rgba(148, 163, 184, 0.12);
-
     border-radius: 14px;
-
     padding: 22px;
-
     margin-bottom: 20px;
-
     transition:
         border-color 0.25s ease,
         box-shadow 0.25s ease;
@@ -278,7 +355,6 @@ body {
 
 .dashboard-section:hover {
     border-color: rgba(148, 163, 184, 0.20);
-
     box-shadow:
         0 10px 30px rgba(0, 0, 0, 0.12);
 }
@@ -290,16 +366,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     gap: 15px;
-
     margin-bottom: 18px;
 }
 
 .section-header h2,
 .dashboard-section h2 {
     color: #ffffff;
-
     font-size: 18px;
     font-weight: 600;
 }
@@ -315,22 +388,15 @@ body {
         #2563eb,
         #1d4ed8
     );
-
     color: #ffffff;
-
     border: none;
     border-radius: 8px;
-
     padding: 9px 14px;
-
     font-size: 13px;
     font-weight: 500;
-
     cursor: pointer;
-
     box-shadow:
         0 5px 15px rgba(37, 99, 235, 0.18);
-
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease,
@@ -343,9 +409,7 @@ body {
         #3b82f6,
         #2563eb
     );
-
     transform: translateY(-2px);
-
     box-shadow:
         0 8px 20px rgba(37, 99, 235, 0.28);
 }
@@ -362,30 +426,22 @@ body {
 .progress-bar {
     width: 100%;
     height: 10px;
-
     background: #0f172a;
-
     border: 1px solid rgba(148, 163, 184, 0.08);
-
     border-radius: 20px;
-
     overflow: hidden;
 }
 
 .progress {
     width: 0;
     height: 100%;
-
     background: linear-gradient(
         90deg,
         #2563eb,
         #60a5fa
     );
-
     border-radius: 20px;
-
     transition: width 0.4s ease;
-
     box-shadow:
         0 0 12px rgba(37, 99, 235, 0.35);
 }
@@ -398,26 +454,18 @@ body {
 .task-list {
     display: flex;
     flex-direction: column;
-
     gap: 10px;
 }
 
 .task {
     display: flex;
     align-items: center;
-
     gap: 12px;
-
     padding: 13px 14px;
-
     background: #111827;
-
     border: 1px solid rgba(148, 163, 184, 0.08);
-
     border-radius: 10px;
-
     min-width: 0;
-
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
@@ -426,9 +474,7 @@ body {
 
 .task:hover {
     background: #162033;
-
     border-color: rgba(96, 165, 250, 0.20);
-
     transform: translateX(2px);
 }
 
@@ -438,11 +484,8 @@ body {
 .task > input[type="checkbox"] {
     width: 17px;
     height: 17px;
-
     flex-shrink: 0;
-
     cursor: pointer;
-
     accent-color: #2563eb;
 }
 
@@ -451,26 +494,20 @@ body {
 
 .task-info {
     flex: 1;
-
     min-width: 0;
-
     display: flex;
     flex-direction: column;
-
     gap: 5px;
 }
 
 .task-info span {
     color: #f8fafc;
-
     font-size: 14px;
-
     word-break: break-word;
 }
 
 .task-info small {
     color: #64748b;
-
     font-size: 12px;
 }
 
@@ -483,7 +520,6 @@ body {
 
 .task.completed .task-info span {
     text-decoration: line-through;
-
     color: #64748b;
 }
 
@@ -495,23 +531,16 @@ body {
 .task-actions {
     display: flex;
     align-items: center;
-
     gap: 6px;
-
     flex-shrink: 0;
 }
 
 .task-actions button {
     border: 1px solid transparent;
-
     border-radius: 7px;
-
     padding: 6px 10px;
-
     font-size: 12px;
-
     cursor: pointer;
-
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
@@ -527,15 +556,12 @@ body {
 
 .edit-task {
     background: #263449;
-
     color: #93c5fd;
-
     border-color: #334155;
 }
 
 .edit-task:hover {
     background: #334155;
-
     border-color: #475569;
 }
 
@@ -544,15 +570,12 @@ body {
 
 .delete-task {
     background: rgba(127, 29, 29, 0.35);
-
     color: #fca5a5;
-
     border-color: rgba(248, 113, 113, 0.15);
 }
 
 .delete-task:hover {
     background: rgba(153, 27, 27, 0.55);
-
     border-color: rgba(248, 113, 113, 0.30);
 }
 
@@ -563,10 +586,8 @@ body {
 
 .bottom-grid {
     display: grid;
-
     grid-template-columns:
         repeat(2, minmax(0, 1fr));
-
     gap: 20px;
 }
 
@@ -577,10 +598,8 @@ body {
 
 .study-info {
     margin-top: 18px;
-
     display: flex;
     flex-direction: column;
-
     gap: 10px;
 }
 
@@ -588,13 +607,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     padding: 12px 14px;
-
     background: #111827;
-
     border: 1px solid rgba(148, 163, 184, 0.08);
-
     border-radius: 10px;
 }
 
@@ -607,20 +622,13 @@ body {
 
 .study-session {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
-
     gap: 15px;
-
     padding: 14px 16px;
-
     background: #111827;
-
     border: 1px solid rgba(148, 163, 184, 0.08);
-
     border-radius: 10px;
-
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
@@ -630,11 +638,8 @@ body {
 
 .study-session:hover {
     background: #162033;
-
     border-color: rgba(96, 165, 250, 0.20);
-
     transform: translateY(-2px);
-
     box-shadow:
         0 7px 20px rgba(0, 0, 0, 0.18);
 }
@@ -645,24 +650,19 @@ body {
 .study-session-info {
     display: flex;
     flex-direction: column;
-
     gap: 5px;
-
     min-width: 0;
 }
 
 .study-session-info span {
     color: #f8fafc;
-
     font-size: 14px;
     font-weight: 600;
-
     word-break: break-word;
 }
 
 .study-session-info strong {
     color: #64748b;
-
     font-size: 12px;
     font-weight: 500;
 }
@@ -672,27 +672,18 @@ body {
 
 .study-session-actions {
     display: flex;
-
     gap: 7px;
-
     flex-shrink: 0;
 }
 
 .study-session-actions button {
     padding: 6px 10px;
-
     border: 1px solid #334155;
-
     border-radius: 7px;
-
     background: #1e293b;
-
     color: #d1d5db;
-
     font-size: 12px;
-
     cursor: pointer;
-
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
@@ -701,7 +692,6 @@ body {
 
 .study-session-actions button:hover {
     background: #334155;
-
     transform: translateY(-1px);
 }
 
@@ -714,7 +704,6 @@ body {
 
 .study-session-actions .edit-study:hover {
     border-color: #3b82f6;
-
     background: #1e3a5f;
 }
 
@@ -727,7 +716,6 @@ body {
 
 .study-session-actions .delete-study:hover {
     border-color: #7f1d1d;
-
     background: #3a1f1f;
 }
 
@@ -754,9 +742,7 @@ body {
 .bottom-grid .dashboard-section:last-child
 .study-info > div:hover {
     background: #162033;
-
     border-color: rgba(96, 165, 250, 0.20);
-
     transform: translateX(2px);
 }
 
@@ -767,29 +753,20 @@ body {
 
 .task-modal {
     display: none;
-
     position: fixed;
-
     inset: 0;
-
     width: 100%;
     height: 100%;
-
     padding: 20px;
-
     background: rgba(2, 6, 23, 0.78);
-
     backdrop-filter: blur(5px);
-
     justify-content: center;
     align-items: center;
-
     z-index: 1000;
 }
 
 .task-modal.active {
     display: flex;
-
     animation: modalBackground 0.2s ease;
 }
 
@@ -799,22 +776,16 @@ body {
 .task-modal-box {
     width: 100%;
     max-width: 450px;
-
     background: linear-gradient(
         145deg,
         #1e293b,
         #172033
     );
-
     border: 1px solid rgba(148, 163, 184, 0.18);
-
     border-radius: 15px;
-
     padding: 25px;
-
     box-shadow:
         0 25px 70px rgba(0, 0, 0, 0.45);
-
     animation: modalOpen 0.25s ease;
 }
 
@@ -823,16 +794,13 @@ body {
 
 .task-modal-header {
     display: flex;
-
     justify-content: space-between;
     align-items: center;
-
     margin-bottom: 25px;
 }
 
 .task-modal-header h2 {
     color: #ffffff;
-
     font-size: 20px;
     font-weight: 600;
 }
@@ -840,25 +808,16 @@ body {
 .task-modal-header button {
     width: 32px;
     height: 32px;
-
     display: flex;
-
     justify-content: center;
     align-items: center;
-
     background: rgba(148, 163, 184, 0.08);
-
     border: 1px solid rgba(148, 163, 184, 0.10);
-
     border-radius: 7px;
-
     color: #94a3b8;
-
     font-size: 24px;
     line-height: 1;
-
     cursor: pointer;
-
     transition:
         background 0.2s ease,
         color 0.2s ease;
@@ -866,7 +825,6 @@ body {
 
 .task-modal-header button:hover {
     background: rgba(148, 163, 184, 0.15);
-
     color: #ffffff;
 }
 
@@ -881,11 +839,8 @@ body {
 
 .task-modal .input-group label {
     display: block;
-
     margin-bottom: 8px;
-
     color: #e2e8f0;
-
     font-size: 13px;
     font-weight: 500;
 }
@@ -893,24 +848,15 @@ body {
 .task-modal .input-group input,
 .task-modal .input-group select {
     display: block;
-
     width: 100%;
     height: 44px;
-
     padding: 0 14px;
-
     background: #0f172a;
-
     color: #ffffff;
-
     border: 1px solid #334155;
-
     border-radius: 8px;
-
     outline: none;
-
     font-size: 14px;
-
     transition:
         border-color 0.2s ease,
         box-shadow 0.2s ease;
@@ -923,7 +869,6 @@ body {
 .task-modal .input-group input:focus,
 .task-modal .input-group select:focus {
     border-color: #3b82f6;
-
     box-shadow:
         0 0 0 3px rgba(59, 130, 246, 0.12);
 }
@@ -935,30 +880,21 @@ body {
 
 .task-modal-actions {
     display: flex;
-
     justify-content: flex-end;
     align-items: center;
-
     gap: 10px;
-
     margin-top: 25px;
 }
 
 .task-modal-actions button {
     min-width: 100px;
     height: 40px;
-
     padding: 0 16px;
-
     border: none;
-
     border-radius: 8px;
-
     cursor: pointer;
-
     font-size: 13px;
     font-weight: 500;
-
     transition:
         transform 0.2s ease,
         background 0.2s ease,
@@ -976,7 +912,6 @@ body {
 #cancelEditTask,
 #cancelStudy {
     background: #334155;
-
     color: #ffffff;
 }
 
@@ -995,9 +930,7 @@ body {
         #2563eb,
         #1d4ed8
     );
-
     color: #ffffff;
-
     box-shadow:
         0 5px 15px rgba(37, 99, 235, 0.18);
 }
@@ -1008,7 +941,6 @@ body {
         #3b82f6,
         #2563eb
     );
-
     box-shadow:
         0 7px 20px rgba(37, 99, 235, 0.28);
 }
@@ -1019,21 +951,22 @@ body {
 ================================================== */
 
 @keyframes modalOpen {
-
     from {
         opacity: 0;
-        transform: translateY(10px) scale(0.98);
+        transform:
+            translateY(10px)
+            scale(0.98);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform:
+            translateY(0)
+            scale(1);
     }
-
 }
 
 @keyframes modalBackground {
-
     from {
         opacity: 0;
     }
@@ -1041,7 +974,6 @@ body {
     to {
         opacity: 1;
     }
-
 }
 
 
@@ -1064,6 +996,19 @@ body {
             repeat(2, minmax(0, 1fr));
     }
 
+    .topbar-right {
+        gap: 8px;
+    }
+
+    .streak-mini,
+    .reminder-mini {
+        min-width: 90px;
+        padding: 7px 9px;
+    }
+
+    .date-time-card {
+        min-width: 155px;
+    }
 }
 
 
@@ -1075,38 +1020,30 @@ body {
 
     .sidebar {
         width: 70px;
-
         padding: 20px 8px;
     }
 
     .logo {
         font-size: 0;
-
         padding: 0;
-
         text-align: center;
-
         margin-bottom: 25px;
     }
 
     .logo::before {
         content: "DT";
-
         font-size: 18px;
         font-weight: 700;
-
         color: #ffffff;
     }
 
     .sidebar a {
         justify-content: center;
-
         font-size: 0;
-
         padding: 12px 8px;
     }
 
-    .sidebar a:first-letter {
+    .sidebar a::first-letter {
         font-size: 18px;
     }
 
@@ -1116,25 +1053,28 @@ body {
 
     .topbar {
         flex-direction: column;
-
         align-items: flex-start;
-
-        gap: 10px;
+        gap: 15px;
     }
 
-    .date {
-        text-align: left;
+    .topbar-right {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .date-time-card {
+        margin-left: auto;
     }
 
     .summary-cards {
         grid-template-columns: 1fr;
-
         gap: 12px;
     }
 
     .bottom-grid {
         grid-template-columns: 1fr;
-
         gap: 0;
     }
 
@@ -1168,7 +1108,6 @@ body {
 
     .task-modal-box {
         max-width: 100%;
-
         padding: 20px;
     }
 
@@ -1179,7 +1118,6 @@ body {
     .task-modal-actions button {
         width: 100%;
     }
-
 }
 
 
@@ -1197,6 +1135,28 @@ body {
         font-size: 23px;
     }
 
+    .topbar-right {
+        width: 100%;
+    }
+
+    .streak-mini,
+    .reminder-mini {
+        min-width: 0;
+        flex: 1;
+        padding: 8px;
+    }
+
+    .date-time-card {
+        width: 100%;
+        margin-left: 0;
+        text-align: left;
+    }
+
+    .current-date,
+    .current-time {
+        text-align: left;
+    }
+
     .dashboard-section {
         padding: 15px;
     }
@@ -1207,7 +1167,6 @@ body {
 
     .section-header button {
         padding: 8px 10px;
-
         font-size: 12px;
     }
 
@@ -1222,5 +1181,4 @@ body {
     .task-actions button {
         padding: 5px 8px;
     }
-
 }
