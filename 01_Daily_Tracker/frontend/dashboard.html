@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -22,6 +21,10 @@
         href="css/dashboard.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="css/common.css"
+    >
 </head>
 
 
@@ -97,7 +100,6 @@
         </aside>
 
 
-
         <!-- Main Content -->
 
         <main class="main-content">
@@ -120,50 +122,27 @@
                 </div>
 
 
-             <!-- Top Right Information -->
+                <!-- Top Right -->
 
-                    <div class="topbar-right">
-
-
-                            <!-- Streak -->
-
-                                <div class="streak-mini">
-
-                                        <span class="streak-icon">
-                                            🔥
-                                        </span>
-
-                                    <div>
-
-                                        <strong id="streakCount">
-                                             0
-                                        </strong>
-
-                                            <small>
-                                             Day Streak
-                                            </small>
-
-                                    </div>
-
-                    </div>
+                <div class="topbar-right">
 
 
-                <!-- Reminder -->
+                    <!-- Streak -->
 
-                    <div class="reminder-mini">
+                    <div class="streak-mini">
 
-                        <span class="reminder-icon">
-                            🔔
+                        <span class="streak-icon">
+                            🔥
                         </span>
 
                         <div>
 
-                            <strong id="reminderCount">
-                             0
+                            <strong id="streakCount">
+                                0
                             </strong>
 
                             <small>
-                              Reminders
+                                Day Streak
                             </small>
 
                         </div>
@@ -171,31 +150,103 @@
                     </div>
 
 
-                        <!-- Date & Time Card -->
+                    <!-- Reminder Bell -->
 
-                            <div class="date-time-card">
+                    <div
+                        class="reminder-wrapper"
+                        id="reminderWrapper"
+                    >
 
-                                <span class="date-label">
-                                     TODAY
-                                </span>
+                        <button
+                            type="button"
+                            class="reminder-bell"
+                            id="reminderBell"
+                            title="Reminders"
+                        >
 
-                                <div
-                                  class="current-date"
-                                 id="currentDate"
-                                ></div>
+                            <span>
+                                🔔
+                            </span>
 
-                                    <div
-                                         class="current-time"
-                                        id="currentTime"
-                                        ></div>
+                            <strong id="reminderCount">
+                                0
+                            </strong>
 
-                                    </div>
+                        </button>
 
+
+                        <!-- Reminder Dropdown -->
+
+                        <div
+                            class="reminder-dropdown"
+                            id="reminderDropdown"
+                        >
+
+                            <div class="reminder-dropdown-header">
+
+                                <div>
+
+                                    <h3>
+                                        Reminders
+                                    </h3>
+
+                                    <small>
+                                        Your upcoming reminders
+                                    </small>
+
+                                </div>
+
+                                <button
+                                    type="button"
+                                    id="openReminderModal"
+                                    class="add-reminder-button"
+                                >
+                                    +
+                                </button>
 
                             </div>
 
-            </header>
 
+                            <div
+                                class="reminder-list"
+                                id="reminderList"
+                            >
+
+                                <div class="no-reminders">
+                                    No reminders yet.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Date & Time -->
+
+                    <div class="date-time-card">
+
+                        <span class="date-label">
+                            TODAY
+                        </span>
+
+                        <div
+                            class="current-date"
+                            id="currentDate"
+                        ></div>
+
+                        <div
+                            class="current-time"
+                            id="currentTime"
+                        ></div>
+
+                    </div>
+
+
+                </div>
+
+            </header>
 
 
             <!-- Summary Cards -->
@@ -223,7 +274,6 @@
                 </div>
 
 
-
                 <div class="card">
 
                     <h3>
@@ -242,7 +292,6 @@
                     </span>
 
                 </div>
-
 
 
                 <div class="card">
@@ -265,11 +314,9 @@
             </section>
 
 
-
             <!-- Today's Progress -->
 
             <section class="dashboard-section">
-
 
                 <div class="section-header">
 
@@ -293,15 +340,12 @@
 
                 </div>
 
-
             </section>
-
 
 
             <!-- Today's Tasks -->
 
             <section class="dashboard-section">
-
 
                 <div class="section-header">
 
@@ -309,16 +353,20 @@
                         Today's Tasks
                     </h2>
 
-
-                    <button>
+                    <button
+                        type="button"
+                        id="openTaskModal"
+                    >
                         + Add Task
                     </button>
 
                 </div>
 
 
-                <div class="task-list">
-
+                <div
+                    class="task-list"
+                    id="dashboardTaskList"
+                >
 
                     <div class="task completed">
 
@@ -340,7 +388,6 @@
                         </div>
 
                     </div>
-
 
 
                     <div class="task completed">
@@ -365,7 +412,6 @@
                     </div>
 
 
-
                     <div class="task">
 
                         <input
@@ -385,7 +431,6 @@
                         </div>
 
                     </div>
-
 
 
                     <div class="task">
@@ -408,12 +453,9 @@
 
                     </div>
 
-
                 </div>
 
-
             </section>
-
 
 
             <!-- Bottom Grid -->
@@ -431,7 +473,10 @@
                             Study Today
                         </h2>
 
-                        <button id="openStudyModal">
+                        <button
+                            type="button"
+                            id="openStudyModal"
+                        >
                             + Add Session
                         </button>
 
@@ -460,11 +505,9 @@
                 </section>
 
 
-
                 <!-- Goals -->
 
                 <section class="dashboard-section">
-
 
                     <div class="section-header">
 
@@ -472,8 +515,9 @@
                             Goals
                         </h2>
 
-
-                        <button>
+                        <button
+                            type="button"
+                        >
                             + Add Goal
                         </button>
 
@@ -481,7 +525,6 @@
 
 
                     <div class="study-info">
-
 
                         <div>
 
@@ -494,7 +537,6 @@
                             </strong>
 
                         </div>
-
 
 
                         <div>
@@ -510,7 +552,6 @@
                         </div>
 
 
-
                         <div>
 
                             <span>
@@ -523,21 +564,16 @@
 
                         </div>
 
-
                     </div>
 
-
                 </section>
-
 
             </div>
 
 
         </main>
 
-
     </div>
-
 
 
     <!-- Add Task Modal -->
@@ -547,16 +583,13 @@
         id="taskModal"
     >
 
-
         <div class="task-modal-box">
-
 
             <div class="task-modal-header">
 
                 <h2>
                     Add New Task
                 </h2>
-
 
                 <button
                     type="button"
@@ -568,16 +601,13 @@
             </div>
 
 
-
             <form id="taskForm">
-
 
                 <div class="input-group">
 
                     <label for="taskName">
                         Task Name
                     </label>
-
 
                     <input
                         type="text"
@@ -589,13 +619,11 @@
                 </div>
 
 
-
                 <div class="input-group">
 
                     <label for="taskPriority">
                         Priority
                     </label>
-
 
                     <select id="taskPriority">
 
@@ -619,13 +647,11 @@
                 </div>
 
 
-
                 <div class="input-group">
 
                     <label for="taskDueTime">
                         Due Time
                     </label>
-
 
                     <input
                         type="time"
@@ -635,9 +661,7 @@
                 </div>
 
 
-
                 <div class="task-modal-actions">
-
 
                     <button
                         type="button"
@@ -646,23 +670,17 @@
                         Cancel
                     </button>
 
-
                     <button type="submit">
                         Add Task
                     </button>
 
-
                 </div>
-
 
             </form>
 
-
         </div>
 
-
     </div>
-
 
 
     <!-- Edit Task Modal -->
@@ -672,16 +690,13 @@
         id="editTaskModal"
     >
 
-
         <div class="task-modal-box">
-
 
             <div class="task-modal-header">
 
                 <h2>
                     Edit Task
                 </h2>
-
 
                 <button
                     type="button"
@@ -693,16 +708,13 @@
             </div>
 
 
-
             <form id="editTaskForm">
-
 
                 <div class="input-group">
 
                     <label for="editTaskName">
                         Task Name
                     </label>
-
 
                     <input
                         type="text"
@@ -714,13 +726,11 @@
                 </div>
 
 
-
                 <div class="input-group">
 
                     <label for="editTaskPriority">
                         Priority
                     </label>
-
 
                     <select id="editTaskPriority">
 
@@ -744,13 +754,11 @@
                 </div>
 
 
-
                 <div class="input-group">
 
                     <label for="editTaskDueTime">
                         Due Time
                     </label>
-
 
                     <input
                         type="time"
@@ -760,9 +768,7 @@
                 </div>
 
 
-
                 <div class="task-modal-actions">
-
 
                     <button
                         type="button"
@@ -771,23 +777,17 @@
                         Cancel
                     </button>
 
-
                     <button type="submit">
                         Save Changes
                     </button>
 
-
                 </div>
-
 
             </form>
 
-
         </div>
 
-
     </div>
-
 
 
     <!-- Add Study Session Modal -->
@@ -816,7 +816,6 @@
 
 
             <form id="studyForm">
-
 
                 <div class="input-group">
 
@@ -866,14 +865,14 @@
 
                 </div>
 
-
             </form>
 
         </div>
 
     </div>
 
-        <!-- Reminder Modal -->
+
+    <!-- Add Reminder Modal -->
 
     <div
         class="task-modal"
@@ -899,7 +898,6 @@
 
 
             <form id="reminderForm">
-
 
                 <div class="input-group">
 
@@ -962,12 +960,12 @@
 
                 </div>
 
-
             </form>
 
         </div>
 
     </div>
+
 
     <!-- JavaScript -->
 
@@ -976,12 +974,6 @@
     <script src="js/dashboard.js"></script>
 
     <script src="js/study.js"></script>
-
-<audio
-    id="reminderSound"
-    src="assets/reminder.mp3"
-    preload="auto"
-></audio>
 
 
 </body>

@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/calendar.css">
+    <link rel="stylesheet" href="css/common.css">
 </head>
 
 <body>
@@ -46,7 +47,7 @@
                     📅 Calendar
                 </a>
 
-                <a href="#">
+                <a href="statistics.html">
                     📈 Statistics
                 </a>
 
@@ -54,7 +55,7 @@
 
             <div class="sidebar-bottom">
 
-                <a href="#">
+                <a href="settings.html">
                     ⚙️ Settings
                 </a>
 
@@ -75,7 +76,7 @@
                     <h1>Calendar 📅</h1>
 
                     <p>
-                        View your tasks, study sessions and journal entries by date.
+                        View your tasks, study sessions and journal activity by date.
                     </p>
                 </div>
 
@@ -124,8 +125,7 @@
                 <div
                     class="calendar-grid"
                     id="calendarGrid"
-                >
-                </div>
+                ></div>
 
             </section>
 
@@ -136,18 +136,96 @@
 
                 <div class="graph-header">
 
-                    <h2>
-                        Monthly Activity 📊
-                    </h2>
+                    <div>
+                            <h2 id="graphTitle">
+                                Monthly Activity 📊
+                            </h2>
 
-                    <p>
-                        Overview of your study, tasks and journal activity.
-                    </p>
+                        <p>
+                            Overview of your study, tasks and journal activity.
+                        </p>
+                    </div>
+
+                    <div class="graph-controls">
+
+                        <label for="graphDesign">
+                            Graph Design
+                        </label>
+
+                        <select id="graphDesign">
+
+                            <option value="modern">
+                                Modern
+                            </option>
+
+                            <option value="bar">
+                                Bar
+                            </option>
+
+                            <option value="line">
+                                Line
+                            </option>
+
+                            <option value="area">
+                                Area
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Graph Statistics -->
+
+                <div class="graph-stats">
+
+                    <div class="graph-stat-card">
+
+                        <span>
+                            📊 Total
+                        </span>
+
+                        <strong id="graphTotal">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="graph-stat-card">
+
+                        <span>
+                            📈 Average
+                        </span>
+
+                        <strong id="graphAverage">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="graph-stat-card">
+
+                        <span>
+                            🏆 Highest Day
+                        </span>
+
+                        <strong id="graphHighest">
+                            0
+                        </strong>
+
+                    </div>
 
                 </div>
 
 
                 <div class="graphs-grid">
+
+
+                    <!-- Study -->
 
                     <div class="graph-card">
 
@@ -161,14 +239,14 @@
 
                         <div class="chart-wrapper">
 
-                            <canvas
-                                id="studyChart"
-                            ></canvas>
+                            <canvas id="studyChart"></canvas>
 
                         </div>
 
                     </div>
 
+
+                    <!-- Tasks -->
 
                     <div class="graph-card">
 
@@ -182,14 +260,14 @@
 
                         <div class="chart-wrapper">
 
-                            <canvas
-                                id="taskChart"
-                            ></canvas>
+                            <canvas id="taskChart"></canvas>
 
                         </div>
 
                     </div>
 
+
+                    <!-- Journal -->
 
                     <div class="graph-card">
 
@@ -203,9 +281,7 @@
 
                         <div class="chart-wrapper">
 
-                            <canvas
-                                id="journalChart"
-                            ></canvas>
+                            <canvas id="journalChart"></canvas>
 
                         </div>
 

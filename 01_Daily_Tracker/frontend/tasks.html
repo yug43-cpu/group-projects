@@ -14,23 +14,20 @@
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/tasks.css">
+    <link rel="stylesheet" href="css/common.css">
 
 </head>
-
 
 <body>
 
     <div class="tasks-page">
 
-
         <!-- Sidebar -->
-
         <aside class="sidebar">
 
             <div class="logo">
                 Daily Tracker
             </div>
-
 
             <nav>
 
@@ -42,32 +39,31 @@
                     ✅ Tasks
                 </a>
 
-                <a href="#">
+                <a href="goals.html">
                     🎯 Goals
                 </a>
 
-                <a href="#">
+                <a href="study.html">
                     📚 Study
                 </a>
 
-                <a href="#">
+                <a href="journal.html">
                     📝 Journal
                 </a>
 
-                <a href="#">
+                <a href="calendar.html">
                     📅 Calendar
                 </a>
 
-                <a href="#">
+                <a href="statistics.html">
                     📈 Statistics
                 </a>
 
             </nav>
 
-
             <div class="sidebar-bottom">
 
-                <a href="#">
+                <a href="settings.html">
                     ⚙️ Settings
                 </a>
 
@@ -80,21 +76,15 @@
         </aside>
 
 
-
         <!-- Main Content -->
-
         <main class="main-content">
 
-
             <!-- Topbar -->
-
             <header class="topbar">
 
                 <div>
 
-                    <h1>
-                        My Tasks
-                    </h1>
+                    <h1>My Tasks</h1>
 
                     <p>
                         Manage your daily tasks and stay productive.
@@ -102,10 +92,10 @@
 
                 </div>
 
-
                 <div class="date">
 
                     <div id="currentDate"></div>
+
                     <div id="currentTime"></div>
 
                 </div>
@@ -113,17 +103,12 @@
             </header>
 
 
-
             <!-- Task Summary -->
-
             <section class="task-summary">
-
 
                 <div class="summary-card">
 
-                    <span>
-                        Total Tasks
-                    </span>
+                    <span>Total Tasks</span>
 
                     <strong id="totalTasks">
                         0
@@ -134,9 +119,7 @@
 
                 <div class="summary-card">
 
-                    <span>
-                        Completed
-                    </span>
+                    <span>Completed</span>
 
                     <strong id="completedTasks">
                         0
@@ -147,9 +130,7 @@
 
                 <div class="summary-card">
 
-                    <span>
-                        Pending
-                    </span>
+                    <span>Pending</span>
 
                     <strong id="pendingTasks">
                         0
@@ -160,9 +141,7 @@
 
                 <div class="summary-card">
 
-                    <span>
-                        Progress
-                    </span>
+                    <span>Progress</span>
 
                     <strong id="taskProgressText">
                         0%
@@ -170,32 +149,23 @@
 
                 </div>
 
-
             </section>
 
 
-
             <!-- Task Section -->
-
             <section class="tasks-section">
-
-
-                <!-- Header -->
 
                 <div class="tasks-header">
 
                     <div>
 
-                        <h2>
-                            Today's Tasks
-                        </h2>
+                        <h2>Today's Tasks</h2>
 
                         <p>
                             Complete your tasks to improve your progress.
                         </p>
 
                     </div>
-
 
                     <button
                         type="button"
@@ -207,9 +177,7 @@
                 </div>
 
 
-
                 <!-- Progress -->
-
                 <div class="progress-container">
 
                     <div class="progress-info">
@@ -224,7 +192,6 @@
 
                     </div>
 
-
                     <div class="progress-bar">
 
                         <div
@@ -237,9 +204,7 @@
                 </div>
 
 
-
                 <!-- Filters -->
-
                 <div class="task-controls">
 
                     <button
@@ -266,21 +231,16 @@
                 </div>
 
 
-
                 <!-- Task List -->
-
                 <div
                     class="task-list"
                     id="taskList"
                 >
-
                     <!-- Tasks will appear here -->
-
                 </div>
 
 
                 <!-- Empty State -->
-
                 <div
                     class="empty-state"
                     id="emptyState"
@@ -300,25 +260,20 @@
 
                 </div>
 
-
             </section>
-
 
         </main>
 
     </div>
 
 
-
     <!-- Add Task Modal -->
-
     <div
         class="task-modal"
         id="taskModal"
     >
 
         <div class="task-modal-box">
-
 
             <div class="task-modal-header">
 
@@ -337,7 +292,6 @@
 
 
             <form id="taskForm">
-
 
                 <div class="input-group">
 
@@ -397,6 +351,21 @@
                 </div>
 
 
+                <div class="input-group">
+
+                    <label for="taskDate">
+                        Task Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="taskDate"
+                        required
+                    >
+
+                </div>
+
+
                 <div class="task-modal-actions">
 
                     <button
@@ -412,7 +381,6 @@
 
                 </div>
 
-
             </form>
 
         </div>
@@ -420,16 +388,13 @@
     </div>
 
 
-
     <!-- Edit Task Modal -->
-
     <div
         class="task-modal"
         id="editTaskModal"
     >
 
         <div class="task-modal-box">
-
 
             <div class="task-modal-header">
 
@@ -448,7 +413,6 @@
 
 
             <form id="editTaskForm">
-
 
                 <div class="input-group">
 
@@ -507,6 +471,21 @@
                 </div>
 
 
+                <div class="input-group">
+
+                    <label for="editTaskDate">
+                        Task Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="editTaskDate"
+                        required
+                    >
+
+                </div>
+
+
                 <div class="task-modal-actions">
 
                     <button
@@ -522,13 +501,11 @@
 
                 </div>
 
-
             </form>
 
         </div>
 
     </div>
-
 
 
     <script src="js/tasks-page.js"></script>
