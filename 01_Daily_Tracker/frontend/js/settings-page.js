@@ -163,6 +163,25 @@ profileForm.addEventListener(
    Theme
 ================================ */
 
+function applyTheme(theme) {
+
+    if (theme === "light") {
+
+        document.body.classList.add(
+            "light-theme"
+        );
+
+    } else {
+
+        document.body.classList.remove(
+            "light-theme"
+        );
+
+    }
+
+}
+
+
 function loadTheme() {
 
     const savedTheme =
@@ -172,6 +191,11 @@ function loadTheme() {
 
     themeSelect.value =
         savedTheme;
+
+
+    applyTheme(
+        savedTheme
+    );
 
 }
 
@@ -190,21 +214,9 @@ themeSelect.addEventListener(
         );
 
 
-        if (
-            theme === "light"
-        ) {
-
-            alert(
-                "Light mode will be fully applied after the light theme CSS is added."
-            );
-
-        } else {
-
-            alert(
-                "Dark mode selected."
-            );
-
-        }
+        applyTheme(
+            theme
+        );
 
     }
 );

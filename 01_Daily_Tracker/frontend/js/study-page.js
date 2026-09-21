@@ -56,7 +56,7 @@ let currentEditingSession = null;
 // Current Filter
 // ================================
 
-let currentFilter = "today";
+let currentFilter = "all";
 
 
 // ================================

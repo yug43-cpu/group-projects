@@ -131,8 +131,6 @@ function isTaskCompleted(task) {
 
 function hasActivity(date) {
 
-    /* Tasks */
-
     const tasks =
         JSON.parse(
             localStorage.getItem("tasks")
@@ -150,8 +148,6 @@ function hasActivity(date) {
     }
 
 
-    /* Study */
-
     const studySessions =
         JSON.parse(
             localStorage.getItem("studySessions")
@@ -167,8 +163,6 @@ function hasActivity(date) {
         return true;
     }
 
-
-    /* Journal */
 
     const journals =
         JSON.parse(
@@ -287,9 +281,24 @@ function updateStreak() {
    Reminder Elements
 ================================ */
 
-const reminderBox =
-    document.querySelector(
-        ".reminder-mini"
+const reminderWrapper =
+    document.getElementById(
+        "reminderWrapper"
+    );
+
+const reminderBell =
+    document.getElementById(
+        "reminderBell"
+    );
+
+const reminderDropdown =
+    document.getElementById(
+        "reminderDropdown"
+    );
+
+const openReminderModal =
+    document.getElementById(
+        "openReminderModal"
     );
 
 const reminderModal =
@@ -314,20 +323,87 @@ const reminderForm =
 
 
 /* ================================
+   Toggle Reminder Dropdown
+================================ */
+
+if (
+    reminderBell &&
+    reminderDropdown
+) {
+
+    reminderBell.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
+
+            reminderDropdown.classList.toggle(
+                "show"
+            );
+
+        }
+    );
+
+}
+
+
+/* ================================
+   Close Dropdown
+================================ */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            reminderWrapper &&
+            reminderDropdown &&
+            !reminderWrapper.contains(event.target)
+        ) {
+
+            reminderDropdown.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+/* ================================
    Open Reminder Modal
 ================================ */
 
 if (
-    reminderBox &&
+    openReminderModal &&
     reminderModal
 ) {
 
-    reminderBox.addEventListener(
+    openReminderModal.addEventListener(
         "click",
-        function () {
+        function (event) {
+
+            event.stopPropagation();
+
+            reminderDropdown.classList.remove(
+                "show"
+            );
 
             reminderModal.style.display =
                 "flex";
+
+            const reminderDate =
+                document.getElementById(
+                    "reminderDate"
+                );
+
+            if (reminderDate) {
+
+                reminderDate.value =
+                    getToday();
+
+            }
 
         }
     );
@@ -380,6 +456,64 @@ if (
 
 
 /* ================================
+   Close Modal Outside
+================================ */
+
+if (reminderModal) {
+
+    reminderModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target === reminderModal
+            ) {
+
+                reminderModal.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ================================
+   Get Reminders
+================================ */
+
+function getReminders() {
+
+    return (
+        JSON.parse(
+            localStorage.getItem(
+                "reminders"
+            )
+        ) || []
+    );
+
+}
+
+
+/* ================================
+   Save Reminders
+================================ */
+
+function saveReminders(reminders) {
+
+    localStorage.setItem(
+        "reminders",
+        JSON.stringify(
+            reminders
+        )
+    );
+
+}
+
+
+/* ================================
    Update Reminder Count
 ================================ */
 
@@ -395,14 +529,258 @@ function updateReminderCount() {
     }
 
     const reminders =
-        JSON.parse(
-            localStorage.getItem(
-                "reminders"
-            )
-        ) || [];
+        getReminders();
 
     reminderCount.textContent =
         reminders.length;
+
+}
+
+
+/* ================================
+   Format Reminder Time
+================================ */
+
+function formatReminderTime(time) {
+
+    if (!time) {
+        return "";
+    }
+
+    const parts =
+        time.split(":");
+
+    let hour =
+        parseInt(
+            parts[0]
+        );
+
+    const minute =
+        parts[1];
+
+    const period =
+        hour >= 12
+            ? "PM"
+            : "AM";
+
+    hour =
+        hour % 12 || 12;
+
+    return `${hour}:${minute} ${period}`;
+
+}
+
+
+/* ================================
+   Format Reminder Date
+================================ */
+
+function formatReminderDate(dateString) {
+
+    if (!dateString) {
+        return "";
+    }
+
+    const date =
+        new Date(
+            dateString + "T00:00:00"
+        );
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short"
+        }
+    );
+
+}
+
+
+/* ================================
+   Reminder List
+================================ */
+
+function displayReminderList() {
+
+    const reminderList =
+        document.getElementById(
+            "reminderList"
+        );
+
+    if (!reminderList) {
+        return;
+    }
+
+    const reminders =
+        getReminders();
+
+    reminderList.innerHTML =
+        "";
+
+    if (reminders.length === 0) {
+
+        reminderList.innerHTML =
+            `
+            <div class="no-reminders">
+                No reminders yet.
+            </div>
+            `;
+
+        return;
+
+    }
+
+    reminders.sort(
+        function (a, b) {
+
+            const dateA =
+                `${a.date || ""} ${a.time || ""}`;
+
+            const dateB =
+                `${b.date || ""} ${b.time || ""}`;
+
+            return dateA.localeCompare(
+                dateB
+            );
+
+        }
+    );
+
+    reminders.forEach(
+        reminder => {
+
+            const reminderItem =
+                document.createElement(
+                    "div"
+                );
+
+            reminderItem.className =
+                "reminder-item";
+
+            const reminderDate =
+                reminder.date
+                    ? formatReminderDate(
+                        reminder.date
+                    )
+                    : "";
+
+            reminderItem.innerHTML =
+                `
+                <div class="reminder-item-info">
+
+                    <div class="reminder-item-text">
+                        🔔 ${escapeReminderText(
+                            reminder.text
+                        )}
+                    </div>
+
+                    <div class="reminder-item-time">
+
+                        ⏰ ${formatReminderTime(
+                            reminder.time
+                        )}
+
+                        ${
+                            reminderDate
+                                ? " • " + reminderDate
+                                : ""
+                        }
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="delete-reminder"
+                    data-id="${reminder.id}"
+                    title="Delete Reminder"
+                >
+                    🗑️
+                </button>
+                `;
+
+            reminderList.appendChild(
+                reminderItem
+            );
+
+        }
+    );
+
+    const deleteButtons =
+        reminderList.querySelectorAll(
+            ".delete-reminder"
+        );
+
+    deleteButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+                    const id =
+                        Number(
+                            this.dataset.id
+                        );
+
+                    deleteReminder(
+                        id
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ================================
+   Escape Reminder Text
+================================ */
+
+function escapeReminderText(text) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+/* ================================
+   Delete Reminder
+================================ */
+
+function deleteReminder(id) {
+
+    const reminders =
+        getReminders();
+
+    const updatedReminders =
+        reminders.filter(
+            reminder =>
+                reminder.id !== id
+        );
+
+    saveReminders(
+        updatedReminders
+    );
+
+    updateReminderCount();
+
+    displayReminderList();
 
 }
 
@@ -442,9 +820,7 @@ function showBrowserNotification(
             "🔔 Daily Tracker",
             {
                 body:
-                    reminderText,
-                icon:
-                    "assets/icon.png"
+                    reminderText
             }
         );
 
@@ -454,7 +830,7 @@ function showBrowserNotification(
 
 
 /* ================================
-   Reminder Beep Sound
+   Reminder Beep
 ================================ */
 
 function playReminderSound() {
@@ -531,21 +907,24 @@ if (reminderForm) {
 
             event.preventDefault();
 
-
             const reminderText =
                 document.getElementById(
                     "reminderText"
                 ).value.trim();
 
+            const reminderDate =
+                document.getElementById(
+                    "reminderDate"
+                ).value;
 
             const reminderTime =
                 document.getElementById(
                     "reminderTime"
                 ).value;
 
-
             if (
                 reminderText === "" ||
+                reminderDate === "" ||
                 reminderTime === ""
             ) {
 
@@ -557,14 +936,8 @@ if (reminderForm) {
 
             }
 
-
             let reminders =
-                JSON.parse(
-                    localStorage.getItem(
-                        "reminders"
-                    )
-                ) || [];
-
+                getReminders();
 
             reminders.push({
 
@@ -574,6 +947,9 @@ if (reminderForm) {
                 text:
                     reminderText,
 
+                date:
+                    reminderDate,
+
                 time:
                     reminderTime,
 
@@ -582,28 +958,21 @@ if (reminderForm) {
 
             });
 
-
-            localStorage.setItem(
-                "reminders",
-                JSON.stringify(
-                    reminders
-                )
+            saveReminders(
+                reminders
             );
-
 
             updateReminderCount();
 
+            displayReminderList();
 
             requestNotificationPermission();
-
 
             alert(
                 "Reminder added successfully!"
             );
 
-
             reminderForm.reset();
-
 
             reminderModal.style.display =
                 "none";
@@ -621,16 +990,13 @@ if (reminderForm) {
 function checkReminders() {
 
     let reminders =
-        JSON.parse(
-            localStorage.getItem(
-                "reminders"
-            )
-        ) || [];
-
+        getReminders();
 
     const now =
         new Date();
 
+    const currentDate =
+        getToday();
 
     const currentHours =
         String(
@@ -640,7 +1006,6 @@ function checkReminders() {
             "0"
         );
 
-
     const currentMinutes =
         String(
             now.getMinutes()
@@ -649,62 +1014,54 @@ function checkReminders() {
             "0"
         );
 
-
     const currentTime =
         `${currentHours}:${currentMinutes}`;
 
-
-    let changed = false;
-
+    let changed =
+        false;
 
     reminders.forEach(
         reminder => {
 
+            const reminderDate =
+                reminder.date ||
+                currentDate;
+
             if (
+                reminderDate === currentDate &&
                 reminder.time === currentTime &&
-                reminder.notified === false
+                reminder.notified !== true
             ) {
 
-                /* Sound */
-
                 playReminderSound();
-
-
-                /* Browser Notification */
 
                 showBrowserNotification(
                     reminder.text
                 );
-
-
-                /* Alert */
 
                 alert(
                     "🔔 Reminder: " +
                     reminder.text
                 );
 
-
                 reminder.notified =
                     true;
 
-
-                changed = true;
+                changed =
+                    true;
 
             }
 
         }
     );
 
-
     if (changed) {
 
-        localStorage.setItem(
-            "reminders",
-            JSON.stringify(
-                reminders
-            )
+        saveReminders(
+            reminders
         );
+
+        displayReminderList();
 
     }
 
@@ -712,7 +1069,7 @@ function checkReminders() {
 
 
 /* ================================
-   Refresh Dashboard Data
+   Refresh Dashboard
 ================================ */
 
 function refreshDashboard() {
@@ -720,6 +1077,8 @@ function refreshDashboard() {
     updateStreak();
 
     updateReminderCount();
+
+    displayReminderList();
 
 }
 
@@ -759,7 +1118,7 @@ setInterval(
 
 
 /* ================================
-   Refresh When Page Becomes Active
+   Refresh On Focus
 ================================ */
 
 window.addEventListener(
