@@ -120,15 +120,79 @@
                 </div>
 
 
-                <!-- Current Date & Time -->
+             <!-- Top Right Information -->
 
-                <div class="date">
+                    <div class="topbar-right">
 
-                    <div id="currentDate"></div>
 
-                    <div id="currentTime"></div>
+                            <!-- Streak -->
 
-                </div>
+                                <div class="streak-mini">
+
+                                        <span class="streak-icon">
+                                            🔥
+                                        </span>
+
+                                    <div>
+
+                                        <strong id="streakCount">
+                                             0
+                                        </strong>
+
+                                            <small>
+                                             Day Streak
+                                            </small>
+
+                                    </div>
+
+                    </div>
+
+
+                <!-- Reminder -->
+
+                    <div class="reminder-mini">
+
+                        <span class="reminder-icon">
+                            🔔
+                        </span>
+
+                        <div>
+
+                            <strong id="reminderCount">
+                             0
+                            </strong>
+
+                            <small>
+                              Reminders
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                        <!-- Date & Time Card -->
+
+                            <div class="date-time-card">
+
+                                <span class="date-label">
+                                     TODAY
+                                </span>
+
+                                <div
+                                  class="current-date"
+                                 id="currentDate"
+                                ></div>
+
+                                    <div
+                                         class="current-time"
+                                        id="currentTime"
+                                        ></div>
+
+                                    </div>
+
+
+                            </div>
 
             </header>
 
@@ -193,24 +257,6 @@
 
                     <span>
                         Active
-                    </span>
-
-                </div>
-
-
-
-                <div class="card">
-
-                    <h3>
-                        Streak
-                    </h3>
-
-                    <p class="number">
-                        🔥 8
-                    </p>
-
-                    <span>
-                        Days
                     </span>
 
                 </div>
@@ -827,6 +873,101 @@
 
     </div>
 
+        <!-- Reminder Modal -->
+
+    <div
+        class="task-modal"
+        id="reminderModal"
+    >
+
+        <div class="task-modal-box">
+
+            <div class="task-modal-header">
+
+                <h2>
+                    Add Reminder
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeReminderModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="reminderForm">
+
+
+                <div class="input-group">
+
+                    <label for="reminderText">
+                        Reminder
+                    </label>
+
+                    <input
+                        type="text"
+                        id="reminderText"
+                        placeholder="e.g. Study C++"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="reminderDate">
+                        Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="reminderDate"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="reminderTime">
+                        Time
+                    </label>
+
+                    <input
+                        type="time"
+                        id="reminderTime"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="task-modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelReminder"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit">
+                        Add Reminder
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
 
     <!-- JavaScript -->
 
@@ -835,6 +976,12 @@
     <script src="js/dashboard.js"></script>
 
     <script src="js/study.js"></script>
+
+<audio
+    id="reminderSound"
+    src="assets/reminder.mp3"
+    preload="auto"
+></audio>
 
 
 </body>
