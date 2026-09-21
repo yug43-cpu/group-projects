@@ -1209,3 +1209,5 @@ renderCalendar();
 renderSelectedDate();
 
 renderGraphs();
+
+
