@@ -11,11 +11,6 @@ A collection of projects developed collaboratively by our team as part of our le
 
 > Each project is organized in its own folder with the required source code, resources, and documentation.
 
-<<<<<<< Updated upstream
-------
-=======
--------
->>>>>>> Stashed changes
 
 ### 👥 Team Projects
 
