@@ -1,4 +1,11 @@
 // ================================
+// API
+// ================================
+
+const API_URL = "http://localhost:5000/api";
+
+
+// ================================
 // Goal Elements
 // ================================
 
@@ -76,6 +83,13 @@ let currentEditingGoal = null;
 
 
 // ================================
+// Current Goals
+// ================================
+
+let goals = [];
+
+
+// ================================
 // Current Filter
 // ================================
 
@@ -83,19 +97,63 @@ let currentFilter = "all";
 
 
 // ================================
-// Load Goals
+// Load Goals From Backend
 // ================================
 
-function loadGoals() {
+async function loadGoals() {
 
-    const goals =
-        JSON.parse(
-            localStorage.getItem("goals")
-        ) || [];
+    try {
 
-    displayGoals(goals);
+        const response =
+            await fetch(`${API_URL}/goals`);
 
-    updateGoalStats(goals);
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message || "Failed to load goals."
+            );
+
+        }
+
+        goals =
+            Array.isArray(data.goals)
+                ? data.goals
+                : [];
+
+        displayGoals(goals);
+
+        updateGoalStats(goals);
+
+    } catch (error) {
+
+        console.error(
+            "Error loading goals:",
+            error
+        );
+
+        goalList.innerHTML = `
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ⚠️
+                </div>
+
+                <h3>
+                    Unable to load goals
+                </h3>
+
+                <p>
+                    Please make sure the backend server is running.
+                </p>
+
+            </div>
+        `;
+
+    }
+
 }
 
 
@@ -158,10 +216,7 @@ function displayGoals(goals) {
 
     filteredGoals.forEach(function (goal) {
 
-        createGoalElement(
-            goal,
-            goals.indexOf(goal)
-        );
+        createGoalElement(goal);
 
     });
 
@@ -172,7 +227,7 @@ function displayGoals(goals) {
 // Create Goal Element
 // ================================
 
-function createGoalElement(goal, index) {
+function createGoalElement(goal) {
 
     const progress =
         Number(goal.progress);
@@ -195,9 +250,10 @@ function createGoalElement(goal, index) {
                 </div>
 
                 <div class="goal-deadline">
-                    ${goal.deadline
-                        ? "Deadline: " + formatDate(goal.deadline)
-                        : "No deadline"
+                    ${
+                        goal.deadline
+                            ? "Deadline: " + formatDate(goal.deadline)
+                            : "No deadline"
                     }
                 </div>
 
@@ -214,7 +270,7 @@ function createGoalElement(goal, index) {
 
             <div
                 class="goal-progress"
-                style="width: ${progress}%"
+                style="width: ${Math.min(Math.max(progress, 0), 100)}%"
             ></div>
 
         </div>
@@ -233,14 +289,14 @@ function createGoalElement(goal, index) {
 
                 <button
                     class="edit-goal"
-                    data-index="${index}"
+                    data-id="${goal.id}"
                 >
                     Edit
                 </button>
 
                 <button
                     class="delete-goal"
-                    data-index="${index}"
+                    data-id="${goal.id}"
                 >
                     Delete
                 </button>
@@ -264,7 +320,8 @@ function escapeHTML(text) {
     const div =
         document.createElement("div");
 
-    div.textContent = text;
+    div.textContent =
+        text || "";
 
     return div.innerHTML;
 
@@ -276,6 +333,10 @@ function escapeHTML(text) {
 // ================================
 
 function formatDate(dateString) {
+
+    if (!dateString) {
+        return "";
+    }
 
     const date =
         new Date(dateString + "T00:00:00");
@@ -317,7 +378,7 @@ function updateGoalStats(goals) {
     goals.forEach(function (goal) {
 
         progressTotal +=
-            Number(goal.progress);
+            Number(goal.progress) || 0;
 
     });
 
@@ -345,20 +406,6 @@ function updateGoalStats(goals) {
 
     averageProgress.textContent =
         `${average}%`;
-
-}
-
-
-// ================================
-// Save Goals
-// ================================
-
-function saveGoals(goals) {
-
-    localStorage.setItem(
-        "goals",
-        JSON.stringify(goals)
-    );
 
 }
 
@@ -436,7 +483,7 @@ goalModal.addEventListener(
 
 goalForm.addEventListener(
     "submit",
-    function (event) {
+    async function (event) {
 
         event.preventDefault();
 
@@ -451,7 +498,13 @@ goalForm.addEventListener(
 
 
         if (name === "") {
+
+            alert(
+                "Goal name is required."
+            );
+
             return;
+
         }
 
 
@@ -469,30 +522,59 @@ goalForm.addEventListener(
         }
 
 
-        const goals =
-            JSON.parse(
-                localStorage.getItem("goals")
-            ) || [];
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/goals`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            name: name,
+                            progress: progress,
+                            deadline: deadline
+                        })
+                    }
+                );
 
 
-        goals.push({
-
-            name: name,
-
-            progress: progress,
-
-            deadline: deadline
-
-        });
+            const data =
+                await response.json();
 
 
-        saveGoals(goals);
+            if (!response.ok || !data.success) {
 
-        displayGoals(goals);
+                throw new Error(
+                    data.message || "Failed to add goal."
+                );
 
-        updateGoalStats(goals);
+            }
 
-        closeGoalModalFunction();
+
+            closeGoalModalFunction();
+
+            await loadGoals();
+
+
+        } catch (error) {
+
+            console.error(
+                "Error adding goal:",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Failed to add goal."
+            );
+
+        }
 
     }
 );
@@ -504,9 +586,11 @@ goalForm.addEventListener(
 
 goalList.addEventListener(
     "click",
-    function (event) {
+    async function (event) {
 
+        // ============================
         // Edit Goal
+        // ============================
 
         if (
             event.target.classList.contains(
@@ -514,20 +598,18 @@ goalList.addEventListener(
             )
         ) {
 
-            const index =
+            const id =
                 Number(
-                    event.target.dataset.index
+                    event.target.dataset.id
                 );
 
 
-            const goals =
-                JSON.parse(
-                    localStorage.getItem("goals")
-                ) || [];
-
-
             const goal =
-                goals[index];
+                goals.find(function (item) {
+
+                    return item.id === id;
+
+                });
 
 
             if (!goal) {
@@ -536,7 +618,7 @@ goalList.addEventListener(
 
 
             currentEditingGoal =
-                index;
+                id;
 
 
             editGoalName.value =
@@ -559,7 +641,9 @@ goalList.addEventListener(
         }
 
 
+        // ============================
         // Delete Goal
+        // ============================
 
         if (
             event.target.classList.contains(
@@ -567,9 +651,9 @@ goalList.addEventListener(
             )
         ) {
 
-            const index =
+            const id =
                 Number(
-                    event.target.dataset.index
+                    event.target.dataset.id
                 );
 
 
@@ -584,20 +668,50 @@ goalList.addEventListener(
             }
 
 
-            const goals =
-                JSON.parse(
-                    localStorage.getItem("goals")
-                ) || [];
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/goals/${id}`,
+                        {
+                            method: "DELETE"
+                        }
+                    );
 
 
-            goals.splice(index, 1);
+                const data =
+                    await response.json();
 
 
-            saveGoals(goals);
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
 
-            displayGoals(goals);
+                    throw new Error(
+                        data.message ||
+                        "Failed to delete goal."
+                    );
 
-            updateGoalStats(goals);
+                }
+
+
+                await loadGoals();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error deleting goal:",
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    "Failed to delete goal."
+                );
+
+            }
 
         }
 
@@ -611,7 +725,7 @@ goalList.addEventListener(
 
 editGoalForm.addEventListener(
     "submit",
-    function (event) {
+    async function (event) {
 
         event.preventDefault();
 
@@ -638,7 +752,13 @@ editGoalForm.addEventListener(
 
 
         if (name === "") {
+
+            alert(
+                "Goal name is required."
+            );
+
             return;
+
         }
 
 
@@ -656,30 +776,63 @@ editGoalForm.addEventListener(
         }
 
 
-        const goals =
-            JSON.parse(
-                localStorage.getItem("goals")
-            ) || [];
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/goals/${currentEditingGoal}`,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            name: name,
+                            progress: progress,
+                            deadline: deadline
+                        })
+                    }
+                );
 
 
-        goals[currentEditingGoal] = {
-
-            name: name,
-
-            progress: progress,
-
-            deadline: deadline
-
-        };
+            const data =
+                await response.json();
 
 
-        saveGoals(goals);
+            if (
+                !response.ok ||
+                !data.success
+            ) {
 
-        displayGoals(goals);
+                throw new Error(
+                    data.message ||
+                    "Failed to update goal."
+                );
 
-        updateGoalStats(goals);
+            }
 
-        closeEditGoalModalFunction();
+
+            closeEditGoalModalFunction();
+
+            await loadGoals();
+
+
+        } catch (error) {
+
+            console.error(
+                "Error updating goal:",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Failed to update goal."
+            );
+
+        }
 
     }
 );
@@ -770,12 +923,6 @@ filterButtons.forEach(function (button) {
                 button.dataset.filter;
 
 
-            const goals =
-                JSON.parse(
-                    localStorage.getItem("goals")
-                ) || [];
-
-
             displayGoals(goals);
 
         }
@@ -820,22 +967,37 @@ function updateDateTime() {
     };
 
 
-    document.getElementById(
-        "currentDate"
-    ).textContent =
-        now.toLocaleDateString(
-            "en-IN",
-            dateOptions
+    const currentDate =
+        document.getElementById(
+            "currentDate"
+        );
+
+    const currentTime =
+        document.getElementById(
+            "currentTime"
         );
 
 
-    document.getElementById(
-        "currentTime"
-    ).textContent =
-        now.toLocaleTimeString(
-            "en-IN",
-            timeOptions
-        );
+    if (currentDate) {
+
+        currentDate.textContent =
+            now.toLocaleDateString(
+                "en-IN",
+                dateOptions
+            );
+
+    }
+
+
+    if (currentTime) {
+
+        currentTime.textContent =
+            now.toLocaleTimeString(
+                "en-IN",
+                timeOptions
+            );
+
+    }
 
 }
 
@@ -849,7 +1011,7 @@ setInterval(
 
 
 // ================================
-// Load Saved Goals
+// Load Goals
 // ================================
 
 loadGoals();

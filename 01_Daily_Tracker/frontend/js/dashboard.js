@@ -1,6 +1,15 @@
 /* ================================
-   Dashboard
+   Daily Tracker - Dashboard
 ================================ */
+
+
+/* ================================
+   Backend API
+================================ */
+
+const API_URL = "http://localhost:5000/api";
+
+let dashboardTasks = [];
 
 
 /* ================================
@@ -44,13 +53,17 @@ function updateDateTime() {
         document.getElementById("currentTime");
 
     if (currentDateElement) {
+
         currentDateElement.textContent =
             currentDate;
+
     }
 
     if (currentTimeElement) {
+
         currentTimeElement.textContent =
             currentTime;
+
     }
 
 }
@@ -77,18 +90,12 @@ function getToday() {
     const month =
         String(
             now.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
+        ).padStart(2, "0");
 
     const day =
         String(
             now.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
+        ).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
 
@@ -96,23 +103,18 @@ function getToday() {
 
 
 /* ================================
-   Get Activity Date
+   Get Task Date
 ================================ */
 
-function getActivityDate(item) {
+function getTaskDate(task) {
 
-    return (
-        item.date ||
-        item.dueDate ||
-        item.deadline ||
-        ""
-    );
+    return task.date || "";
 
 }
 
 
 /* ================================
-   Check Task Completed
+   Check Completed
 ================================ */
 
 function isTaskCompleted(task) {
@@ -126,57 +128,502 @@ function isTaskCompleted(task) {
 
 
 /* ================================
+   Escape Text
+================================ */
+
+function escapeText(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text || "";
+
+    return div.innerHTML;
+
+}
+
+
+/* ================================
+   Format Task Time
+================================ */
+
+function formatTaskTime(time) {
+
+    if (!time) {
+
+        return "";
+
+    }
+
+    const parts =
+        time.split(":");
+
+    if (parts.length < 2) {
+
+        return time;
+
+    }
+
+    let hour =
+        parseInt(
+            parts[0],
+            10
+        );
+
+    const minute =
+        parts[1];
+
+    const period =
+        hour >= 12
+            ? "PM"
+            : "AM";
+
+    hour =
+        hour % 12 || 12;
+
+    return `${hour}:${minute} ${period}`;
+
+}
+
+
+/* ================================
+   Load Tasks
+================================ */
+
+async function loadDashboardTasks() {
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/tasks`
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load tasks"
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+        if (
+            data.success &&
+            Array.isArray(data.tasks)
+        ) {
+
+            dashboardTasks =
+                data.tasks;
+
+        } else {
+
+            dashboardTasks = [];
+
+        }
+
+        displayDashboardTasks();
+
+        updateTaskSummary();
+
+        updateStreak();
+
+    } catch (error) {
+
+        console.error(
+            "Dashboard task error:",
+            error
+        );
+
+        dashboardTasks = [];
+
+        displayDashboardTasks();
+
+        updateTaskSummary();
+
+        updateStreak();
+
+    }
+
+}
+
+
+/* ================================
+   Display Today's Tasks
+================================ */
+
+function displayDashboardTasks() {
+
+    const taskList =
+        document.getElementById(
+            "dashboardTaskList"
+        );
+
+    if (!taskList) {
+
+        return;
+
+    }
+
+    const today =
+        getToday();
+
+    const todayTasks =
+        dashboardTasks.filter(
+            task =>
+                getTaskDate(task) === today
+        );
+
+    taskList.innerHTML = "";
+
+
+    /* ================================
+       No Tasks
+    ================================ */
+
+    if (todayTasks.length === 0) {
+
+        taskList.innerHTML = `
+            <div class="no-tasks">
+                No tasks for today.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    /* ================================
+       Create Tasks
+    ================================ */
+
+    todayTasks.forEach(
+        function (task) {
+
+            const taskElement =
+                document.createElement("div");
+
+            if (
+                isTaskCompleted(task)
+            ) {
+
+                taskElement.className =
+                    "task completed";
+
+            } else {
+
+                taskElement.className =
+                    "task";
+
+            }
+
+
+            const dueTime =
+                task.dueTime
+                    ? ` • Due: ${escapeText(
+                        formatTaskTime(
+                            task.dueTime
+                        )
+                    )}`
+                    : "";
+
+
+            taskElement.innerHTML = `
+                <input
+                    type="checkbox"
+                    class="dashboard-task-checkbox"
+                    data-id="${task.id}"
+                    ${isTaskCompleted(task) ? "checked" : ""}
+                >
+
+                <div class="task-info">
+
+                    <span>
+                        ${escapeText(
+                            task.name
+                        )}
+                    </span>
+
+                    <small>
+                        Priority:
+                        ${escapeText(
+                            task.priority || "Medium"
+                        )}
+                        ${dueTime}
+                    </small>
+
+                </div>
+            `;
+
+
+            taskList.appendChild(
+                taskElement
+            );
+
+        }
+    );
+
+
+    /* ================================
+       Checkbox Events
+    ================================ */
+
+    const checkboxes =
+        taskList.querySelectorAll(
+            ".dashboard-task-checkbox"
+        );
+
+    checkboxes.forEach(
+        function (checkbox) {
+
+            checkbox.addEventListener(
+                "change",
+                async function () {
+
+                    const id =
+                        Number(
+                            this.dataset.id
+                        );
+
+                    const completed =
+                        this.checked;
+
+                    await updateDashboardTask(
+                        id,
+                        completed
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ================================
+   Update Task
+================================ */
+
+async function updateDashboardTask(
+    id,
+    completed
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/tasks/${id}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            completed:
+                                completed
+                        })
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to update task"
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            throw new Error(
+                "Task update failed"
+            );
+
+        }
+
+        await loadDashboardTasks();
+
+    } catch (error) {
+
+        console.error(
+            "Task update error:",
+            error
+        );
+
+        alert(
+            "Could not update task."
+        );
+
+        await loadDashboardTasks();
+
+    }
+
+}
+
+
+/* ================================
+   Update Task Summary
+================================ */
+
+function updateTaskSummary() {
+
+    const taskCount =
+        document.getElementById(
+            "taskCount"
+        );
+
+    const progressText =
+        document.getElementById(
+            "taskProgressText"
+        );
+
+    const progressBar =
+        document.getElementById(
+            "taskProgress"
+        );
+
+
+    const today =
+        getToday();
+
+
+    const todayTasks =
+        dashboardTasks.filter(
+            task =>
+                getTaskDate(task) === today
+        );
+
+
+    const total =
+        todayTasks.length;
+
+
+    const completed =
+        todayTasks.filter(
+            task =>
+                isTaskCompleted(task)
+        ).length;
+
+
+    let percentage =
+        0;
+
+
+    if (total > 0) {
+
+        percentage =
+            Math.round(
+                (
+                    completed /
+                    total
+                ) * 100
+            );
+
+    }
+
+
+    if (taskCount) {
+
+        taskCount.textContent =
+            `${completed}/${total}`;
+
+    }
+
+
+    if (progressText) {
+
+        progressText.textContent =
+            `${percentage}%`;
+
+    }
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            `${percentage}%`;
+
+    }
+
+}
+
+
+/* ================================
    Check Daily Activity
 ================================ */
 
 function hasActivity(date) {
 
-    const tasks =
-        JSON.parse(
-            localStorage.getItem("tasks")
-        ) || [];
-
-    const hasCompletedTask =
-        tasks.some(
+    const completedTask =
+        dashboardTasks.some(
             task =>
-                getActivityDate(task) === date &&
+                getTaskDate(task) === date &&
                 isTaskCompleted(task)
         );
 
-    if (hasCompletedTask) {
+
+    if (completedTask) {
+
         return true;
+
     }
 
 
     const studySessions =
         JSON.parse(
-            localStorage.getItem("studySessions")
+            localStorage.getItem(
+                "studySessions"
+            )
         ) || [];
 
-    const hasStudy =
+
+    const studyActivity =
         studySessions.some(
             session =>
                 session.date === date
         );
 
-    if (hasStudy) {
+
+    if (studyActivity) {
+
         return true;
+
     }
 
 
     const journals =
         JSON.parse(
-            localStorage.getItem("journals")
+            localStorage.getItem(
+                "journals"
+            )
         ) || [];
 
-    const hasJournal =
+
+    const journalActivity =
         journals.some(
             journal =>
                 journal.date === date
         );
 
-    if (hasJournal) {
+
+    if (journalActivity) {
+
         return true;
+
     }
 
 
@@ -186,38 +633,37 @@ function hasActivity(date) {
 
 
 /* ================================
-   Get Previous Date
+   Previous Date
 ================================ */
 
 function getPreviousDate(dateString) {
 
     const date =
         new Date(
-            dateString + "T00:00:00"
+            dateString +
+            "T00:00:00"
         );
 
     date.setDate(
         date.getDate() - 1
     );
 
+
     const year =
         date.getFullYear();
+
 
     const month =
         String(
             date.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
+        ).padStart(2, "0");
+
 
     const day =
         String(
             date.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
+        ).padStart(2, "0");
+
 
     return `${year}-${month}-${day}`;
 
@@ -235,6 +681,7 @@ function calculateStreak() {
     let currentDate =
         getToday();
 
+
     while (
         hasActivity(currentDate)
     ) {
@@ -247,6 +694,7 @@ function calculateStreak() {
             );
 
     }
+
 
     return streak;
 
@@ -265,14 +713,13 @@ function updateStreak() {
         );
 
     if (!streakCount) {
+
         return;
+
     }
 
-    const streak =
-        calculateStreak();
-
     streakCount.textContent =
-        streak;
+        calculateStreak();
 
 }
 
@@ -323,7 +770,7 @@ const reminderForm =
 
 
 /* ================================
-   Toggle Reminder Dropdown
+   Reminder Dropdown
 ================================ */
 
 if (
@@ -347,10 +794,6 @@ if (
 }
 
 
-/* ================================
-   Close Dropdown
-================================ */
-
 document.addEventListener(
     "click",
     function (event) {
@@ -358,7 +801,9 @@ document.addEventListener(
         if (
             reminderWrapper &&
             reminderDropdown &&
-            !reminderWrapper.contains(event.target)
+            !reminderWrapper.contains(
+                event.target
+            )
         ) {
 
             reminderDropdown.classList.remove(
@@ -386,17 +831,23 @@ if (
 
             event.stopPropagation();
 
-            reminderDropdown.classList.remove(
-                "show"
-            );
+            if (reminderDropdown) {
+
+                reminderDropdown.classList.remove(
+                    "show"
+                );
+
+            }
 
             reminderModal.style.display =
                 "flex";
+
 
             const reminderDate =
                 document.getElementById(
                     "reminderDate"
                 );
+
 
             if (reminderDate) {
 
@@ -433,10 +884,6 @@ if (
 }
 
 
-/* ================================
-   Cancel Reminder
-================================ */
-
 if (
     cancelReminder &&
     reminderModal
@@ -455,10 +902,6 @@ if (
 }
 
 
-/* ================================
-   Close Modal Outside
-================================ */
-
 if (reminderModal) {
 
     reminderModal.addEventListener(
@@ -466,7 +909,8 @@ if (reminderModal) {
         function (event) {
 
             if (
-                event.target === reminderModal
+                event.target ===
+                reminderModal
             ) {
 
                 reminderModal.style.display =
@@ -514,7 +958,7 @@ function saveReminders(reminders) {
 
 
 /* ================================
-   Update Reminder Count
+   Reminder Count
 ================================ */
 
 function updateReminderCount() {
@@ -525,26 +969,27 @@ function updateReminderCount() {
         );
 
     if (!reminderCount) {
+
         return;
+
     }
 
-    const reminders =
-        getReminders();
-
     reminderCount.textContent =
-        reminders.length;
+        getReminders().length;
 
 }
 
 
 /* ================================
-   Format Reminder Time
+   Reminder Time
 ================================ */
 
 function formatReminderTime(time) {
 
     if (!time) {
+
         return "";
+
     }
 
     const parts =
@@ -552,7 +997,8 @@ function formatReminderTime(time) {
 
     let hour =
         parseInt(
-            parts[0]
+            parts[0],
+            10
         );
 
     const minute =
@@ -572,18 +1018,21 @@ function formatReminderTime(time) {
 
 
 /* ================================
-   Format Reminder Date
+   Reminder Date
 ================================ */
 
 function formatReminderDate(dateString) {
 
     if (!dateString) {
+
         return "";
+
     }
 
     const date =
         new Date(
-            dateString + "T00:00:00"
+            dateString +
+            "T00:00:00"
         );
 
     return date.toLocaleDateString(
@@ -598,7 +1047,7 @@ function formatReminderDate(dateString) {
 
 
 /* ================================
-   Reminder List
+   Display Reminders
 ================================ */
 
 function displayReminderList() {
@@ -609,27 +1058,31 @@ function displayReminderList() {
         );
 
     if (!reminderList) {
+
         return;
+
     }
 
     const reminders =
         getReminders();
 
+
     reminderList.innerHTML =
         "";
 
+
     if (reminders.length === 0) {
 
-        reminderList.innerHTML =
-            `
+        reminderList.innerHTML = `
             <div class="no-reminders">
                 No reminders yet.
             </div>
-            `;
+        `;
 
         return;
 
     }
+
 
     reminders.sort(
         function (a, b) {
@@ -647,8 +1100,9 @@ function displayReminderList() {
         }
     );
 
+
     reminders.forEach(
-        reminder => {
+        function (reminder) {
 
             const reminderItem =
                 document.createElement(
@@ -658,6 +1112,7 @@ function displayReminderList() {
             reminderItem.className =
                 "reminder-item";
 
+
             const reminderDate =
                 reminder.date
                     ? formatReminderDate(
@@ -665,25 +1120,28 @@ function displayReminderList() {
                     )
                     : "";
 
-            reminderItem.innerHTML =
-                `
+
+            reminderItem.innerHTML = `
                 <div class="reminder-item-info">
 
                     <div class="reminder-item-text">
-                        🔔 ${escapeReminderText(
+                        🔔
+                        ${escapeText(
                             reminder.text
                         )}
                     </div>
 
                     <div class="reminder-item-time">
 
-                        ⏰ ${formatReminderTime(
+                        ⏰
+                        ${formatReminderTime(
                             reminder.time
                         )}
 
                         ${
                             reminderDate
-                                ? " • " + reminderDate
+                                ? " • " +
+                                  reminderDate
                                 : ""
                         }
 
@@ -699,7 +1157,8 @@ function displayReminderList() {
                 >
                     🗑️
                 </button>
-                `;
+            `;
+
 
             reminderList.appendChild(
                 reminderItem
@@ -708,13 +1167,15 @@ function displayReminderList() {
         }
     );
 
+
     const deleteButtons =
         reminderList.querySelectorAll(
             ".delete-reminder"
         );
 
+
     deleteButtons.forEach(
-        button => {
+        function (button) {
 
             button.addEventListener(
                 "click",
@@ -722,13 +1183,10 @@ function displayReminderList() {
 
                     event.stopPropagation();
 
-                    const id =
+                    deleteReminder(
                         Number(
                             this.dataset.id
-                        );
-
-                    deleteReminder(
-                        id
+                        )
                     );
 
                 }
@@ -736,25 +1194,6 @@ function displayReminderList() {
 
         }
     );
-
-}
-
-
-/* ================================
-   Escape Reminder Text
-================================ */
-
-function escapeReminderText(text) {
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-    div.textContent =
-        text;
-
-    return div.innerHTML;
 
 }
 
@@ -768,15 +1207,18 @@ function deleteReminder(id) {
     const reminders =
         getReminders();
 
+
     const updatedReminders =
         reminders.filter(
             reminder =>
                 reminder.id !== id
         );
 
+
     saveReminders(
         updatedReminders
     );
+
 
     updateReminderCount();
 
@@ -786,14 +1228,15 @@ function deleteReminder(id) {
 
 
 /* ================================
-   Request Notification Permission
+   Notification Permission
 ================================ */
 
 function requestNotificationPermission() {
 
     if (
         "Notification" in window &&
-        Notification.permission === "default"
+        Notification.permission ===
+            "default"
     ) {
 
         Notification.requestPermission();
@@ -808,19 +1251,19 @@ function requestNotificationPermission() {
 ================================ */
 
 function showBrowserNotification(
-    reminderText
+    text
 ) {
 
     if (
         "Notification" in window &&
-        Notification.permission === "granted"
+        Notification.permission ===
+            "granted"
     ) {
 
         new Notification(
             "🔔 Daily Tracker",
             {
-                body:
-                    reminderText
+                body: text
             }
         );
 
@@ -830,7 +1273,7 @@ function showBrowserNotification(
 
 
 /* ================================
-   Reminder Beep
+   Reminder Sound
 ================================ */
 
 function playReminderSound() {
@@ -841,47 +1284,63 @@ function playReminderSound() {
             window.AudioContext ||
             window.webkitAudioContext;
 
+
         if (!AudioContext) {
+
             return;
+
         }
+
 
         const audioContext =
             new AudioContext();
 
+
         const oscillator =
             audioContext.createOscillator();
+
 
         const gainNode =
             audioContext.createGain();
 
+
         oscillator.type =
             "sine";
 
+
         oscillator.frequency.value =
             800;
+
 
         gainNode.gain.setValueAtTime(
             0.3,
             audioContext.currentTime
         );
 
+
         oscillator.connect(
             gainNode
         );
+
 
         gainNode.connect(
             audioContext.destination
         );
 
+
         oscillator.start();
+
 
         gainNode.gain.exponentialRampToValueAtTime(
             0.001,
-            audioContext.currentTime + 0.8
+            audioContext.currentTime +
+            0.8
         );
 
+
         oscillator.stop(
-            audioContext.currentTime + 0.8
+            audioContext.currentTime +
+            0.8
         );
 
     } catch (error) {
@@ -896,7 +1355,7 @@ function playReminderSound() {
 
 
 /* ================================
-   Save Reminder
+   Add Reminder
 ================================ */
 
 if (reminderForm) {
@@ -907,20 +1366,24 @@ if (reminderForm) {
 
             event.preventDefault();
 
+
             const reminderText =
                 document.getElementById(
                     "reminderText"
                 ).value.trim();
+
 
             const reminderDate =
                 document.getElementById(
                     "reminderDate"
                 ).value;
 
+
             const reminderTime =
                 document.getElementById(
                     "reminderTime"
                 ).value;
+
 
             if (
                 reminderText === "" ||
@@ -936,8 +1399,10 @@ if (reminderForm) {
 
             }
 
-            let reminders =
+
+            const reminders =
                 getReminders();
+
 
             reminders.push({
 
@@ -958,9 +1423,11 @@ if (reminderForm) {
 
             });
 
+
             saveReminders(
                 reminders
             );
+
 
             updateReminderCount();
 
@@ -968,11 +1435,14 @@ if (reminderForm) {
 
             requestNotificationPermission();
 
+
             alert(
                 "Reminder added successfully!"
             );
 
+
             reminderForm.reset();
+
 
             reminderModal.style.display =
                 "none";
@@ -989,47 +1459,43 @@ if (reminderForm) {
 
 function checkReminders() {
 
-    let reminders =
+    const reminders =
         getReminders();
+
 
     const now =
         new Date();
 
+
     const currentDate =
         getToday();
 
-    const currentHours =
-        String(
-            now.getHours()
-        ).padStart(
-            2,
-            "0"
-        );
-
-    const currentMinutes =
-        String(
-            now.getMinutes()
-        ).padStart(
-            2,
-            "0"
-        );
 
     const currentTime =
-        `${currentHours}:${currentMinutes}`;
+        `${String(
+            now.getHours()
+        ).padStart(2, "0")}:${String(
+            now.getMinutes()
+        ).padStart(2, "0")}`;
+
 
     let changed =
         false;
 
+
     reminders.forEach(
-        reminder => {
+        function (reminder) {
 
             const reminderDate =
                 reminder.date ||
                 currentDate;
 
+
             if (
-                reminderDate === currentDate &&
-                reminder.time === currentTime &&
+                reminderDate ===
+                    currentDate &&
+                reminder.time ===
+                    currentTime &&
                 reminder.notified !== true
             ) {
 
@@ -1044,8 +1510,10 @@ function checkReminders() {
                     reminder.text
                 );
 
+
                 reminder.notified =
                     true;
+
 
                 changed =
                     true;
@@ -1054,6 +1522,7 @@ function checkReminders() {
 
         }
     );
+
 
     if (changed) {
 
@@ -1069,29 +1538,264 @@ function checkReminders() {
 
 
 /* ================================
-   Refresh Dashboard
+   Open Task Modal
 ================================ */
 
-function refreshDashboard() {
+const openTaskModal =
+    document.getElementById(
+        "openTaskModal"
+    );
 
-    updateStreak();
+const taskModal =
+    document.getElementById(
+        "taskModal"
+    );
 
-    updateReminderCount();
+const closeTaskModal =
+    document.getElementById(
+        "closeTaskModal"
+    );
 
-    displayReminderList();
+const cancelTask =
+    document.getElementById(
+        "cancelTask"
+    );
+
+const taskForm =
+    document.getElementById(
+        "taskForm"
+    );
+
+
+if (
+    openTaskModal &&
+    taskModal
+) {
+
+    openTaskModal.addEventListener(
+        "click",
+        function () {
+
+            taskModal.style.display =
+                "flex";
+
+        }
+    );
+
+}
+
+
+if (
+    closeTaskModal &&
+    taskModal
+) {
+
+    closeTaskModal.addEventListener(
+        "click",
+        function () {
+
+            taskModal.style.display =
+                "none";
+
+        }
+    );
+
+}
+
+
+if (
+    cancelTask &&
+    taskModal
+) {
+
+    cancelTask.addEventListener(
+        "click",
+        function () {
+
+            taskModal.style.display =
+                "none";
+
+        }
+    );
+
+}
+
+
+if (taskModal) {
+
+    taskModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                taskModal
+            ) {
+
+                taskModal.style.display =
+                    "none";
+
+            }
+
+        }
+    );
 
 }
 
 
 /* ================================
-   Initial Load
+   Add Task From Dashboard
 ================================ */
+
+if (taskForm) {
+
+    taskForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const taskName =
+                document.getElementById(
+                    "taskName"
+                ).value.trim();
+
+
+            const taskPriority =
+                document.getElementById(
+                    "taskPriority"
+                ).value;
+
+
+            const taskDueTime =
+                document.getElementById(
+                    "taskDueTime"
+                ).value;
+
+
+            if (!taskName) {
+
+                alert(
+                    "Please enter task name."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/tasks`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    name:
+                                        taskName,
+
+                                    priority:
+                                        taskPriority,
+
+                                    dueTime:
+                                        taskDueTime,
+
+                                    date:
+                                        getToday()
+
+                                })
+
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to add task"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                if (!data.success) {
+
+                    throw new Error(
+                        "Task was not added"
+                    );
+
+                }
+
+
+                taskForm.reset();
+
+
+                taskModal.style.display =
+                    "none";
+
+
+                await loadDashboardTasks();
+
+
+                alert(
+                    "Task added successfully!"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Add task error:",
+                    error
+                );
+
+
+                alert(
+                    "Could not add task. Make sure backend is running."
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ================================
+   Initial Dashboard Load
+================================ */
+
+async function refreshDashboard() {
+
+    updateReminderCount();
+
+    displayReminderList();
+
+    await loadDashboardTasks();
+
+}
+
 
 refreshDashboard();
 
 
 /* ================================
-   Request Notification
+   Notification Permission
 ================================ */
 
 window.addEventListener(
@@ -1108,7 +1812,7 @@ window.addEventListener(
 
 
 /* ================================
-   Check Reminder Every Second
+   Reminder Check
 ================================ */
 
 setInterval(
