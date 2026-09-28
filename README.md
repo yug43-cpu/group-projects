@@ -2,7 +2,7 @@
 
 A collection of projects developed collaboratively by our team as part of our learning, practice, and academic work.
 
-## 📂 Project
+## 📂 Projects
 
 * **01** — [Daily Tracker](./01_Daily_Tracker)
 * **02** — [Project Name](./02_PROJECT)
