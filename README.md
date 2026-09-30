@@ -5,7 +5,7 @@ A collection of projects developed collaboratively by our team as part of our le
 ## 📂 Projects
 
 * **01** — [Daily Tracker](./01_Daily_Tracker)
-* **02** — [ProTrack](./02_Pro_tracker)
+* **02** — [Pro Tracker](./02_Pro_tracker)
 * **03** — [Project Name](./03_PROJECT)
 * **04** — [Project Name](./04_PROJECT)
 
