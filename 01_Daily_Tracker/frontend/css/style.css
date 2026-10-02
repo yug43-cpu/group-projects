@@ -1,0 +1,262 @@
+/* =================================
+   DAILY TRACKER - GLOBAL THEME
+================================= */
+
+:root {
+    /* Dark Theme */
+    --bg-main: #0b1120;
+    --bg-sidebar: #0f172a;
+    --bg-card: #111827;
+    --bg-card-secondary: #1e293b;
+    --bg-input: #0f172a;
+
+    --border-main: #1e293b;
+    --border-light: #334155;
+
+    --text-main: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-light: #cbd5e1;
+
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: #60a5fa;
+
+    --danger-bg: #450a0a;
+    --danger-border: #7f1d1d;
+    --danger-text: #fca5a5;
+}
+
+
+/* =================================
+   LIGHT THEME
+================================= */
+
+body.light-theme {
+    --bg-main: #f1f5f9;
+    --bg-sidebar: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-secondary: #f8fafc;
+    --bg-input: #f8fafc;
+
+    --border-main: #cbd5e1;
+    --border-light: #cbd5e1;
+
+    --text-main: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --text-light: #334155;
+
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: #3b82f6;
+
+    --danger-bg: #fef2f2;
+    --danger-border: #fecaca;
+    --danger-text: #dc2626;
+}
+
+
+/* =================================
+   GLOBAL BODY
+================================= */
+
+body {
+    background: var(--bg-main);
+    color: var(--text-main);
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+/* =================================
+   COMMON ELEMENTS
+================================= */
+
+.sidebar {
+    background: var(--bg-sidebar);
+    border-color: var(--border-main);
+}
+
+.logo {
+    color: var(--text-main);
+}
+
+.sidebar a {
+    color: var(--text-secondary);
+}
+
+.sidebar a:hover {
+    background: var(--bg-card-secondary);
+    color: var(--text-main);
+}
+
+.sidebar a.active {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.main-content {
+    color: var(--text-main);
+}
+
+.topbar h1,
+.topbar h2 {
+    color: var(--text-main);
+}
+
+.topbar p,
+.date {
+    color: var(--text-secondary);
+}
+
+
+/* =================================
+   COMMON CARDS / SECTIONS
+================================= */
+
+.card,
+.summary-card,
+.dashboard-section,
+.tasks-section,
+.settings-section,
+.calendar-section,
+.selected-date-section,
+.statistics-section,
+.graph-section,
+.goal-modal-box,
+.study-modal-box,
+.journal-modal-box,
+.task-modal-box {
+    background: var(--bg-card);
+    border-color: var(--border-main);
+}
+
+
+/* =================================
+   COMMON SECONDARY BACKGROUNDS
+================================= */
+
+.task-item,
+.goal-item,
+.study-item,
+.journal-entry,
+.calendar-day,
+.activity-item,
+.weekly-card,
+.monthly-card,
+.graph-card,
+.graph-stat-card,
+.setting-row {
+    background: var(--bg-card-secondary);
+    border-color: var(--border-main);
+}
+
+
+/* =================================
+   COMMON TEXT
+================================= */
+
+.card h3,
+.summary-card span,
+.section-header p,
+.goal-deadline,
+.study-date,
+.journal-entry-meta,
+.empty-state,
+.date {
+    color: var(--text-secondary);
+}
+
+.empty-state h3 {
+    color: var(--text-light);
+}
+
+
+/* =================================
+   COMMON INPUTS
+================================= */
+
+input,
+select,
+textarea {
+    background: var(--bg-input);
+    color: var(--text-main);
+    border-color: var(--border-light);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--text-muted);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary);
+}
+
+
+/* =================================
+   COMMON BUTTONS
+================================= */
+
+.primary-btn,
+.section-header button {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.primary-btn:hover,
+.section-header button:hover {
+    background: var(--primary-hover);
+}
+
+
+/* =================================
+   COMMON FILTER BUTTON
+================================= */
+
+.filter-btn {
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    border-color: var(--border-main);
+}
+
+.filter-btn:hover {
+    background: var(--bg-card);
+    color: var(--text-main);
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+}
+
+
+/* =================================
+   COMMON MODAL
+================================= */
+
+.task-modal,
+.goal-modal,
+.study-modal,
+.journal-modal {
+    background: rgba(0, 0, 0, 0.65);
+}
+
+
+/* =================================
+   COMMON BORDER
+================================= */
+
+.task-controls,
+.task-item,
+.goal-item,
+.study-item,
+.journal-entry,
+.activity-item {
+    border-color: var(--border-main);
+}

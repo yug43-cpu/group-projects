@@ -1,47 +1,78 @@
+/* ================================
+   Authentication Pages
+================================ */
+
 body {
     min-height: 100vh;
+
     display: flex;
     justify-content: center;
     align-items: center;
 
-    background: #0f172a;
-    color: #ffffff;
+    margin: 0;
+
+    background: var(--bg-main);
+    color: var(--text-main);
+
+    transition: background 0.2s, color 0.2s;
 }
 
-/* Login Container */
+
+/* ================================
+   Auth Container
+================================ */
 
 .auth-container {
     width: 100%;
     max-width: 420px;
+
     padding: 20px;
 }
 
-/* Login Box */
+
+/* ================================
+   Auth Box
+================================ */
 
 .auth-box {
-    background: #1e293b;
+    background: var(--bg-card);
+
     padding: 35px;
+
     border-radius: 16px;
 
-    border: 1px solid #334155;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-light);
+
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
 }
 
-/* Heading */
+
+/* ================================
+   Heading
+================================ */
 
 .auth-box h1 {
     text-align: center;
+
     margin-bottom: 8px;
+
     font-size: 30px;
+
+    color: var(--text-main);
 }
 
 .auth-box > p {
     text-align: center;
-    color: #94a3b8;
+
+    color: var(--text-secondary);
+
     margin-bottom: 30px;
 }
 
-/* Input Group */
+
+/* ================================
+   Input Group
+================================ */
 
 .input-group {
     margin-bottom: 18px;
@@ -49,55 +80,84 @@ body {
 
 .input-group label {
     display: block;
+
     margin-bottom: 8px;
+
     font-size: 14px;
+
+    color: var(--text-light);
 }
 
-/* Inputs */
+
+/* ================================
+   Inputs
+================================ */
 
 .input-group input {
     width: 100%;
+
     padding: 12px 14px;
 
-    background: #0f172a;
-    color: #ffffff;
+    background: var(--bg-input);
+    color: var(--text-main);
 
-    border: 1px solid #334155;
+    border: 1px solid var(--border-light);
+
     border-radius: 8px;
 
     outline: none;
+
     font-size: 14px;
+
+    font-family: inherit;
+}
+
+.input-group input::placeholder {
+    color: var(--text-muted);
 }
 
 .input-group input:focus {
-    border-color: #60a5fa;
+    border-color: var(--primary-light);
 }
 
-/* Remember + Forgot */
+
+/* ================================
+   Remember + Forgot
+================================ */
 
 .form-options {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
 
     margin-bottom: 22px;
+
     font-size: 13px;
 }
 
 .remember {
     display: flex;
+
     align-items: center;
+
     gap: 6px;
+
+    color: var(--text-secondary);
 }
 
 .remember input {
     width: auto;
 }
 
-/* Links */
+
+/* ================================
+   Links
+================================ */
 
 .auth-box a {
-    color: #60a5fa;
+    color: var(--primary-light);
+
     text-decoration: none;
 }
 
@@ -105,58 +165,102 @@ body {
     text-decoration: underline;
 }
 
-/* Login Button */
+
+/* ================================
+   Auth Button
+================================ */
 
 .auth-box button {
     width: 100%;
+
     padding: 13px;
 
-    background: #2563eb;
+    background: var(--primary);
+
     color: #ffffff;
 
     border: none;
+
     border-radius: 8px;
 
     font-size: 15px;
     font-weight: bold;
 
     cursor: pointer;
+
+    transition: 0.2s;
 }
 
 .auth-box button:hover {
-    background: #1d4ed8;
+    background: var(--primary-hover);
 }
 
-/* Divider */
+
+/* ================================
+   Divider
+================================ */
 
 .divider {
     display: flex;
+
     align-items: center;
+
     gap: 10px;
 
     margin: 25px 0;
 
-    color: #64748b;
+    color: var(--text-muted);
+
     font-size: 12px;
 }
 
 .divider::before,
 .divider::after {
     content: "";
+
     flex: 1;
+
     height: 1px;
-    background: #334155;
+
+    background: var(--border-light);
 }
 
 .divider span {
     padding: 0 5px;
 }
 
-/* Register */
+
+/* ================================
+   Register Text
+================================ */
 
 .register-text {
     text-align: center;
+
     margin: 0 !important;
-    color: #94a3b8;
+
+    color: var(--text-secondary);
+
     font-size: 14px;
+}
+
+
+/* ================================
+   Responsive
+================================ */
+
+@media (max-width: 500px) {
+
+    .auth-container {
+        padding: 15px;
+    }
+
+    .auth-box {
+        padding: 25px;
+    }
+
+    .auth-box h1 {
+        font-size: 26px;
+    }
+
 }

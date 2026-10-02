@@ -1,1344 +1,4 @@
-body {
-    background: #0b1120;
-    color: #f8fafc;
-}
-
-.dashboard {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    width: 240px;
-    min-height: 100vh;
-    background: rgba(15, 23, 42, 0.95);
-    border-right: 1px solid rgba(148, 163, 184, 0.12);
-    padding: 25px 15px;
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.15);
-}
-
-.logo {
-    font-size: 22px;
-    font-weight: 700;
-    padding: 0 12px;
-    margin-bottom: 35px;
-    color: #ffffff;
-}
-
-.sidebar nav {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
-
-.sidebar a {
-    color: #94a3b8;
-    text-decoration: none;
-    padding: 12px 13px;
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.sidebar a:hover {
-    background: rgba(37, 99, 235, 0.10);
-    color: #ffffff;
-    transform: translateX(3px);
-}
-
-.sidebar a.active {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #ffffff;
-    box-shadow: 0 5px 18px rgba(37, 99, 235, 0.25);
-}
-
-.sidebar-bottom {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
-
-.main-content {
-    flex: 1;
-    width: 100%;
-    padding: 35px;
-    max-width: 1450px;
-}
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.topbar h1 {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: #ffffff;
-}
-
-.topbar p {
-    color: #94a3b8;
-    font-size: 14px;
-}
-
-.topbar-right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-
-/* ==================================================
-   Streak
-================================================== */
-
-.streak-mini {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 100px;
-    padding: 8px 10px;
-    background: #111827;
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    border-radius: 10px;
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.streak-mini:hover {
-    background: #162033;
-    border-color: rgba(96, 165, 250, 0.25);
-    transform: translateY(-1px);
-}
-
-.streak-icon {
-    font-size: 19px;
-    line-height: 1;
-}
-
-.streak-mini strong {
-    display: block;
-    color: #f8fafc;
-    font-size: 14px;
-    line-height: 1.2;
-}
-
-.streak-mini small {
-    display: block;
-    margin-top: 2px;
-    color: #64748b;
-    font-size: 10px;
-    white-space: nowrap;
-}
-
-
-/* ==================================================
-   REMINDER BELL + DROPDOWN
-================================================== */
-
-.reminder-wrapper {
-    position: relative;
-    flex-shrink: 0;
-}
-
-.reminder-bell {
-    position: relative;
-    width: 44px;
-    height: 42px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    background: #111827;
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    border-radius: 10px;
-
-    color: #ffffff;
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.reminder-bell:hover {
-    background: #162033;
-    border-color: rgba(96, 165, 250, 0.25);
-    transform: translateY(-1px);
-}
-
-.reminder-bell:active {
-    transform: translateY(0);
-}
-
-.reminder-bell span {
-    font-size: 19px;
-    line-height: 1;
-}
-
-.reminder-bell strong {
-    position: absolute;
-
-    top: -3px;
-    right: -3px;
-
-    min-width: 15px;
-    height: 15px;
-
-    padding: 0 3px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #2563eb;
-    border: 2px solid #0b1120;
-    border-radius: 50%;
-
-    color: #ffffff;
-
-    font-size: 8px;
-    font-weight: 600;
-    line-height: 1;
-}
-
-
-/* ==================================================
-   Reminder Dropdown
-================================================== */
-
-.reminder-dropdown {
-    display: none;
-
-    position: absolute;
-
-    top: calc(100% + 10px);
-    right: 0;
-
-    width: 330px;
-
-    background: linear-gradient(
-        145deg,
-        #1e293b,
-        #172033
-    );
-
-    border: 1px solid rgba(148, 163, 184, 0.18);
-    border-radius: 13px;
-
-    box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.40);
-
-    overflow: hidden;
-
-    z-index: 1100;
-}
-
-.reminder-dropdown.show {
-    display: block;
-    animation: reminderDropdownOpen 0.18s ease;
-}
-
-.reminder-dropdown-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 12px;
-
-    padding: 15px 16px;
-
-    border-bottom: 1px solid rgba(148, 163, 184, 0.10);
-}
-
-.reminder-dropdown-header h3 {
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 3px;
-}
-
-.reminder-dropdown-header small {
-    color: #64748b;
-    font-size: 10px;
-}
-
-.add-reminder-button {
-    width: 31px;
-    height: 31px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    background: linear-gradient(
-        135deg,
-        #2563eb,
-        #1d4ed8
-    );
-
-    border: none;
-    border-radius: 8px;
-
-    color: #ffffff;
-
-    font-size: 20px;
-    line-height: 1;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease;
-}
-
-.add-reminder-button:hover {
-    background: linear-gradient(
-        135deg,
-        #3b82f6,
-        #2563eb
-    );
-
-    transform: translateY(-1px);
-}
-
-.reminder-list {
-    max-height: 320px;
-    overflow-y: auto;
-    padding: 8px;
-}
-
-.reminder-list::-webkit-scrollbar {
-    width: 5px;
-}
-
-.reminder-list::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.reminder-list::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 10px;
-}
-
-.reminder-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 10px;
-
-    padding: 12px 10px;
-
-    background: #111827;
-
-    border: 1px solid rgba(148, 163, 184, 0.08);
-    border-radius: 9px;
-
-    margin-bottom: 7px;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.reminder-item:last-child {
-    margin-bottom: 0;
-}
-
-.reminder-item:hover {
-    background: #162033;
-    border-color: rgba(96, 165, 250, 0.20);
-    transform: translateX(2px);
-}
-
-.reminder-item-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.reminder-item-text {
-    color: #f8fafc;
-    font-size: 13px;
-    font-weight: 500;
-    word-break: break-word;
-    line-height: 1.4;
-}
-
-.reminder-item-time {
-    margin-top: 5px;
-    color: #64748b;
-    font-size: 11px;
-}
-
-.delete-reminder {
-    width: 30px;
-    height: 30px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    background: rgba(127, 29, 29, 0.35);
-
-    border: 1px solid rgba(248, 113, 113, 0.15);
-    border-radius: 7px;
-
-    color: #fca5a5;
-
-    font-size: 13px;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.delete-reminder:hover {
-    background: rgba(153, 27, 27, 0.55);
-    border-color: rgba(248, 113, 113, 0.30);
-    transform: translateY(-1px);
-}
-
-.no-reminders {
-    padding: 28px 15px;
-
-    text-align: center;
-
-    color: #64748b;
-    font-size: 12px;
-}
-
-@keyframes reminderDropdownOpen {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-/* ==================================================
-   Professional Date & Time Card
-================================================== */
-
-.date-time-card {
-    min-width: 175px;
-    padding: 10px 14px;
-    background: linear-gradient(
-        145deg,
-        rgba(30, 41, 59, 0.95),
-        rgba(23, 32, 51, 0.95)
-    );
-    border: 1px solid rgba(148, 163, 184, 0.14);
-    border-radius: 12px;
-    text-align: right;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-    transition:
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.date-time-card:hover {
-    border-color: rgba(96, 165, 250, 0.25);
-    transform: translateY(-1px);
-}
-
-.date-label {
-    display: block;
-    margin-bottom: 3px;
-    color: #64748b;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-}
-
-.current-date {
-    color: #cbd5e1;
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.current-time {
-    margin-top: 2px;
-    color: #ffffff;
-    font-size: 21px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    line-height: 1.2;
-    white-space: nowrap;
-}
-
-
-/* ==================================================
-   Summary Cards
-================================================== */
-
-.summary-cards {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 25px;
-}
-
-.card {
-    background: linear-gradient(145deg, #1e293b, #172033);
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    border-radius: 14px;
-    padding: 22px;
-    position: relative;
-    overflow: hidden;
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-.card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: #2563eb;
-    opacity: 0.8;
-}
-
-.card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(96, 165, 250, 0.3);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-}
-
-.card h3 {
-    color: #94a3b8;
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 12px;
-}
-
-.card .number {
-    color: #ffffff;
-    font-size: 26px;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-
-.card span {
-    color: #64748b;
-    font-size: 12px;
-}
-
-
-/* ==================================================
-   Dashboard Sections
-================================================== */
-
-.dashboard-section {
-    background: linear-gradient(145deg, #1e293b, #172033);
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    border-radius: 14px;
-    padding: 22px;
-    margin-bottom: 20px;
-    transition:
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-.dashboard-section:hover {
-    border-color: rgba(148, 163, 184, 0.20);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 18px;
-}
-
-.section-header h2,
-.dashboard-section h2 {
-    color: #ffffff;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.section-header button {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    padding: 9px 14px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.18);
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
-}
-
-.section-header button:hover {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.28);
-}
-
-.section-header button:active {
-    transform: translateY(0);
-}
-
-
-/* ==================================================
-   Progress
-================================================== */
-
-.progress-bar {
-    width: 100%;
-    height: 10px;
-    background: #0f172a;
-    border: 1px solid rgba(148, 163, 184, 0.08);
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.progress {
-    width: 0;
-    height: 100%;
-    background: linear-gradient(90deg, #2563eb, #60a5fa);
-    border-radius: 20px;
-
-    transition:
-        width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-
-    box-shadow: 0 0 12px rgba(37, 99, 235, 0.35);
-}
-
-
-/* ==================================================
-   Tasks
-================================================== */
-
-.task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.task {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 13px 14px;
-    background: #111827;
-    border: 1px solid rgba(148, 163, 184, 0.08);
-    border-radius: 10px;
-    min-width: 0;
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.task:hover {
-    background: #162033;
-    border-color: rgba(96, 165, 250, 0.20);
-    transform: translateX(2px);
-}
-
-.task > input[type="checkbox"] {
-    width: 17px;
-    height: 17px;
-    flex-shrink: 0;
-    cursor: pointer;
-    accent-color: #2563eb;
-}
-
-.task-info {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.task-info span {
-    color: #f8fafc;
-    font-size: 14px;
-    word-break: break-word;
-}
-
-.task-info small {
-    color: #64748b;
-    font-size: 12px;
-}
-
-.task.completed {
-    opacity: 0.75;
-}
-
-.task.completed .task-info span {
-    text-decoration: line-through;
-    color: #64748b;
-}
-
-
-/* ==================================================
-   Task Actions
-================================================== */
-
-.task-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-}
-
-.task-actions button {
-    border: 1px solid transparent;
-    border-radius: 7px;
-    padding: 6px 10px;
-    font-size: 12px;
-    cursor: pointer;
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.task-actions button:hover {
-    transform: translateY(-1px);
-}
-
-.edit-task {
-    background: #263449;
-    color: #93c5fd;
-    border-color: #334155;
-}
-
-.edit-task:hover {
-    background: #334155;
-    border-color: #475569;
-}
-
-.delete-task {
-    background: rgba(127, 29, 29, 0.35);
-    color: #fca5a5;
-    border-color: rgba(248, 113, 113, 0.15);
-}
-
-.delete-task:hover {
-    background: rgba(153, 27, 27, 0.55);
-    border-color: rgba(248, 113, 113, 0.30);
-}
-
-
-/* ==================================================
-   Bottom Grid
-================================================== */
-
-.bottom-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
-}
-
-
-/* ==================================================
-   Study
-================================================== */
-
-.study-info {
-    margin-top: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.study-info > div:not(.study-session) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 14px;
-    background: #111827;
-    border: 1px solid rgba(148, 163, 184, 0.08);
-    border-radius: 10px;
-}
-
-.study-info span {
-    color: #94a3b8;
-}
-
-.study-session {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 14px 16px;
-    background: #111827;
-    border: 1px solid rgba(148, 163, 184, 0.08);
-    border-radius: 10px;
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.study-session:hover {
-    background: #162033;
-    border-color: rgba(96, 165, 250, 0.20);
-    transform: translateY(-2px);
-    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.18);
-}
-
-.study-session-info {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    min-width: 0;
-}
-
-.study-session-info span {
-    color: #f8fafc;
-    font-size: 14px;
-    font-weight: 600;
-    word-break: break-word;
-}
-
-.study-session-info strong {
-    color: #64748b;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.study-session-actions {
-    display: flex;
-    gap: 7px;
-    flex-shrink: 0;
-}
-
-.study-session-actions button {
-    padding: 6px 10px;
-    border: 1px solid #334155;
-    border-radius: 7px;
-    background: #1e293b;
-    color: #d1d5db;
-    font-size: 12px;
-    cursor: pointer;
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.study-session-actions button:hover {
-    background: #334155;
-    transform: translateY(-1px);
-}
-
-.study-session-actions .edit-study {
-    color: #60a5fa;
-}
-
-.study-session-actions .edit-study:hover {
-    border-color: #3b82f6;
-    background: #1e3a5f;
-}
-
-.study-session-actions .delete-study {
-    color: #f87171;
-}
-
-.study-session-actions .delete-study:hover {
-    border-color: #7f1d1d;
-    background: #3a1f1f;
-}
-
-#studyList > div:first-child:has(span) {
-    min-height: 55px;
-}
-
-.bottom-grid .dashboard-section:last-child .study-info > div {
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.bottom-grid .dashboard-section:last-child .study-info > div:hover {
-    background: #162033;
-    border-color: rgba(96, 165, 250, 0.20);
-    transform: translateX(2px);
-}
-
-
-/* ==================================================
-   Modal
-================================================== */
-
-.task-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    padding: 20px;
-    background: rgba(2, 6, 23, 0.78);
-    backdrop-filter: blur(5px);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.task-modal.active {
-    display: flex;
-    animation: modalBackground 0.2s ease;
-}
-
-.task-modal-box {
-    width: 100%;
-    max-width: 450px;
-    background: linear-gradient(145deg, #1e293b, #172033);
-    border: 1px solid rgba(148, 163, 184, 0.18);
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
-    animation: modalOpen 0.25s ease;
-}
-
-.task-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.task-modal-header h2 {
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.task-modal-header button {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(148, 163, 184, 0.08);
-    border: 1px solid rgba(148, 163, 184, 0.10);
-    border-radius: 7px;
-    color: #94a3b8;
-    font-size: 24px;
-    line-height: 1;
-    cursor: pointer;
-    transition:
-        background 0.2s ease,
-        color 0.2s ease;
-}
-
-.task-modal-header button:hover {
-    background: rgba(148, 163, 184, 0.15);
-    color: #ffffff;
-}
-
-
-/* ==================================================
-   Modal Form
-================================================== */
-
-.task-modal .input-group {
-    margin-bottom: 18px;
-}
-
-.task-modal .input-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: #e2e8f0;
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.task-modal .input-group input,
-.task-modal .input-group select {
-    display: block;
-    width: 100%;
-    height: 44px;
-    padding: 0 14px;
-    background: #0f172a;
-    color: #ffffff;
-    border: 1px solid #334155;
-    border-radius: 8px;
-    outline: none;
-    font-size: 14px;
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.task-modal .input-group input::placeholder {
-    color: #64748b;
-}
-
-.task-modal .input-group input:focus,
-.task-modal .input-group select:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-}
-
-
-/* ==================================================
-   Modal Buttons
-================================================== */
-
-.task-modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 10px;
-    margin-top: 25px;
-}
-
-.task-modal-actions button {
-    min-width: 100px;
-    height: 40px;
-    padding: 0 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    transition:
-        transform 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.task-modal-actions button:hover {
-    transform: translateY(-1px);
-}
-
-#cancelTask,
-#cancelEditTask,
-#cancelStudy,
-#cancelReminder {
-    background: #334155;
-    color: #ffffff;
-}
-
-#cancelTask:hover,
-#cancelEditTask:hover,
-#cancelStudy:hover,
-#cancelReminder:hover {
-    background: #475569;
-}
-
-.task-modal-actions button[type="submit"] {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #ffffff;
-    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.18);
-}
-
-.task-modal-actions button[type="submit"]:hover {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    box-shadow: 0 7px 20px rgba(37, 99, 235, 0.28);
-}
-
-
-/* ==================================================
-   Animations
-================================================== */
-
-@keyframes modalOpen {
-    from {
-        opacity: 0;
-        transform: translateY(10px) scale(0.98);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes modalBackground {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-
-/* ==================================================
-   Responsive Tablet
-================================================== */
-
-@media (max-width: 1000px) {
-
-    .sidebar {
-        width: 210px;
-    }
-
-    .main-content {
-        padding: 25px;
-    }
-
-    .summary-cards {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .topbar-right {
-        gap: 8px;
-    }
-
-    .streak-mini {
-        min-width: 90px;
-        padding: 7px 9px;
-    }
-
-    .date-time-card {
-        min-width: 155px;
-    }
-
-    .reminder-dropdown {
-        width: 320px;
-    }
-}
-
-
-/* ==================================================
-   Responsive Mobile
-================================================== */
-
-@media (max-width: 700px) {
-
-    .sidebar {
-        width: 70px;
-        padding: 20px 8px;
-    }
-
-    .logo {
-        font-size: 0;
-        padding: 0;
-        text-align: center;
-        margin-bottom: 25px;
-    }
-
-    .logo::before {
-        content: "DT";
-        font-size: 18px;
-        font-weight: 700;
-        color: #ffffff;
-    }
-
-    .sidebar a {
-        justify-content: center;
-        font-size: 0;
-        padding: 12px 8px;
-    }
-
-    .sidebar a::first-letter {
-        font-size: 18px;
-    }
-
-    .main-content {
-        padding: 20px 15px;
-    }
-
-    .topbar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-
-    .topbar-right {
-        width: 100%;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .date-time-card {
-        margin-left: auto;
-    }
-
-    .summary-cards {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-
-    .bottom-grid {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-
-    .dashboard-section {
-        padding: 18px;
-    }
-
-    .section-header {
-        align-items: flex-start;
-    }
-
-    .task {
-        align-items: flex-start;
-    }
-
-    .task-actions {
-        flex-direction: column;
-    }
-
-    .study-session {
-        align-items: flex-start;
-    }
-
-    .study-session-actions {
-        flex-direction: column;
-    }
-
-    .task-modal {
-        padding: 15px;
-    }
-
-    .task-modal-box {
-        max-width: 100%;
-        padding: 20px;
-    }
-
-    .task-modal-actions {
-        flex-direction: column-reverse;
-    }
-
-    .task-modal-actions button {
-        width: 100%;
-    }
-
-    .reminder-dropdown {
-        width: 310px;
-        max-width: calc(100vw - 30px);
-    }
-}
-
-
-/* ==================================================
-   Responsive Small Mobile
-================================================== */
-
-@media (max-width: 450px) {
-
-    .main-content {
-        padding: 15px 10px;
-    }
-
-    .topbar h1 {
-        font-size: 23px;
-    }
-
-    .topbar-right {
-        width: 100%;
-    }
-
-    .streak-mini {
-        min-width: 0;
-        flex: 1;
-        padding: 8px;
-    }
-
-    .reminder-bell {
-        width: 44px;
-        height: 42px;
-    }
-
-    .date-time-card {
-        width: 100%;
-        margin-left: 0;
-        text-align: left;
-    }
-
-    .current-date,
-    .current-time {
-        text-align: left;
-    }
-
-    .reminder-dropdown {
-        position: fixed;
-
-        top: 75px;
-        right: 10px;
-        left: 10px;
-
-        width: auto;
-        max-width: none;
-    }
-
-    .dashboard-section {
-        padding: 15px;
-    }
-
-    .section-header h2 {
-        font-size: 16px;
-    }
-
-    .section-header button {
-        padding: 8px 10px;
-        font-size: 12px;
-    }
-
-    .task {
-        padding: 11px;
-    }
-
-    .task-info span {
-        font-size: 13px;
-    }
-
-    .task-actions button {
-        padding: 5px 8px;
-    }
-}/* =================================
+/* =================================
    Daily Tracker - Dashboard
 ================================= */
 
@@ -1349,8 +9,8 @@ body {
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #0b1120;
-    color: #ffffff;
+    background: var(--bg-main);
+    color: var(--text-main);
     overflow-x: hidden;
 }
 
@@ -1371,12 +31,12 @@ body {
     width: 240px;
     min-height: 100vh;
     flex-shrink: 0;
-    background: rgba(15, 23, 42, 0.95);
-    border-right: 1px solid #1e293b;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-main);
     padding: 25px 15px;
     position: sticky;
     top: 0;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
 }
 
 .logo {
@@ -1384,6 +44,7 @@ body {
     font-weight: bold;
     text-align: center;
     margin-bottom: 30px;
+    color: var(--text-main);
 }
 
 .sidebar nav,
@@ -1398,26 +59,27 @@ body {
     align-items: center;
     gap: 10px;
     padding: 12px 13px;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     text-decoration: none;
     border-radius: 10px;
     font-size: 14px;
-    transition: background 0.2s ease,
-                color 0.2s ease,
-                transform 0.2s ease;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .sidebar a:hover {
-    background: rgba(37, 99, 235, 0.12);
-    color: #ffffff;
+    background: var(--bg-card-secondary);
+    color: var(--text-main);
     transform: translateX(2px);
 }
 
 .sidebar a.active {
     background: linear-gradient(
         135deg,
-        #2563eb,
-        #1d4ed8
+        var(--primary),
+        var(--primary-hover)
     );
     color: #ffffff;
 }
@@ -1453,11 +115,12 @@ body {
 .topbar h1 {
     margin: 0;
     font-size: 28px;
+    color: var(--text-main);
 }
 
 .topbar p {
     margin: 6px 0 0;
-    color: #94a3b8;
+    color: var(--text-secondary);
     font-size: 14px;
 }
 
@@ -1476,10 +139,20 @@ body {
     align-items: center;
     gap: 8px;
     padding: 9px 12px;
-    background: #111827;
-    border: 1px solid #1e293b;
+    background: var(--bg-card);
+    border: 1px solid var(--border-main);
     border-radius: 10px;
     white-space: nowrap;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.streak-mini:hover {
+    background: var(--bg-card-secondary);
+    border-color: var(--border-light);
+    transform: translateY(-1px);
 }
 
 .streak-icon {
@@ -1488,12 +161,13 @@ body {
 
 .streak-mini strong {
     display: block;
+    color: var(--text-main);
     font-size: 15px;
 }
 
 .streak-mini small {
     display: block;
-    color: #94a3b8;
+    color: var(--text-secondary);
     font-size: 9px;
 }
 
@@ -1509,16 +183,20 @@ body {
     position: relative;
     width: 42px;
     height: 42px;
-    border: 1px solid #1e293b;
+    border: 1px solid var(--border-main);
     border-radius: 10px;
-    background: #111827;
-    color: #ffffff;
+    background: var(--bg-card);
+    color: var(--text-main);
     cursor: pointer;
     font-size: 17px;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .reminder-bell:hover {
-    background: #1e293b;
+    background: var(--bg-card-secondary);
+    border-color: var(--border-light);
 }
 
 .reminder-bell strong {
@@ -1531,8 +209,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #2563eb;
-    border: 2px solid #0b1120;
+    background: var(--primary);
+    border: 2px solid var(--bg-main);
     border-radius: 50%;
     color: #ffffff;
     font-size: 8px;
@@ -1547,12 +225,12 @@ body {
     right: 0;
     width: 310px;
     max-width: calc(100vw - 30px);
-    background: #111827;
-    border: 1px solid #1e293b;
+    background: var(--bg-card);
+    border: 1px solid var(--border-main);
     border-radius: 14px;
     padding: 15px;
     z-index: 100;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
 }
 
 .reminder-dropdown.show {
@@ -1569,11 +247,12 @@ body {
 
 .reminder-dropdown-header h3 {
     margin: 0;
+    color: var(--text-main);
     font-size: 16px;
 }
 
 .reminder-dropdown-header small {
-    color: #94a3b8;
+    color: var(--text-secondary);
     font-size: 11px;
 }
 
@@ -1582,10 +261,14 @@ body {
     height: 32px;
     border: 0;
     border-radius: 8px;
-    background: #2563eb;
+    background: var(--primary);
     color: #ffffff;
     font-size: 20px;
     cursor: pointer;
+}
+
+.add-reminder-button:hover {
+    background: var(--primary-hover);
 }
 
 .reminder-list {
@@ -1593,10 +276,83 @@ body {
     overflow-y: auto;
 }
 
+.reminder-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.reminder-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.reminder-list::-webkit-scrollbar-thumb {
+    background: var(--border-light);
+    border-radius: 10px;
+}
+
+.reminder-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 10px;
+    background: var(--bg-card-secondary);
+    border: 1px solid var(--border-main);
+    border-radius: 9px;
+    margin-bottom: 7px;
+}
+
+.reminder-item:last-child {
+    margin-bottom: 0;
+}
+
+.reminder-item:hover {
+    background: var(--bg-card);
+    border-color: var(--border-light);
+}
+
+.reminder-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.reminder-item-text {
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 500;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.reminder-item-time {
+    margin-top: 5px;
+    color: var(--text-secondary);
+    font-size: 11px;
+}
+
+.delete-reminder {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    border-radius: 7px;
+    color: var(--danger-text);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.delete-reminder:hover {
+    opacity: 0.85;
+}
+
 .no-reminders {
     padding: 20px 5px;
     text-align: center;
-    color: #64748b;
+    color: var(--text-secondary);
     font-size: 13px;
 }
 
@@ -1607,28 +363,28 @@ body {
 .date-time-card {
     min-width: 150px;
     padding: 9px 12px;
-    background: #111827;
-    border: 1px solid #1e293b;
+    background: var(--bg-card);
+    border: 1px solid var(--border-main);
     border-radius: 10px;
     text-align: right;
 }
 
 .date-label {
     display: block;
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 9px;
     letter-spacing: 1px;
     margin-bottom: 2px;
 }
 
 .current-date {
-    color: #cbd5e1;
+    color: var(--text-secondary);
     font-size: 11px;
 }
 
 .current-time {
     margin-top: 2px;
-    color: #ffffff;
+    color: var(--text-main);
     font-size: 15px;
     font-weight: bold;
 }
@@ -1646,32 +402,34 @@ body {
 
 .card {
     padding: 22px;
-    background: #111827;
-    border: 1px solid #1e293b;
+    background: var(--bg-card);
+    border: 1px solid var(--border-main);
     border-radius: 14px;
-    transition: transform 0.2s ease,
-                border-color 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .card:hover {
     transform: translateY(-2px);
-    border-color: #334155;
+    border-color: var(--border-light);
 }
 
 .card h3 {
     margin: 0 0 10px;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     font-size: 14px;
 }
 
 .card .number {
     margin: 0 0 5px;
+    color: var(--text-main);
     font-size: 27px;
     font-weight: bold;
 }
 
 .card span {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 12px;
 }
 
@@ -1682,8 +440,8 @@ body {
 .dashboard-section {
     margin-bottom: 25px;
     padding: 22px;
-    background: #111827;
-    border: 1px solid #1e293b;
+    background: var(--bg-card);
+    border: 1px solid var(--border-main);
     border-radius: 14px;
 }
 
@@ -1697,6 +455,7 @@ body {
 
 .section-header h2 {
     margin: 0;
+    color: var(--text-main);
     font-size: 20px;
 }
 
@@ -1704,7 +463,7 @@ body {
     padding: 9px 13px;
     border: 0;
     border-radius: 8px;
-    background: #2563eb;
+    background: var(--primary);
     color: #ffffff;
     cursor: pointer;
     font-size: 12px;
@@ -1712,7 +471,7 @@ body {
 }
 
 .section-header button:hover {
-    background: #1d4ed8;
+    background: var(--primary-hover);
 }
 
 /* =================================
@@ -1723,7 +482,8 @@ body {
     width: 100%;
     height: 10px;
     overflow: hidden;
-    background: #1e293b;
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
     border-radius: 20px;
 }
 
@@ -1732,8 +492,8 @@ body {
     height: 100%;
     background: linear-gradient(
         90deg,
-        #2563eb,
-        #3b82f6
+        var(--primary),
+        var(--primary-light)
     );
     border-radius: 20px;
     transition: width 0.3s ease;
@@ -1755,9 +515,17 @@ body {
     gap: 12px;
     min-width: 0;
     padding: 13px;
-    background: #0f172a;
-    border: 1px solid #1e293b;
+    background: var(--bg-card-secondary);
+    border: 1px solid var(--border-main);
     border-radius: 10px;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.task:hover {
+    background: var(--bg-card);
+    border-color: var(--border-light);
 }
 
 .task input[type="checkbox"] {
@@ -1765,6 +533,7 @@ body {
     width: 17px;
     height: 17px;
     cursor: pointer;
+    accent-color: var(--primary);
 }
 
 .task-info {
@@ -1774,7 +543,7 @@ body {
 
 .task-info span {
     display: block;
-    color: #ffffff;
+    color: var(--text-main);
     font-size: 14px;
     overflow-wrap: anywhere;
 }
@@ -1782,13 +551,60 @@ body {
 .task-info small {
     display: block;
     margin-top: 4px;
-    color: #64748b;
+    color: var(--text-secondary);
     font-size: 11px;
 }
 
 .task.completed .task-info span {
-    color: #64748b;
+    color: var(--text-muted);
     text-decoration: line-through;
+}
+
+/* =================================
+   Task Actions
+================================= */
+
+.task-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.task-actions button {
+    border: 1px solid var(--border-main);
+    border-radius: 7px;
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.task-actions button:hover {
+    transform: translateY(-1px);
+}
+
+.edit-task {
+    background: var(--bg-card-secondary);
+    color: var(--primary-light);
+    border-color: var(--border-light);
+}
+
+.edit-task:hover {
+    background: var(--bg-card);
+}
+
+.delete-task {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    border-color: var(--danger-border);
+}
+
+.delete-task:hover {
+    opacity: 0.85;
 }
 
 /* =================================
@@ -1821,22 +637,95 @@ body {
     align-items: center;
     gap: 15px;
     padding: 12px;
-    background: #0f172a;
-    border: 1px solid #1e293b;
+    background: var(--bg-card-secondary);
+    border: 1px solid var(--border-main);
     border-radius: 9px;
+}
+
+.study-info > div:hover {
+    background: var(--bg-card);
+    border-color: var(--border-light);
 }
 
 .study-info span {
     min-width: 0;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     font-size: 13px;
     overflow-wrap: anywhere;
 }
 
 .study-info strong {
     flex-shrink: 0;
-    color: #ffffff;
+    color: var(--text-main);
     font-size: 13px;
+}
+
+/* =================================
+   Study Sessions
+================================= */
+
+.study-session {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 14px 16px;
+    background: var(--bg-card-secondary);
+    border: 1px solid var(--border-main);
+    border-radius: 10px;
+}
+
+.study-session:hover {
+    background: var(--bg-card);
+    border-color: var(--border-light);
+}
+
+.study-session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.study-session-info span {
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.study-session-info strong {
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.study-session-actions {
+    display: flex;
+    gap: 7px;
+    flex-shrink: 0;
+}
+
+.study-session-actions button {
+    padding: 6px 10px;
+    border: 1px solid var(--border-light);
+    border-radius: 7px;
+    background: var(--bg-card);
+    color: var(--text-light);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.study-session-actions button:hover {
+    background: var(--bg-card-secondary);
+}
+
+.study-session-actions .edit-study {
+    color: var(--primary-light);
+}
+
+.study-session-actions .delete-study {
+    color: var(--danger-text);
 }
 
 /* =================================
@@ -1864,8 +753,8 @@ body {
     max-height: calc(100vh - 40px);
     overflow-y: auto;
     padding: 22px;
-    background: #111827;
-    border: 1px solid #1e293b;
+    background: var(--bg-card);
+    border: 1px solid var(--border-main);
     border-radius: 14px;
 }
 
@@ -1879,19 +768,28 @@ body {
 
 .task-modal-header h2 {
     margin: 0;
+    color: var(--text-main);
     font-size: 20px;
 }
 
 .task-modal-header button {
     width: 32px;
     height: 32px;
-    border: 0;
+    border: 1px solid var(--border-main);
     border-radius: 8px;
-    background: #1e293b;
-    color: #ffffff;
+    background: var(--bg-card-secondary);
+    color: var(--text-main);
     font-size: 20px;
     cursor: pointer;
 }
+
+.task-modal-header button:hover {
+    background: var(--bg-input);
+}
+
+/* =================================
+   Modal Form
+================================= */
 
 .input-group {
     margin-bottom: 15px;
@@ -1900,7 +798,7 @@ body {
 .input-group label {
     display: block;
     margin-bottom: 7px;
-    color: #cbd5e1;
+    color: var(--text-light);
     font-size: 13px;
 }
 
@@ -1908,18 +806,26 @@ body {
 .input-group select {
     width: 100%;
     padding: 11px 12px;
-    border: 1px solid #334155;
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     outline: none;
-    background: #0f172a;
-    color: #ffffff;
+    background: var(--bg-input);
+    color: var(--text-main);
     font-size: 14px;
+}
+
+.input-group input::placeholder {
+    color: var(--text-muted);
 }
 
 .input-group input:focus,
 .input-group select:focus {
-    border-color: #2563eb;
+    border-color: var(--primary);
 }
+
+/* =================================
+   Modal Buttons
+================================= */
 
 .task-modal-actions {
     display: flex;
@@ -1932,14 +838,24 @@ body {
     padding: 10px 15px;
     border: 0;
     border-radius: 8px;
-    background: #2563eb;
+    background: var(--primary);
     color: #ffffff;
     cursor: pointer;
     font-size: 13px;
 }
 
+.task-modal-actions button:hover {
+    background: var(--primary-hover);
+}
+
 .task-modal-actions button:first-child {
-    background: #1e293b;
+    background: var(--bg-card-secondary);
+    color: var(--text-main);
+    border: 1px solid var(--border-main);
+}
+
+.task-modal-actions button:first-child:hover {
+    background: var(--bg-input);
 }
 
 /* =================================
@@ -1994,6 +910,7 @@ body {
         content: "DT";
         font-size: 19px;
         font-weight: bold;
+        color: var(--text-main);
     }
 
     .sidebar a {

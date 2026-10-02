@@ -1,4 +1,4 @@
-/* ================================
+ /* ================================
    Calendar Page
 ================================ */
 
@@ -8,8 +8,8 @@
 
 body {
     margin: 0;
-    background: #0b1120;
-    color: #f8fafc;
+    background: var(--bg-main);
+    color: var(--text-main);
     font-family: Arial, sans-serif;
 }
 
@@ -39,8 +39,8 @@ body {
     display: flex;
     flex-direction: column;
 
-    background: #0f172a;
-    border-right: 1px solid #1e293b;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-main);
 
     z-index: 100;
 }
@@ -51,9 +51,9 @@ body {
     font-size: 21px;
     font-weight: bold;
 
-    color: #f8fafc;
+    color: var(--text-main);
 
-    border-bottom: 1px solid #1e293b;
+    border-bottom: 1px solid var(--border-main);
 }
 
 .sidebar nav {
@@ -74,7 +74,7 @@ body {
 
     padding: 12px 14px;
 
-    color: #94a3b8;
+    color: var(--text-secondary);
     text-decoration: none;
 
     border-radius: 8px;
@@ -86,13 +86,13 @@ body {
 
 .sidebar nav a:hover,
 .sidebar-bottom a:hover {
-    background: #1e293b;
-    color: #f8fafc;
+    background: var(--bg-card-secondary);
+    color: var(--text-main);
 }
 
 .sidebar nav a.active {
-    background: #2563eb;
-    color: white;
+    background: var(--primary);
+    color: #ffffff;
 }
 
 .sidebar-bottom {
@@ -139,12 +139,14 @@ body {
     margin: 0 0 6px;
 
     font-size: 28px;
+
+    color: var(--text-main) !important;
 }
 
 .topbar p {
     margin: 0;
 
-    color: #94a3b8;
+    color: var(--text-secondary) !important;
 
     font-size: 14px;
 }
@@ -152,7 +154,7 @@ body {
 .date {
     text-align: right;
 
-    color: #94a3b8;
+    color: var(--text-secondary) !important;
 
     font-size: 14px;
 }
@@ -160,7 +162,7 @@ body {
 #currentTime {
     margin-top: 4px;
 
-    color: #f8fafc;
+    color: var(--text-main) !important;
 }
 
 
@@ -170,9 +172,9 @@ body {
 
 .calendar-section,
 .selected-date-section {
-    background: #111827;
+    background: var(--bg-card);
 
-    border: 1px solid #1e293b;
+    border: 1px solid var(--border-main);
 
     border-radius: 14px;
 
@@ -194,17 +196,19 @@ body {
     margin: 0;
 
     font-size: 21px;
+
+    color: var(--text-main);
 }
 
 .calendar-header button {
     width: 40px;
     height: 40px;
 
-    border: 1px solid #334155;
+    border: 1px solid var(--border-light);
 
-    background: #0f172a;
+    background: var(--bg-input);
 
-    color: #f8fafc;
+    color: var(--text-main);
 
     border-radius: 8px;
 
@@ -216,7 +220,8 @@ body {
 }
 
 .calendar-header button:hover {
-    background: #1e293b;
+    background: var(--bg-card-secondary);
+
     transform: translateY(-1px);
 }
 
@@ -240,7 +245,7 @@ body {
 
     text-align: center;
 
-    color: #64748b;
+    color: var(--text-muted);
 
     font-size: 12px;
     font-weight: bold;
@@ -266,9 +271,9 @@ body {
 
     padding: 10px;
 
-    background: #0f172a;
+    background: var(--bg-card-secondary);
 
-    border: 1px solid #1e293b;
+    border: 1px solid var(--border-main);
 
     border-radius: 9px;
 
@@ -278,9 +283,10 @@ body {
 }
 
 .calendar-day:hover {
-    border-color: #475569;
+    border-color: var(--border-light);
 
-    background: #172033;
+    background: var(--bg-card);
+
 }
 
 .calendar-day.empty {
@@ -294,25 +300,25 @@ body {
 .day-number {
     font-size: 14px;
 
-    color: #cbd5e1;
+    color: var(--text-light);
 }
 
 .calendar-day.today {
-    border-color: #2563eb;
+    border-color: var(--primary);
 
-    box-shadow: 0 0 0 1px #2563eb;
+    box-shadow: 0 0 0 1px var(--primary);
 }
 
 .calendar-day.today .day-number {
-    color: #60a5fa;
+    color: var(--primary-light);
 
     font-weight: bold;
 }
 
 .calendar-day.selected {
-    background: #172554;
+    background: var(--bg-card-secondary);
 
-    border-color: #3b82f6;
+    border-color: var(--primary-light);
 }
 
 
@@ -366,12 +372,14 @@ body {
     margin: 0 0 5px;
 
     font-size: 20px;
+
+    color: var(--text-main);
 }
 
 .section-header p {
     margin: 0;
 
-    color: #94a3b8;
+    color: var(--text-secondary);
 
     font-size: 13px;
 }
@@ -398,9 +406,9 @@ body {
 
     padding: 15px;
 
-    background: #0f172a;
+    background: var(--bg-card-secondary);
 
-    border: 1px solid #1e293b;
+    border: 1px solid var(--border-main);
 
     border-radius: 10px;
 }
@@ -414,7 +422,7 @@ body {
     align-items: center;
     justify-content: center;
 
-    background: #1e293b;
+    background: var(--bg-card);
 
     border-radius: 8px;
 
@@ -429,12 +437,14 @@ body {
     margin: 0 0 4px;
 
     font-size: 14px;
+
+    color: var(--text-main);
 }
 
 .activity-info p {
     margin: 0;
 
-    color: #64748b;
+    color: var(--text-muted);
 
     font-size: 12px;
 }
@@ -449,7 +459,7 @@ body {
 
     padding: 50px 20px;
 
-    color: #64748b;
+    color: var(--text-secondary);
 }
 
 .empty-icon {
@@ -461,7 +471,7 @@ body {
 .empty-state h3 {
     margin: 0 0 8px;
 
-    color: #cbd5e1;
+    color: var(--text-light);
 }
 
 .empty-state p {
@@ -476,9 +486,9 @@ body {
 ================================ */
 
 .graph-section {
-    background: #111827;
+    background: var(--bg-card);
 
-    border: 1px solid #1e293b;
+    border: 1px solid var(--border-main);
 
     border-radius: 14px;
 
@@ -502,12 +512,14 @@ body {
     margin: 0 0 5px;
 
     font-size: 20px;
+
+    color: var(--text-main);
 }
 
 .graph-header p {
     margin: 0;
 
-    color: #94a3b8;
+    color: var(--text-secondary);
 
     font-size: 13px;
 }
@@ -526,7 +538,7 @@ body {
 }
 
 .graph-controls label {
-    color: #94a3b8;
+    color: var(--text-secondary);
 
     font-size: 12px;
 }
@@ -536,13 +548,13 @@ body {
 
     padding: 9px 12px;
 
-    background: #0f172a;
+    background: var(--bg-input);
 
-    border: 1px solid #334155;
+    border: 1px solid var(--border-light);
 
     border-radius: 8px;
 
-    color: #f8fafc;
+    color: var(--text-main);
 
     outline: none;
 
@@ -550,7 +562,7 @@ body {
 }
 
 .graph-controls select:focus {
-    border-color: #3b82f6;
+    border-color: var(--primary);
 }
 
 
@@ -571,9 +583,9 @@ body {
 .graph-stat-card {
     padding: 15px;
 
-    background: #0f172a;
+    background: var(--bg-card-secondary);
 
-    border: 1px solid #1e293b;
+    border: 1px solid var(--border-main);
 
     border-radius: 10px;
 }
@@ -583,7 +595,7 @@ body {
 
     margin-bottom: 7px;
 
-    color: #64748b;
+    color: var(--text-muted);
 
     font-size: 12px;
 }
@@ -591,7 +603,7 @@ body {
 .graph-stat-card strong {
     display: block;
 
-    color: #f8fafc;
+    color: var(--text-main);
 
     font-size: 21px;
 }
@@ -612,9 +624,9 @@ body {
 .graph-card {
     position: relative;
 
-    background: #0f172a;
+    background: var(--bg-card-secondary);
 
-    border: 1px solid #1e293b;
+    border: 1px solid var(--border-main);
 
     border-radius: 12px;
 
@@ -627,12 +639,14 @@ body {
     margin: 0 0 6px;
 
     font-size: 16px;
+
+    color: var(--text-main);
 }
 
 .graph-card p {
     margin: 0 0 18px;
 
-    color: #64748b;
+    color: var(--text-muted);
 
     font-size: 12px;
 }
