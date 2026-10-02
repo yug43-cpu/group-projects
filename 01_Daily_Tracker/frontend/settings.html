@@ -4,13 +4,17 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Settings - Daily Tracker</title>
 
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/settings.css">
     <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -22,37 +26,37 @@
 
         <aside class="sidebar">
 
-            <div class="logo">
+            <div class="logo" data-i18n="appName">
                 Daily Tracker
             </div>
 
             <nav>
 
-                <a href="dashboard.html">
+                <a href="dashboard.html" data-i18n="dashboard">
                     🏠 Dashboard
                 </a>
 
-                <a href="tasks.html">
+                <a href="tasks.html" data-i18n="tasks">
                     ✅ Tasks
                 </a>
 
-                <a href="goals.html">
+                <a href="goals.html" data-i18n="goals">
                     🎯 Goals
                 </a>
 
-                <a href="study.html">
+                <a href="study.html" data-i18n="study">
                     📚 Study
                 </a>
 
-                <a href="journal.html">
+                <a href="journal.html" data-i18n="journal">
                     📝 Journal
                 </a>
 
-                <a href="calendar.html">
+                <a href="calendar.html" data-i18n="calendar">
                     📅 Calendar
                 </a>
 
-                <a href="statistics.html">
+                <a href="statistics.html" data-i18n="statistics">
                     📈 Statistics
                 </a>
 
@@ -60,11 +64,15 @@
 
             <div class="sidebar-bottom">
 
-                <a href="settings.html" class="active">
+                <a
+                    href="settings.html"
+                    class="active"
+                    data-i18n="settings"
+                >
                     ⚙️ Settings
                 </a>
 
-                <a href="login.html">
+                <a href="login.html" data-i18n="logout">
                     🚪 Logout
                 </a>
 
@@ -83,11 +91,11 @@
 
                 <div>
 
-                    <h1>
+                    <h1 data-i18n="settingsTitle">
                         Settings ⚙️
                     </h1>
 
-                    <p>
+                    <p data-i18n="settingsDescription">
                         Manage your Daily Tracker settings.
                     </p>
 
@@ -112,11 +120,11 @@
 
                     <div>
 
-                        <h2>
+                        <h2 data-i18n="profile">
                             Profile
                         </h2>
 
-                        <p>
+                        <p data-i18n="profileDescription">
                             Manage your basic profile information.
                         </p>
 
@@ -129,13 +137,17 @@
 
                     <div class="input-group">
 
-                        <label for="profileName">
+                        <label
+                            for="profileName"
+                            data-i18n="fullName"
+                        >
                             Full Name
                         </label>
 
                         <input
                             type="text"
                             id="profileName"
+                            data-i18n-placeholder="namePlaceholder"
                             placeholder="Enter your name"
                         >
 
@@ -144,13 +156,17 @@
 
                     <div class="input-group">
 
-                        <label for="profileEmail">
+                        <label
+                            for="profileEmail"
+                            data-i18n="email"
+                        >
                             Email
                         </label>
 
                         <input
                             type="email"
                             id="profileEmail"
+                            data-i18n-placeholder="emailPlaceholder"
                             placeholder="Enter your email"
                         >
 
@@ -160,6 +176,7 @@
                     <button
                         type="submit"
                         class="primary-btn"
+                        data-i18n="saveProfile"
                     >
                         Save Profile
                     </button>
@@ -177,11 +194,11 @@
 
                     <div>
 
-                        <h2>
+                        <h2 data-i18n="appearance">
                             Appearance
                         </h2>
 
-                        <p>
+                        <p data-i18n="appearanceDescription">
                             Customize the appearance of the application.
                         </p>
 
@@ -194,11 +211,11 @@
 
                     <div>
 
-                        <h3>
+                        <h3 data-i18n="theme">
                             Theme
                         </h3>
 
-                        <p>
+                        <p data-i18n="themeDescription">
                             Choose between dark and light mode.
                         </p>
 
@@ -207,12 +224,59 @@
 
                     <select id="themeSelect">
 
-                        <option value="dark">
+                        <option
+                            value="dark"
+                            data-i18n="dark"
+                        >
                             Dark
                         </option>
 
-                        <option value="light">
+                        <option
+                            value="light"
+                            data-i18n="light"
+                        >
                             Light
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Language -->
+
+                <div
+                    class="setting-row"
+                    style="margin-top: 15px;"
+                >
+
+                    <div>
+
+                        <h3 data-i18n="language">
+                            Language
+                        </h3>
+
+                        <p data-i18n="languageDescription">
+                            Choose your preferred language.
+                        </p>
+
+                    </div>
+
+
+                    <select id="languageSelect">
+
+                        <option
+                            value="en"
+                            data-i18n="english"
+                        >
+                            English
+                        </option>
+
+                        <option
+                            value="hi"
+                            data-i18n="hindi"
+                        >
+                            Hindi
                         </option>
 
                     </select>
@@ -230,11 +294,11 @@
 
                     <div>
 
-                        <h2>
+                        <h2 data-i18n="changePassword">
                             Change Password
                         </h2>
 
-                        <p>
+                        <p data-i18n="changePasswordDescription">
                             Update your account password.
                         </p>
 
@@ -247,13 +311,17 @@
 
                     <div class="input-group">
 
-                        <label for="currentPassword">
+                        <label
+                            for="currentPassword"
+                            data-i18n="currentPassword"
+                        >
                             Current Password
                         </label>
 
                         <input
                             type="password"
                             id="currentPassword"
+                            data-i18n-placeholder="currentPasswordPlaceholder"
                             placeholder="Enter current password"
                         >
 
@@ -262,13 +330,17 @@
 
                     <div class="input-group">
 
-                        <label for="newPassword">
+                        <label
+                            for="newPassword"
+                            data-i18n="newPassword"
+                        >
                             New Password
                         </label>
 
                         <input
                             type="password"
                             id="newPassword"
+                            data-i18n-placeholder="newPasswordPlaceholder"
                             placeholder="Enter new password"
                         >
 
@@ -277,13 +349,17 @@
 
                     <div class="input-group">
 
-                        <label for="confirmPassword">
+                        <label
+                            for="confirmPassword"
+                            data-i18n="confirmPassword"
+                        >
                             Confirm New Password
                         </label>
 
                         <input
                             type="password"
                             id="confirmPassword"
+                            data-i18n-placeholder="confirmPasswordPlaceholder"
                             placeholder="Confirm new password"
                         >
 
@@ -293,6 +369,7 @@
                     <button
                         type="submit"
                         class="primary-btn"
+                        data-i18n="changePasswordButton"
                     >
                         Change Password
                     </button>
@@ -310,11 +387,11 @@
 
                     <div>
 
-                        <h2>
+                        <h2 data-i18n="account">
                             Account
                         </h2>
 
-                        <p>
+                        <p data-i18n="accountDescription">
                             Manage your account.
                         </p>
 
@@ -328,6 +405,7 @@
                     <button
                         id="logoutButton"
                         class="logout-btn"
+                        data-i18n="logout"
                     >
                         🚪 Logout
                     </button>
@@ -341,7 +419,9 @@
     </div>
 
 
+    <script src="js/theme.js"></script>
     <script src="js/settings-page.js"></script>
+    <script src="js/language.js"></script>
 
 </body>
 

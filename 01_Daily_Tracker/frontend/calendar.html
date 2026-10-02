@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Calendar - Daily Tracker</title>
 
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/calendar.css">
     <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
@@ -18,37 +25,47 @@
         <aside class="sidebar">
 
             <div class="logo">
-                Daily Tracker
+                <span data-i18n="appName">Daily Tracker</span>
             </div>
 
             <nav>
 
                 <a href="dashboard.html">
-                    🏠 Dashboard
+                    <span>🏠</span>
+                    <span data-i18n="dashboard">Dashboard</span>
                 </a>
 
                 <a href="tasks.html">
-                    ✅ Tasks
+                    <span>✅</span>
+                    <span data-i18n="tasks">Tasks</span>
                 </a>
 
                 <a href="goals.html">
-                    🎯 Goals
+                    <span>🎯</span>
+                    <span data-i18n="goals">Goals</span>
                 </a>
 
                 <a href="study.html">
-                    📚 Study
+                    <span>📚</span>
+                    <span data-i18n="study">Study</span>
                 </a>
 
                 <a href="journal.html">
-                    📝 Journal
+                    <span>📝</span>
+                    <span data-i18n="journal">Journal</span>
                 </a>
 
-                <a href="calendar.html" class="active">
-                    📅 Calendar
+                <a
+                    href="calendar.html"
+                    class="active"
+                >
+                    <span>📅</span>
+                    <span data-i18n="calendar">Calendar</span>
                 </a>
 
                 <a href="statistics.html">
-                    📈 Statistics
+                    <span>📈</span>
+                    <span data-i18n="statistics">Statistics</span>
                 </a>
 
             </nav>
@@ -56,11 +73,13 @@
             <div class="sidebar-bottom">
 
                 <a href="settings.html">
-                    ⚙️ Settings
+                    <span>⚙️</span>
+                    <span data-i18n="settings">Settings</span>
                 </a>
 
                 <a href="login.html">
-                    🚪 Logout
+                    <span>🚪</span>
+                    <span data-i18n="logout">Logout</span>
                 </a>
 
             </div>
@@ -73,16 +92,23 @@
             <header class="topbar">
 
                 <div>
-                    <h1>Calendar 📅</h1>
 
-                    <p>
+                    <h1 data-i18n="calendarTitle">
+                        Calendar 📅
+                    </h1>
+
+                    <p data-i18n="calendarDescription">
                         View your tasks, study sessions and journal activity by date.
                     </p>
+
                 </div>
 
                 <div class="date">
+
                     <div id="currentDate"></div>
+
                     <div id="currentTime"></div>
+
                 </div>
 
             </header>
@@ -111,13 +137,13 @@
 
                 <div class="calendar-weekdays">
 
-                    <div>Sun</div>
-                    <div>Mon</div>
-                    <div>Tue</div>
-                    <div>Wed</div>
-                    <div>Thu</div>
-                    <div>Fri</div>
-                    <div>Sat</div>
+                    <div data-i18n="sun">Sun</div>
+                    <div data-i18n="mon">Mon</div>
+                    <div data-i18n="tue">Tue</div>
+                    <div data-i18n="wed">Wed</div>
+                    <div data-i18n="thu">Thu</div>
+                    <div data-i18n="fri">Fri</div>
+                    <div data-i18n="sat">Sat</div>
 
                 </div>
 
@@ -137,36 +163,53 @@
                 <div class="graph-header">
 
                     <div>
-                            <h2 id="graphTitle">
-                                Monthly Activity 📊
-                            </h2>
 
-                        <p>
+                        <h2 id="graphTitle" data-i18n="monthlyActivity">
+                            Monthly Activity 📊
+                        </h2>
+
+                        <p data-i18n="monthlyActivityDescription">
                             Overview of your study, tasks and journal activity.
                         </p>
+
                     </div>
 
                     <div class="graph-controls">
 
-                        <label for="graphDesign">
+                        <label
+                            for="graphDesign"
+                            data-i18n="graphDesign"
+                        >
                             Graph Design
                         </label>
 
                         <select id="graphDesign">
 
-                            <option value="modern">
+                            <option
+                                value="modern"
+                                data-i18n="modern"
+                            >
                                 Modern
                             </option>
 
-                            <option value="bar">
+                            <option
+                                value="bar"
+                                data-i18n="bar"
+                            >
                                 Bar
                             </option>
 
-                            <option value="line">
+                            <option
+                                value="line"
+                                data-i18n="line"
+                            >
                                 Line
                             </option>
 
-                            <option value="area">
+                            <option
+                                value="area"
+                                data-i18n="area"
+                            >
                                 Area
                             </option>
 
@@ -183,7 +226,7 @@
 
                     <div class="graph-stat-card">
 
-                        <span>
+                        <span data-i18n="total">
                             📊 Total
                         </span>
 
@@ -196,7 +239,7 @@
 
                     <div class="graph-stat-card">
 
-                        <span>
+                        <span data-i18n="average">
                             📈 Average
                         </span>
 
@@ -209,7 +252,7 @@
 
                     <div class="graph-stat-card">
 
-                        <span>
+                        <span data-i18n="highestDay">
                             🏆 Highest Day
                         </span>
 
@@ -229,11 +272,11 @@
 
                     <div class="graph-card">
 
-                        <h3>
+                        <h3 data-i18n="studyTime">
                             📚 Study Time
                         </h3>
 
-                        <p>
+                        <p data-i18n="studyMinutesPerDay">
                             Study minutes per day
                         </p>
 
@@ -250,11 +293,11 @@
 
                     <div class="graph-card">
 
-                        <h3>
+                        <h3 data-i18n="completedTasks">
                             ✅ Completed Tasks
                         </h3>
 
-                        <p>
+                        <p data-i18n="completedTasksPerDay">
                             Completed tasks per day
                         </p>
 
@@ -271,11 +314,11 @@
 
                     <div class="graph-card">
 
-                        <h3>
+                        <h3 data-i18n="journalEntries">
                             📝 Journal Entries
                         </h3>
 
-                        <p>
+                        <p data-i18n="journalEntriesPerDay">
                             Journal entries per day
                         </p>
 
@@ -300,11 +343,14 @@
 
                     <div>
 
-                        <h2 id="selectedDateTitle">
+                        <h2
+                            id="selectedDateTitle"
+                            data-i18n="todaysActivity"
+                        >
                             Today's Activity
                         </h2>
 
-                        <p>
+                        <p data-i18n="selectedDateDescription">
                             Activities recorded for the selected date.
                         </p>
 
@@ -324,11 +370,11 @@
                             📅
                         </div>
 
-                        <h3>
+                        <h3 data-i18n="noActivity">
                             No activity
                         </h3>
 
-                        <p>
+                        <p data-i18n="noActivityDescription">
                             No tasks, study sessions or journal entries found.
                         </p>
 
@@ -343,7 +389,10 @@
     </div>
 
 
+    <script src="js/theme.js"></script>
     <script src="js/calendar-page.js"></script>
+    <script src="js/language.js"></script>
 
 </body>
+
 </html>

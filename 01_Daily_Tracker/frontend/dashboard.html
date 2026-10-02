@@ -1,7 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -13,11 +15,6 @@
 
     <link
         rel="stylesheet"
-        href="css/style.css"
-    >
-
-    <link
-        rel="stylesheet"
         href="css/dashboard.css"
     >
 
@@ -25,6 +22,12 @@
         rel="stylesheet"
         href="css/common.css"
     >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
 </head>
 
 
@@ -37,7 +40,7 @@
 
         <aside class="sidebar">
 
-            <div class="logo">
+            <div class="logo" data-i18n="appName">
                 Daily Tracker
             </div>
 
@@ -48,37 +51,78 @@
                     href="#"
                     class="active"
                 >
-                    🏠 Dashboard
+                    <span>🏠</span>
+
+                    <span data-i18n="dashboard">
+                        Dashboard
+                    </span>
+
                 </a>
 
 
                 <a href="tasks.html">
-                    ✅ Tasks
+
+                    <span>✅</span>
+
+                    <span data-i18n="tasks">
+                        Tasks
+                    </span>
+
                 </a>
 
 
                 <a href="goals.html">
-                    🎯 Goals
+
+                    <span>🎯</span>
+
+                    <span data-i18n="goals">
+                        Goals
+                    </span>
+
                 </a>
 
 
                 <a href="study.html">
-                    📚 Study
+
+                    <span>📚</span>
+
+                    <span data-i18n="study">
+                        Study
+                    </span>
+
                 </a>
 
 
                 <a href="journal.html">
-                    📝 Journal
+
+                    <span>📝</span>
+
+                    <span data-i18n="journal">
+                        Journal
+                    </span>
+
                 </a>
 
 
                 <a href="calendar.html">
-                    📅 Calendar
+
+                    <span>📅</span>
+
+                    <span data-i18n="calendar">
+                        Calendar
+                    </span>
+
                 </a>
 
 
                 <a href="statistics.html">
-                    📈 Statistics
+
+                    <span>📈</span>
+
+                    <span data-i18n="statistics">
+                        Statistics
+                    </span>
+
                 </a>
 
             </nav>
@@ -87,12 +131,24 @@
             <div class="sidebar-bottom">
 
                 <a href="settings.html">
-                    ⚙️ Settings
+
+                    <span>⚙️</span>
+
+                    <span data-i18n="settings">
+                        Settings
+                    </span>
+
                 </a>
 
 
                 <a href="login.html">
-                    🚪 Logout
+
+                    <span>🚪</span>
+
+                    <span data-i18n="logout">
+                        Logout
+                    </span>
+
                 </a>
 
             </div>
@@ -111,18 +167,16 @@
 
                 <div>
 
-                    <h1>
+                    <h1 data-i18n="homeTitle">
                         HOME 🏡
                     </h1>
 
-                    <p>
+                    <p data-i18n="homeDescription">
                         Let's make today productive.
                     </p>
 
                 </div>
 
-
-                <!-- Top Right -->
 
                 <div class="topbar-right">
 
@@ -141,7 +195,7 @@
                                 0
                             </strong>
 
-                            <small>
+                            <small data-i18n="dayStreak">
                                 Day Streak
                             </small>
 
@@ -150,7 +204,7 @@
                     </div>
 
 
-                    <!-- Reminder Bell -->
+                    <!-- Reminder -->
 
                     <div
                         class="reminder-wrapper"
@@ -162,6 +216,7 @@
                             class="reminder-bell"
                             id="reminderBell"
                             title="Reminders"
+                            data-i18n-title="reminders"
                         >
 
                             <span>
@@ -175,8 +230,6 @@
                         </button>
 
 
-                        <!-- Reminder Dropdown -->
-
                         <div
                             class="reminder-dropdown"
                             id="reminderDropdown"
@@ -186,20 +239,23 @@
 
                                 <div>
 
-                                    <h3>
+                                    <h3 data-i18n="reminders">
                                         Reminders
                                     </h3>
 
-                                    <small>
+                                    <small data-i18n="upcomingReminders">
                                         Your upcoming reminders
                                     </small>
 
                                 </div>
 
+
                                 <button
                                     type="button"
                                     id="openReminderModal"
                                     class="add-reminder-button"
+                                    title="Add Reminder"
+                                    data-i18n-title="addReminder"
                                 >
                                     +
                                 </button>
@@ -212,7 +268,10 @@
                                 id="reminderList"
                             >
 
-                                <div class="no-reminders">
+                                <div
+                                    class="no-reminders"
+                                    data-i18n="noReminders"
+                                >
                                     No reminders yet.
                                 </div>
 
@@ -223,11 +282,14 @@
                     </div>
 
 
-                    <!-- Date & Time -->
+                    <!-- Date Time -->
 
                     <div class="date-time-card">
 
-                        <span class="date-label">
+                        <span
+                            class="date-label"
+                            data-i18n="today"
+                        >
                             TODAY
                         </span>
 
@@ -243,7 +305,6 @@
 
                     </div>
 
-
                 </div>
 
             </header>
@@ -256,7 +317,7 @@
 
                 <div class="card">
 
-                    <h3>
+                    <h3 data-i18n="tasks">
                         Tasks
                     </h3>
 
@@ -267,7 +328,7 @@
                         0/0
                     </p>
 
-                    <span>
+                    <span data-i18n="completed">
                         Completed
                     </span>
 
@@ -276,7 +337,7 @@
 
                 <div class="card">
 
-                    <h3>
+                    <h3 data-i18n="study">
                         Study
                     </h3>
 
@@ -287,7 +348,7 @@
                         0m
                     </p>
 
-                    <span>
+                    <span data-i18n="today">
                         Today
                     </span>
 
@@ -296,20 +357,22 @@
 
                 <div class="card">
 
-                    <h3>
+                    <h3 data-i18n="goals">
                         Goals
                     </h3>
 
-                    <p class="number">
-                        3
+                    <p
+                        class="number"
+                        id="goalCount"
+                    >
+                        0
                     </p>
 
-                    <span>
+                    <span data-i18n="active">
                         Active
                     </span>
 
                 </div>
-
 
             </section>
 
@@ -320,7 +383,7 @@
 
                 <div class="section-header">
 
-                    <h2>
+                    <h2 data-i18n="todaysProgress">
                         Today's Progress
                     </h2>
 
@@ -349,13 +412,14 @@
 
                 <div class="section-header">
 
-                    <h2>
+                    <h2 data-i18n="todaysTasks">
                         Today's Tasks
                     </h2>
 
                     <button
                         type="button"
                         id="openTaskModal"
+                        data-i18n="addTask"
                     >
                         + Add Task
                     </button>
@@ -368,90 +432,7 @@
                     id="dashboardTaskList"
                 >
 
-                    <div class="task completed">
-
-                        <input
-                            type="checkbox"
-                            checked
-                        >
-
-                        <div class="task-info">
-
-                            <span>
-                                Complete C++ Study
-                            </span>
-
-                            <small>
-                                Priority: High
-                            </small>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="task completed">
-
-                        <input
-                            type="checkbox"
-                            checked
-                        >
-
-                        <div class="task-info">
-
-                            <span>
-                                College Work
-                            </span>
-
-                            <small>
-                                Priority: Medium
-                            </small>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="task">
-
-                        <input
-                            type="checkbox"
-                        >
-
-                        <div class="task-info">
-
-                            <span>
-                                Practice Python
-                            </span>
-
-                            <small>
-                                Priority: Medium
-                            </small>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="task">
-
-                        <input
-                            type="checkbox"
-                        >
-
-                        <div class="task-info">
-
-                            <span>
-                                GitHub Work
-                            </span>
-
-                            <small>
-                                Priority: Low
-                            </small>
-
-                        </div>
-
-                    </div>
+                    <!-- Tasks loaded by dashboard.js -->
 
                 </div>
 
@@ -469,13 +450,18 @@
 
                     <div class="section-header">
 
-                        <h2>
+                        <h2 data-i18n="studyToday">
                             Study Today
                         </h2>
 
+
+                        <!-- IMPORTANT:
+                             This now opens study.html -->
+
                         <button
                             type="button"
-                            id="openStudyModal"
+                            id="openStudyPage"
+                            data-i18n="addSession"
                         >
                             + Add Session
                         </button>
@@ -488,17 +474,7 @@
                         id="studyList"
                     >
 
-                        <div>
-
-                            <span>
-                                No study sessions yet
-                            </span>
-
-                            <strong>
-                                0m
-                            </strong>
-
-                        </div>
+                        <!-- Study sessions loaded by study-dashboard.js -->
 
                     </div>
 
@@ -511,12 +487,14 @@
 
                     <div class="section-header">
 
-                        <h2>
+                        <h2 data-i18n="goals">
                             Goals
                         </h2>
 
                         <button
                             type="button"
+                            id="openGoalPage"
+                            data-i18n="addGoal"
                         >
                             + Add Goal
                         </button>
@@ -524,49 +502,17 @@
                     </div>
 
 
-                    <div class="study-info">
+                    <div
+                        class="study-info"
+                        id="dashboardGoalList"
+                    >
 
-                        <div>
-
-                            <span>
-                                Complete C++ Course
-                            </span>
-
-                            <strong>
-                                70%
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-                                Learn Python
-                            </span>
-
-                            <strong>
-                                45%
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-                                Build Daily Tracker
-                            </span>
-
-                            <strong>
-                                30%
-                            </strong>
-
-                        </div>
+                        <!-- Goals loaded by dashboard.js -->
 
                     </div>
 
                 </section>
+
 
             </div>
 
@@ -585,9 +531,10 @@
 
         <div class="task-modal-box">
 
+
             <div class="task-modal-header">
 
-                <h2>
+                <h2 data-i18n="addNewTask">
                     Add New Task
                 </h2>
 
@@ -605,7 +552,10 @@
 
                 <div class="input-group">
 
-                    <label for="taskName">
+                    <label
+                        for="taskName"
+                        data-i18n="taskName"
+                    >
                         Task Name
                     </label>
 
@@ -613,6 +563,7 @@
                         type="text"
                         id="taskName"
                         placeholder="Enter task name"
+                        data-i18n-placeholder="taskNamePlaceholder"
                         required
                     >
 
@@ -621,24 +572,34 @@
 
                 <div class="input-group">
 
-                    <label for="taskPriority">
+                    <label
+                        for="taskPriority"
+                        data-i18n="priority"
+                    >
                         Priority
                     </label>
 
                     <select id="taskPriority">
 
-                        <option value="Low">
+                        <option
+                            value="Low"
+                            data-i18n="low"
+                        >
                             Low
                         </option>
 
                         <option
                             value="Medium"
                             selected
+                            data-i18n="medium"
                         >
                             Medium
                         </option>
 
-                        <option value="High">
+                        <option
+                            value="High"
+                            data-i18n="high"
+                        >
                             High
                         </option>
 
@@ -649,7 +610,10 @@
 
                 <div class="input-group">
 
-                    <label for="taskDueTime">
+                    <label
+                        for="taskDueTime"
+                        data-i18n="dueTime"
+                    >
                         Due Time
                     </label>
 
@@ -666,11 +630,15 @@
                     <button
                         type="button"
                         id="cancelTask"
+                        data-i18n="cancel"
                     >
                         Cancel
                     </button>
 
-                    <button type="submit">
+                    <button
+                        type="submit"
+                        data-i18n="addTaskButton"
+                    >
                         Add Task
                     </button>
 
@@ -683,114 +651,7 @@
     </div>
 
 
-    <!-- Edit Task Modal -->
-
-    <div
-        class="task-modal"
-        id="editTaskModal"
-    >
-
-        <div class="task-modal-box">
-
-            <div class="task-modal-header">
-
-                <h2>
-                    Edit Task
-                </h2>
-
-                <button
-                    type="button"
-                    id="closeEditTaskModal"
-                >
-                    ×
-                </button>
-
-            </div>
-
-
-            <form id="editTaskForm">
-
-                <div class="input-group">
-
-                    <label for="editTaskName">
-                        Task Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="editTaskName"
-                        placeholder="Enter task name"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label for="editTaskPriority">
-                        Priority
-                    </label>
-
-                    <select id="editTaskPriority">
-
-                        <option value="Low">
-                            Low
-                        </option>
-
-                        <option
-                            value="Medium"
-                            selected
-                        >
-                            Medium
-                        </option>
-
-                        <option value="High">
-                            High
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="input-group">
-
-                    <label for="editTaskDueTime">
-                        Due Time
-                    </label>
-
-                    <input
-                        type="time"
-                        id="editTaskDueTime"
-                    >
-
-                </div>
-
-
-                <div class="task-modal-actions">
-
-                    <button
-                        type="button"
-                        id="cancelEditTask"
-                    >
-                        Cancel
-                    </button>
-
-                    <button type="submit">
-                        Save Changes
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-
-    <!-- Add Study Session Modal -->
+    <!-- Edit Study Session Modal -->
 
     <div
         class="task-modal"
@@ -799,10 +660,11 @@
 
         <div class="task-modal-box">
 
+
             <div class="task-modal-header">
 
-                <h2>
-                    Add Study Session
+                <h2 data-i18n="editStudySession">
+                    Edit Study Session
                 </h2>
 
                 <button
@@ -817,9 +679,13 @@
 
             <form id="studyForm">
 
+
                 <div class="input-group">
 
-                    <label for="studySubject">
+                    <label
+                        for="studySubject"
+                        data-i18n="subject"
+                    >
                         Subject
                     </label>
 
@@ -827,6 +693,7 @@
                         type="text"
                         id="studySubject"
                         placeholder="e.g. C++, Python, DSA"
+                        data-i18n-placeholder="subjectPlaceholder"
                         required
                     >
 
@@ -835,7 +702,10 @@
 
                 <div class="input-group">
 
-                    <label for="studyDuration">
+                    <label
+                        for="studyDuration"
+                        data-i18n="durationMinutes"
+                    >
                         Duration (minutes)
                     </label>
 
@@ -843,6 +713,7 @@
                         type="number"
                         id="studyDuration"
                         placeholder="e.g. 60"
+                        data-i18n-placeholder="durationPlaceholder"
                         min="1"
                         required
                     >
@@ -855,12 +726,16 @@
                     <button
                         type="button"
                         id="cancelStudy"
+                        data-i18n="cancel"
                     >
                         Cancel
                     </button>
 
-                    <button type="submit">
-                        Add Session
+                    <button
+                        type="submit"
+                        data-i18n="saveChanges"
+                    >
+                        Save Changes
                     </button>
 
                 </div>
@@ -881,9 +756,10 @@
 
         <div class="task-modal-box">
 
+
             <div class="task-modal-header">
 
-                <h2>
+                <h2 data-i18n="addReminder">
                     Add Reminder
                 </h2>
 
@@ -899,9 +775,13 @@
 
             <form id="reminderForm">
 
+
                 <div class="input-group">
 
-                    <label for="reminderText">
+                    <label
+                        for="reminderText"
+                        data-i18n="reminder"
+                    >
                         Reminder
                     </label>
 
@@ -909,6 +789,7 @@
                         type="text"
                         id="reminderText"
                         placeholder="e.g. Study C++"
+                        data-i18n-placeholder="reminderPlaceholder"
                         required
                     >
 
@@ -917,7 +798,10 @@
 
                 <div class="input-group">
 
-                    <label for="reminderDate">
+                    <label
+                        for="reminderDate"
+                        data-i18n="date"
+                    >
                         Date
                     </label>
 
@@ -932,7 +816,10 @@
 
                 <div class="input-group">
 
-                    <label for="reminderTime">
+                    <label
+                        for="reminderTime"
+                        data-i18n="time"
+                    >
                         Time
                     </label>
 
@@ -950,11 +837,15 @@
                     <button
                         type="button"
                         id="cancelReminder"
+                        data-i18n="cancel"
                     >
                         Cancel
                     </button>
 
-                    <button type="submit">
+                    <button
+                        type="submit"
+                        data-i18n="addReminderButton"
+                    >
                         Add Reminder
                     </button>
 
@@ -969,10 +860,16 @@
 
     <!-- JavaScript -->
 
+    <script src="js/theme.js"></script>
+
     <script src="js/dashboard.js"></script>
 
-    <script src="js/study.js"></script>
+    <!-- IMPORTANT: dashboard study file -->
+    <script src="js/study-dashboard.js"></script>
 
+    <script src="js/language.js"></script>
+
+    <script src="js/auth.js"></script>
 
 </body>
 

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -12,9 +13,20 @@
 
     <title>Tasks - Daily Tracker</title>
 
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/tasks.css">
-    <link rel="stylesheet" href="css/common.css">
+    <link
+        rel="stylesheet"
+        href="css/tasks.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/common.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 
 </head>
 
@@ -22,53 +34,124 @@
 
     <div class="tasks-page">
 
+
         <!-- Sidebar -->
+
         <aside class="sidebar">
 
-            <div class="logo">
+            <div
+                class="logo"
+                data-i18n="appName"
+            >
                 Daily Tracker
             </div>
+
 
             <nav>
 
                 <a href="dashboard.html">
-                    🏠 Dashboard
+
+                    <span>🏠</span>
+
+                    <span data-i18n="dashboard">
+                        Dashboard
+                    </span>
+
                 </a>
 
-                <a href="tasks.html" class="active">
-                    ✅ Tasks
+
+                <a
+                    href="tasks.html"
+                    class="active"
+                >
+
+                    <span>✅</span>
+
+                    <span data-i18n="tasks">
+                        Tasks
+                    </span>
+
                 </a>
+
 
                 <a href="goals.html">
-                    🎯 Goals
+
+                    <span>🎯</span>
+
+                    <span data-i18n="goals">
+                        Goals
+                    </span>
+
                 </a>
+
 
                 <a href="study.html">
-                    📚 Study
+
+                    <span>📚</span>
+
+                    <span data-i18n="study">
+                        Study
+                    </span>
+
                 </a>
+
 
                 <a href="journal.html">
-                    📝 Journal
+
+                    <span>📝</span>
+
+                    <span data-i18n="journal">
+                        Journal
+                    </span>
+
                 </a>
+
 
                 <a href="calendar.html">
-                    📅 Calendar
+
+                    <span>📅</span>
+
+                    <span data-i18n="calendar">
+                        Calendar
+                    </span>
+
                 </a>
 
+
                 <a href="statistics.html">
-                    📈 Statistics
+
+                    <span>📈</span>
+
+                    <span data-i18n="statistics">
+                        Statistics
+                    </span>
+
                 </a>
 
             </nav>
 
+
             <div class="sidebar-bottom">
 
                 <a href="settings.html">
-                    ⚙️ Settings
+
+                    <span>⚙️</span>
+
+                    <span data-i18n="settings">
+                        Settings
+                    </span>
+
                 </a>
 
+
                 <a href="login.html">
-                    🚪 Logout
+
+                    <span>🚪</span>
+
+                    <span data-i18n="logout">
+                        Logout
+                    </span>
+
                 </a>
 
             </div>
@@ -77,20 +160,26 @@
 
 
         <!-- Main Content -->
+
         <main class="main-content">
 
+
             <!-- Topbar -->
+
             <header class="topbar">
 
                 <div>
 
-                    <h1>My Tasks</h1>
+                    <h1 data-i18n="myTasks">
+                        My Tasks
+                    </h1>
 
-                    <p>
+                    <p data-i18n="tasksDescription">
                         Manage your daily tasks and stay productive.
                     </p>
 
                 </div>
+
 
                 <div class="date">
 
@@ -104,11 +193,15 @@
 
 
             <!-- Task Summary -->
+
             <section class="task-summary">
+
 
                 <div class="summary-card">
 
-                    <span>Total Tasks</span>
+                    <span data-i18n="totalTasks">
+                        Total Tasks
+                    </span>
 
                     <strong id="totalTasks">
                         0
@@ -119,7 +212,9 @@
 
                 <div class="summary-card">
 
-                    <span>Completed</span>
+                    <span data-i18n="completed">
+                        Completed
+                    </span>
 
                     <strong id="completedTasks">
                         0
@@ -130,7 +225,9 @@
 
                 <div class="summary-card">
 
-                    <span>Pending</span>
+                    <span data-i18n="pending">
+                        Pending
+                    </span>
 
                     <strong id="pendingTasks">
                         0
@@ -141,7 +238,9 @@
 
                 <div class="summary-card">
 
-                    <span>Progress</span>
+                    <span data-i18n="progress">
+                        Progress
+                    </span>
 
                     <strong id="taskProgressText">
                         0%
@@ -153,23 +252,29 @@
 
 
             <!-- Task Section -->
+
             <section class="tasks-section">
+
 
                 <div class="tasks-header">
 
                     <div>
 
-                        <h2>Today's Tasks</h2>
+                        <h2 data-i18n="todaysTasks">
+                            Today's Tasks
+                        </h2>
 
-                        <p>
+                        <p data-i18n="tasksProgressDescription">
                             Complete your tasks to improve your progress.
                         </p>
 
                     </div>
 
+
                     <button
                         type="button"
                         id="openTaskModal"
+                        data-i18n="addTask"
                     >
                         + Add Task
                     </button>
@@ -178,11 +283,12 @@
 
 
                 <!-- Progress -->
+
                 <div class="progress-container">
 
                     <div class="progress-info">
 
-                        <span>
+                        <span data-i18n="todaysProgress">
                             Today's Progress
                         </span>
 
@@ -191,6 +297,7 @@
                         </strong>
 
                     </div>
+
 
                     <div class="progress-bar">
 
@@ -205,25 +312,31 @@
 
 
                 <!-- Filters -->
+
                 <div class="task-controls">
 
                     <button
                         class="filter-btn active"
                         data-filter="all"
+                        data-i18n="all"
                     >
                         All
                     </button>
 
+
                     <button
                         class="filter-btn"
                         data-filter="pending"
+                        data-i18n="pending"
                     >
                         Pending
                     </button>
 
+
                     <button
                         class="filter-btn"
                         data-filter="completed"
+                        data-i18n="completed"
                     >
                         Completed
                     </button>
@@ -232,6 +345,7 @@
 
 
                 <!-- Task List -->
+
                 <div
                     class="task-list"
                     id="taskList"
@@ -241,6 +355,7 @@
 
 
                 <!-- Empty State -->
+
                 <div
                     class="empty-state"
                     id="emptyState"
@@ -250,11 +365,11 @@
                         ✓
                     </div>
 
-                    <h3>
+                    <h3 data-i18n="noTasks">
                         No tasks yet
                     </h3>
 
-                    <p>
+                    <p data-i18n="noTasksDescription">
                         Add your first task to get started.
                     </p>
 
@@ -268,6 +383,7 @@
 
 
     <!-- Add Task Modal -->
+
     <div
         class="task-modal"
         id="taskModal"
@@ -275,11 +391,13 @@
 
         <div class="task-modal-box">
 
+
             <div class="task-modal-header">
 
-                <h2>
+                <h2 data-i18n="addNewTask">
                     Add New Task
                 </h2>
+
 
                 <button
                     type="button"
@@ -293,16 +411,22 @@
 
             <form id="taskForm">
 
+
                 <div class="input-group">
 
-                    <label for="taskName">
+                    <label
+                        for="taskName"
+                        data-i18n="taskName"
+                    >
                         Task Name
                     </label>
+
 
                     <input
                         type="text"
                         id="taskName"
                         placeholder="Enter task name"
+                        data-i18n-placeholder="taskNamePlaceholder"
                         required
                     >
 
@@ -311,24 +435,37 @@
 
                 <div class="input-group">
 
-                    <label for="taskPriority">
+                    <label
+                        for="taskPriority"
+                        data-i18n="priority"
+                    >
                         Priority
                     </label>
 
+
                     <select id="taskPriority">
 
-                        <option value="Low">
+                        <option
+                            value="Low"
+                            data-i18n="low"
+                        >
                             Low
                         </option>
+
 
                         <option
                             value="Medium"
                             selected
+                            data-i18n="medium"
                         >
                             Medium
                         </option>
 
-                        <option value="High">
+
+                        <option
+                            value="High"
+                            data-i18n="high"
+                        >
                             High
                         </option>
 
@@ -339,9 +476,13 @@
 
                 <div class="input-group">
 
-                    <label for="taskDueTime">
+                    <label
+                        for="taskDueTime"
+                        data-i18n="dueTime"
+                    >
                         Due Time
                     </label>
+
 
                     <input
                         type="time"
@@ -353,9 +494,13 @@
 
                 <div class="input-group">
 
-                    <label for="taskDate">
+                    <label
+                        for="taskDate"
+                        data-i18n="taskDate"
+                    >
                         Task Date
                     </label>
+
 
                     <input
                         type="date"
@@ -368,14 +513,20 @@
 
                 <div class="task-modal-actions">
 
+
                     <button
                         type="button"
                         id="cancelTask"
+                        data-i18n="cancel"
                     >
                         Cancel
                     </button>
 
-                    <button type="submit">
+
+                    <button
+                        type="submit"
+                        data-i18n="addTaskButton"
+                    >
                         Add Task
                     </button>
 
@@ -389,6 +540,7 @@
 
 
     <!-- Edit Task Modal -->
+
     <div
         class="task-modal"
         id="editTaskModal"
@@ -396,11 +548,13 @@
 
         <div class="task-modal-box">
 
+
             <div class="task-modal-header">
 
-                <h2>
+                <h2 data-i18n="editTask">
                     Edit Task
                 </h2>
+
 
                 <button
                     type="button"
@@ -414,15 +568,22 @@
 
             <form id="editTaskForm">
 
+
                 <div class="input-group">
 
-                    <label for="editTaskName">
+                    <label
+                        for="editTaskName"
+                        data-i18n="taskName"
+                    >
                         Task Name
                     </label>
+
 
                     <input
                         type="text"
                         id="editTaskName"
+                        placeholder="Enter task name"
+                        data-i18n-placeholder="taskNamePlaceholder"
                         required
                     >
 
@@ -431,24 +592,37 @@
 
                 <div class="input-group">
 
-                    <label for="editTaskPriority">
+                    <label
+                        for="editTaskPriority"
+                        data-i18n="priority"
+                    >
                         Priority
                     </label>
 
+
                     <select id="editTaskPriority">
 
-                        <option value="Low">
+                        <option
+                            value="Low"
+                            data-i18n="low"
+                        >
                             Low
                         </option>
+
 
                         <option
                             value="Medium"
                             selected
+                            data-i18n="medium"
                         >
                             Medium
                         </option>
 
-                        <option value="High">
+
+                        <option
+                            value="High"
+                            data-i18n="high"
+                        >
                             High
                         </option>
 
@@ -459,9 +633,13 @@
 
                 <div class="input-group">
 
-                    <label for="editTaskDueTime">
+                    <label
+                        for="editTaskDueTime"
+                        data-i18n="dueTime"
+                    >
                         Due Time
                     </label>
+
 
                     <input
                         type="time"
@@ -473,9 +651,13 @@
 
                 <div class="input-group">
 
-                    <label for="editTaskDate">
+                    <label
+                        for="editTaskDate"
+                        data-i18n="taskDate"
+                    >
                         Task Date
                     </label>
+
 
                     <input
                         type="date"
@@ -488,14 +670,20 @@
 
                 <div class="task-modal-actions">
 
+
                     <button
                         type="button"
                         id="cancelEditTask"
+                        data-i18n="cancel"
                     >
                         Cancel
                     </button>
 
-                    <button type="submit">
+
+                    <button
+                        type="submit"
+                        data-i18n="saveChanges"
+                    >
                         Save Changes
                     </button>
 
@@ -508,7 +696,14 @@
     </div>
 
 
+    <!-- JavaScript -->
+
+    <script src="js/theme.js"></script>
+
     <script src="js/tasks-page.js"></script>
+
+    <script src="js/language.js"></script>
+
 
 </body>
 

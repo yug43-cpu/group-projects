@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Journal - Daily Tracker</title>
 
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/journal.css">
     <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
@@ -18,37 +25,47 @@
         <aside class="sidebar">
 
             <div class="logo">
-                Daily Tracker
+                <span data-i18n="appName">Daily Tracker</span>
             </div>
 
             <nav>
 
                 <a href="dashboard.html">
-                    🏠 Dashboard
+                    <span>🏠</span>
+                    <span data-i18n="dashboard">Dashboard</span>
                 </a>
 
                 <a href="tasks.html">
-                    ✅ Tasks
+                    <span>✅</span>
+                    <span data-i18n="tasks">Tasks</span>
                 </a>
 
                 <a href="goals.html">
-                    🎯 Goals
+                    <span>🎯</span>
+                    <span data-i18n="goals">Goals</span>
                 </a>
 
                 <a href="study.html">
-                    📚 Study
+                    <span>📚</span>
+                    <span data-i18n="study">Study</span>
                 </a>
 
-                <a href="journal.html" class="active">
-                    📝 Journal
+                <a
+                    href="journal.html"
+                    class="active"
+                >
+                    <span>📝</span>
+                    <span data-i18n="journal">Journal</span>
                 </a>
 
                 <a href="calendar.html">
-                    📅 Calendar
+                    <span>📅</span>
+                    <span data-i18n="calendar">Calendar</span>
                 </a>
 
                 <a href="statistics.html">
-                    📈 Statistics
+                    <span>📈</span>
+                    <span data-i18n="statistics">Statistics</span>
                 </a>
 
             </nav>
@@ -56,11 +73,13 @@
             <div class="sidebar-bottom">
 
                 <a href="settings.html">
-                    ⚙️ Settings
+                    <span>⚙️</span>
+                    <span data-i18n="settings">Settings</span>
                 </a>
 
                 <a href="login.html">
-                    🚪 Logout
+                    <span>🚪</span>
+                    <span data-i18n="logout">Logout</span>
                 </a>
 
             </div>
@@ -73,13 +92,23 @@
             <header class="topbar">
 
                 <div>
-                    <h1>Journal 📝</h1>
-                    <p>Write down your thoughts and daily experiences.</p>
+
+                    <h1 data-i18n="journalTitle">
+                        Journal 📝
+                    </h1>
+
+                    <p data-i18n="journalDescription">
+                        Write down your thoughts and daily experiences.
+                    </p>
+
                 </div>
 
                 <div class="date">
+
                     <div id="currentDate"></div>
+
                     <div id="currentTime"></div>
+
                 </div>
 
             </header>
@@ -88,21 +117,62 @@
             <section class="summary-cards">
 
                 <div class="card">
-                    <h3>Total Entries</h3>
-                    <p class="number" id="totalEntries">0</p>
-                    <span>All journal entries</span>
+
+                    <h3 data-i18n="totalEntries">
+                        Total Entries
+                    </h3>
+
+                    <p
+                        class="number"
+                        id="totalEntries"
+                    >
+                        0
+                    </p>
+
+                    <span data-i18n="allJournalEntries">
+                        All journal entries
+                    </span>
+
                 </div>
 
-                <div class="card">
-                    <h3>This Month</h3>
-                    <p class="number" id="monthlyEntries">0</p>
-                    <span>Entries this month</span>
-                </div>
 
                 <div class="card">
-                    <h3>Latest Entry</h3>
-                    <p class="number" id="latestEntry">None</p>
-                    <span>Most recent journal</span>
+
+                    <h3 data-i18n="thisMonth">
+                        This Month
+                    </h3>
+
+                    <p
+                        class="number"
+                        id="monthlyEntries"
+                    >
+                        0
+                    </p>
+
+                    <span data-i18n="entriesThisMonth">
+                        Entries this month
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3 data-i18n="latestEntry">
+                        Latest Entry
+                    </h3>
+
+                    <p
+                        class="number"
+                        id="latestEntry"
+                    >
+                        None
+                    </p>
+
+                    <span data-i18n="mostRecentJournal">
+                        Most recent journal
+                    </span>
+
                 </div>
 
             </section>
@@ -113,11 +183,21 @@
                 <div class="section-header">
 
                     <div>
-                        <h2>My Journal</h2>
-                        <p>Record your daily thoughts, ideas and experiences.</p>
+
+                        <h2 data-i18n="myJournal">
+                            My Journal
+                        </h2>
+
+                        <p data-i18n="journalSectionDescription">
+                            Record your daily thoughts, ideas and experiences.
+                        </p>
+
                     </div>
 
-                    <button id="openJournalModal">
+                    <button
+                        id="openJournalModal"
+                        data-i18n="newEntry"
+                    >
                         + New Entry
                     </button>
 
@@ -130,20 +210,32 @@
                         type="text"
                         id="searchJournal"
                         placeholder="Search journal..."
+                        data-i18n-placeholder="searchJournalPlaceholder"
                     >
 
-                    <button class="filter-btn active" data-filter="all">
+                    <button
+                        class="filter-btn active"
+                        data-filter="all"
+                        data-i18n="all"
+                    >
                         All
                     </button>
 
-                    <button class="filter-btn" data-filter="today">
+                    <button
+                        class="filter-btn"
+                        data-filter="today"
+                        data-i18n="today"
+                    >
                         Today
                     </button>
 
                 </div>
 
 
-                <div class="journal-list" id="journalList">
+                <div
+                    class="journal-list"
+                    id="journalList"
+                >
 
                     <div class="empty-state">
 
@@ -151,9 +243,11 @@
                             📝
                         </div>
 
-                        <h3>No journal entries yet</h3>
+                        <h3 data-i18n="noJournalEntries">
+                            No journal entries yet
+                        </h3>
 
-                        <p>
+                        <p data-i18n="noJournalEntriesDescription">
                             Write your first journal entry to start your daily record.
                         </p>
 
@@ -170,17 +264,26 @@
 
     <!-- Journal Modal -->
 
-    <div class="journal-modal" id="journalModal">
+    <div
+        class="journal-modal"
+        id="journalModal"
+    >
 
         <div class="journal-modal-box">
 
             <div class="journal-modal-header">
 
-                <h2 id="journalModalTitle">
+                <h2
+                    id="journalModalTitle"
+                    data-i18n="newJournalEntry"
+                >
                     New Journal Entry
                 </h2>
 
-                <button type="button" id="closeJournalModal">
+                <button
+                    type="button"
+                    id="closeJournalModal"
+                >
                     ×
                 </button>
 
@@ -191,7 +294,10 @@
 
                 <div class="input-group">
 
-                    <label for="journalTitle">
+                    <label
+                        for="journalTitle"
+                        data-i18n="title"
+                    >
                         Title
                     </label>
 
@@ -199,6 +305,7 @@
                         type="text"
                         id="journalTitle"
                         placeholder="e.g. My Productive Day"
+                        data-i18n-placeholder="journalTitlePlaceholder"
                         required
                     >
 
@@ -207,7 +314,10 @@
 
                 <div class="input-group">
 
-                    <label for="journalDate">
+                    <label
+                        for="journalDate"
+                        data-i18n="date"
+                    >
                         Date
                     </label>
 
@@ -222,7 +332,10 @@
 
                 <div class="input-group">
 
-                    <label for="journalMood">
+                    <label
+                        for="journalMood"
+                        data-i18n="mood"
+                    >
                         Mood
                     </label>
 
@@ -259,7 +372,10 @@
 
                 <div class="input-group">
 
-                    <label for="journalContent">
+                    <label
+                        for="journalContent"
+                        data-i18n="journal"
+                    >
                         Journal
                     </label>
 
@@ -267,6 +383,7 @@
                         id="journalContent"
                         rows="8"
                         placeholder="Write about your day..."
+                        data-i18n-placeholder="journalContentPlaceholder"
                         required
                     ></textarea>
 
@@ -278,11 +395,15 @@
                     <button
                         type="button"
                         id="cancelJournal"
+                        data-i18n="cancel"
                     >
                         Cancel
                     </button>
 
-                    <button type="submit">
+                    <button
+                        type="submit"
+                        data-i18n="saveEntry"
+                    >
                         Save Entry
                     </button>
 
@@ -295,7 +416,10 @@
     </div>
 
 
+    <script src="js/theme.js"></script>
     <script src="js/journal-page.js"></script>
+    <script src="js/language.js"></script>
 
 </body>
+
 </html>
