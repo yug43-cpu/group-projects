@@ -1,16 +1,87 @@
-const journalList = document.getElementById("journalList");
+// ================================
+// Backend API
+// ================================
 
-const journalModal = document.getElementById("journalModal");
-const openJournalModal = document.getElementById("openJournalModal");
-const closeJournalModal = document.getElementById("closeJournalModal");
-const cancelJournal = document.getElementById("cancelJournal");
+const API_URL = "http://localhost:5000/api";
 
-const journalForm = document.getElementById("journalForm");
 
-const journalTitle = document.getElementById("journalTitle");
-const journalDate = document.getElementById("journalDate");
-const journalMood = document.getElementById("journalMood");
-const journalContent = document.getElementById("journalContent");
+// ================================
+// Current User
+// ================================
+
+let currentUser = null;
+
+const currentUserData =
+    localStorage.getItem("currentUser");
+
+if (!currentUserData) {
+
+    window.location.href = "login.html";
+
+} else {
+
+    try {
+
+        currentUser =
+            JSON.parse(currentUserData);
+
+    } catch (error) {
+
+        console.error(
+            "Invalid current user data:",
+            error
+        );
+
+        localStorage.removeItem("currentUser");
+
+        window.location.href = "login.html";
+
+    }
+
+}
+
+if (!currentUser || !currentUser.id) {
+
+    localStorage.removeItem("currentUser");
+
+    window.location.href = "login.html";
+
+}
+
+
+// ================================
+// Journal Elements
+// ================================
+
+const journalList =
+    document.getElementById("journalList");
+
+const journalModal =
+    document.getElementById("journalModal");
+
+const openJournalModal =
+    document.getElementById("openJournalModal");
+
+const closeJournalModal =
+    document.getElementById("closeJournalModal");
+
+const cancelJournal =
+    document.getElementById("cancelJournal");
+
+const journalForm =
+    document.getElementById("journalForm");
+
+const journalTitle =
+    document.getElementById("journalTitle");
+
+const journalDate =
+    document.getElementById("journalDate");
+
+const journalMood =
+    document.getElementById("journalMood");
+
+const journalContent =
+    document.getElementById("journalContent");
 
 const journalModalTitle =
     document.getElementById("journalModalTitle");
@@ -30,98 +101,156 @@ const monthlyEntries =
 const latestEntry =
     document.getElementById("latestEntry");
 
-let journals =
-    JSON.parse(localStorage.getItem("journals")) || [];
+
+// ================================
+// State
+// ================================
+
+let journals = [];
 
 let currentFilter = "all";
+
 let editingId = null;
 
 
-/* ================================
-   Date & Time
-================================ */
+// ================================
+// Date & Time
+// ================================
 
 function updateDateTime() {
 
     const now = new Date();
 
     const dateOptions = {
+
         weekday: "long",
+
         day: "2-digit",
+
         month: "long",
+
         year: "numeric"
+
     };
 
     const timeOptions = {
+
         hour: "2-digit",
+
         minute: "2-digit",
+
         second: "2-digit",
+
         hour12: true
+
     };
 
-    document.getElementById("currentDate").textContent =
-        now.toLocaleDateString("en-IN", dateOptions);
+    const currentDate =
+        document.getElementById("currentDate");
 
-    document.getElementById("currentTime").textContent =
-        now.toLocaleTimeString("en-IN", timeOptions);
+    const currentTime =
+        document.getElementById("currentTime");
+
+    if (currentDate) {
+
+        currentDate.textContent =
+            now.toLocaleDateString(
+                "en-IN",
+                dateOptions
+            );
+
+    }
+
+    if (currentTime) {
+
+        currentTime.textContent =
+            now.toLocaleTimeString(
+                "en-IN",
+                timeOptions
+            );
+
+    }
+
 }
+
 
 updateDateTime();
 
-setInterval(updateDateTime, 1000);
+setInterval(
+    updateDateTime,
+    1000
+);
 
 
-/* ================================
-   Today Date
-================================ */
+// ================================
+// Get Today's Date
+// ================================
 
 function getToday() {
 
     const now = new Date();
 
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
+
 }
 
 
-/* ================================
-   Escape HTML
-================================ */
+// ================================
+// Escape HTML
+// ================================
 
 function escapeHTML(text) {
 
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text || "";
+
+    return div.innerHTML;
+
 }
 
 
-/* ================================
-   Save Journals
-================================ */
-
-function saveJournals() {
-
-    localStorage.setItem(
-        "journals",
-        JSON.stringify(journals)
-    );
-}
-
-
-/* ================================
-   Format Date
-================================ */
+// ================================
+// Format Date
+// ================================
 
 function formatDate(dateString) {
 
-    const date = new Date(dateString + "T00:00:00");
+    if (!dateString) {
+
+        return "No date";
+
+    }
+
+    const date =
+        new Date(
+            dateString + "T00:00:00"
+        );
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "Invalid date";
+
+    }
 
     return date.toLocaleDateString(
         "en-IN",
@@ -131,12 +260,90 @@ function formatDate(dateString) {
             year: "numeric"
         }
     );
+
 }
 
 
-/* ================================
-   Render Journals
-================================ */
+// ================================
+// Load Journals From Backend
+// ================================
+
+async function loadJournals() {
+
+    if (!currentUser || !currentUser.id) {
+
+        window.location.href = "login.html";
+
+        return;
+
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/journals?userId=${encodeURIComponent(currentUser.id)}`
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Failed to load journal entries."
+            );
+
+        }
+
+        journals =
+            Array.isArray(data.journals)
+                ? data.journals
+                : [];
+
+        renderJournals();
+
+        updateStatistics();
+
+    } catch (error) {
+
+        console.error(
+            "Journal loading error:",
+            error
+        );
+
+        journalList.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ⚠️
+                </div>
+
+                <h3>
+                    Unable to load journal entries
+                </h3>
+
+                <p>
+                    Please make sure the backend server is running.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// ================================
+// Render Journals
+// ================================
 
 function renderJournals() {
 
@@ -148,156 +355,290 @@ function renderJournals() {
     let filteredJournals =
         [...journals];
 
-    if (currentFilter === "today") {
+
+    // ================================
+    // Today Filter
+    // ================================
+
+    if (
+        currentFilter === "today"
+    ) {
 
         filteredJournals =
             filteredJournals.filter(
-                journal =>
-                    journal.date === getToday()
+                function (journal) {
+
+                    return (
+                        journal.date ===
+                        getToday()
+                    );
+
+                }
             );
+
     }
 
-    if (searchText !== "") {
+
+    // ================================
+    // Search
+    // ================================
+
+    if (
+        searchText !== ""
+    ) {
 
         filteredJournals =
-            filteredJournals.filter(journal =>
-                journal.title.toLowerCase().includes(searchText) ||
-                journal.content.toLowerCase().includes(searchText) ||
-                journal.mood.toLowerCase().includes(searchText)
+            filteredJournals.filter(
+                function (journal) {
+
+                    const title =
+                        String(
+                            journal.title || ""
+                        ).toLowerCase();
+
+                    const content =
+                        String(
+                            journal.content || ""
+                        ).toLowerCase();
+
+                    const mood =
+                        String(
+                            journal.mood || ""
+                        ).toLowerCase();
+
+                    return (
+                        title.includes(searchText) ||
+                        content.includes(searchText) ||
+                        mood.includes(searchText)
+                    );
+
+                }
             );
+
     }
 
+
+    // ================================
+    // Sort Newest First
+    // ================================
+
     filteredJournals.sort(
-        (a, b) =>
-            new Date(b.date) - new Date(a.date)
+        function (a, b) {
+
+            return (
+                new Date(
+                    b.date + "T00:00:00"
+                ) -
+                new Date(
+                    a.date + "T00:00:00"
+                )
+            );
+
+        }
     );
 
-    if (filteredJournals.length === 0) {
+
+    // ================================
+    // Empty State
+    // ================================
+
+    if (
+        filteredJournals.length === 0
+    ) {
 
         journalList.innerHTML = `
+
             <div class="empty-state">
 
                 <div class="empty-icon">
                     📝
                 </div>
 
-                <h3>No journal entries found</h3>
+                <h3>
+                    No journal entries found
+                </h3>
 
                 <p>
                     Create a new journal entry to start writing.
                 </p>
 
             </div>
+
         `;
 
         return;
+
     }
 
+
+    // ================================
+    // Create Journal Elements
+    // ================================
+
     journalList.innerHTML =
-        filteredJournals.map(journal => `
+        filteredJournals.map(
+            function (journal) {
 
-            <div class="journal-entry">
+                return `
 
-                <div class="journal-entry-header">
+                    <div
+                        class="journal-entry"
+                        data-id="${journal.id}"
+                    >
 
-                    <div>
+                        <div class="journal-entry-header">
 
-                        <div class="journal-entry-title">
-                            ${escapeHTML(journal.title)}
+                            <div>
+
+                                <div class="journal-entry-title">
+
+                                    ${escapeHTML(
+                                        journal.title
+                                    )}
+
+                                </div>
+
+                                <div class="journal-entry-meta">
+
+                                    ${formatDate(
+                                        journal.date
+                                    )}
+
+                                </div>
+
+                            </div>
+
+                            <div class="journal-mood">
+
+                                ${escapeHTML(
+                                    journal.mood || ""
+                                )}
+
+                            </div>
+
                         </div>
 
-                        <div class="journal-entry-meta">
-                            ${formatDate(journal.date)}
+
+                        <div class="journal-entry-content">
+
+                            ${escapeHTML(
+                                journal.content
+                            )}
+
+                        </div>
+
+
+                        <div class="journal-entry-actions">
+
+                            <button
+                                class="edit-journal"
+                                data-id="${journal.id}"
+                            >
+                                Edit
+                            </button>
+
+                            <button
+                                class="delete-journal"
+                                data-id="${journal.id}"
+                            >
+                                Delete
+                            </button>
+
                         </div>
 
                     </div>
 
-                    <div class="journal-mood">
-                        ${escapeHTML(journal.mood)}
-                    </div>
+                `;
 
-                </div>
+            }
+        ).join("");
 
-                <div class="journal-entry-content">
-                    ${escapeHTML(journal.content)}
-                </div>
-
-                <div class="journal-entry-actions">
-
-                    <button
-                        onclick="editJournal('${journal.id}')"
-                    >
-                        Edit
-                    </button>
-
-                    <button
-                        onclick="deleteJournal('${journal.id}')"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            </div>
-
-        `).join("");
 }
 
 
-/* ================================
-   Update Statistics
-================================ */
+// ================================
+// Update Statistics
+// ================================
 
 function updateStatistics() {
 
-    totalEntries.textContent =
+    const total =
         journals.length;
 
+    totalEntries.textContent =
+        total;
+
+    const now =
+        new Date();
+
     const currentMonth =
-        new Date().getMonth();
+        now.getMonth();
 
     const currentYear =
-        new Date().getFullYear();
+        now.getFullYear();
 
     const monthCount =
-        journals.filter(journal => {
+        journals.filter(
+            function (journal) {
 
-            const date =
-                new Date(journal.date + "T00:00:00");
+                const date =
+                    new Date(
+                        journal.date +
+                        "T00:00:00"
+                    );
 
-            return (
-                date.getMonth() === currentMonth &&
-                date.getFullYear() === currentYear
-            );
+                return (
+                    date.getMonth() ===
+                    currentMonth &&
 
-        }).length;
+                    date.getFullYear() ===
+                    currentYear
+                );
+
+            }
+        ).length;
 
     monthlyEntries.textContent =
         monthCount;
 
-    if (journals.length === 0) {
+    if (total === 0) {
 
         latestEntry.textContent =
             "None";
 
         return;
+
     }
 
     const sorted =
         [...journals].sort(
-            (a, b) =>
-                new Date(b.date) -
-                new Date(a.date)
+            function (a, b) {
+
+                return (
+                    new Date(
+                        b.date +
+                        "T00:00:00"
+                    ) -
+                    new Date(
+                        a.date +
+                        "T00:00:00"
+                    )
+                );
+
+            }
         );
 
     latestEntry.textContent =
-        formatDate(sorted[0].date);
+        formatDate(
+            sorted[0].date
+        );
+
 }
 
 
-/* ================================
-   Open Modal
-================================ */
+// ================================
+// Open Add Journal Modal
+// ================================
 
 openJournalModal.addEventListener(
     "click",
@@ -305,50 +646,80 @@ openJournalModal.addEventListener(
 
         editingId = null;
 
+        journalForm.reset();
+
         journalModalTitle.textContent =
             "New Journal Entry";
-
-        journalForm.reset();
 
         journalDate.value =
             getToday();
 
-        journalModal.classList.add("show");
+        journalModal.classList.add(
+            "show"
+        );
+
+        journalTitle.focus();
+
     }
 );
 
 
-/* ================================
-   Close Modal
-================================ */
+// ================================
+// Close Journal Modal
+// ================================
 
-function closeModal() {
+function closeJournalModalFunction() {
 
-    journalModal.classList.remove("show");
+    journalModal.classList.remove(
+        "show"
+    );
 
     journalForm.reset();
 
     editingId = null;
+
 }
+
 
 closeJournalModal.addEventListener(
     "click",
-    closeModal
+    closeJournalModalFunction
 );
+
 
 cancelJournal.addEventListener(
     "click",
-    closeModal
+    closeJournalModalFunction
 );
 
 
-/* ================================
-   Save Journal
-================================ */
+// ================================
+// Close Modal Outside
+// ================================
+
+journalModal.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            event.target === journalModal
+        ) {
+
+            closeJournalModalFunction();
+
+        }
+
+    }
+);
+
+
+// ================================
+// Add / Edit Journal
+// ================================
 
 journalForm.addEventListener(
     "submit",
-    function (event) {
+    async function (event) {
 
         event.preventDefault();
 
@@ -364,166 +735,382 @@ journalForm.addEventListener(
         const content =
             journalContent.value.trim();
 
+
+        // ================================
+        // Validation
+        // ================================
+
         if (
             title === "" ||
             date === "" ||
             content === ""
         ) {
-            alert("Please fill all required fields!");
+
+            alert(
+                "Please fill all required fields!"
+            );
+
             return;
+
         }
 
 
-        if (editingId) {
+        if (!currentUser || !currentUser.id) {
+
+            window.location.href = "login.html";
+
+            return;
+
+        }
+
+
+        try {
+
+            let response;
+
+
+            // ================================
+            // Edit Existing Journal
+            // ================================
+
+            if (
+                editingId !== null
+            ) {
+
+                response =
+                    await fetch(
+                        `${API_URL}/journals/${editingId}`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    userId:
+                                        currentUser.id,
+
+                                    title:
+                                        title,
+
+                                    date:
+                                        date,
+
+                                    mood:
+                                        mood,
+
+                                    content:
+                                        content
+
+                                })
+
+                        }
+                    );
+
+            }
+
+
+            // ================================
+            // Add New Journal
+            // ================================
+
+            else {
+
+                response =
+                    await fetch(
+                        `${API_URL}/journals`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    userId:
+                                        currentUser.id,
+
+                                    title:
+                                        title,
+
+                                    date:
+                                        date,
+
+                                    mood:
+                                        mood,
+
+                                    content:
+                                        content
+
+                                })
+
+                        }
+                    );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Journal operation failed."
+                );
+
+            }
+
+
+            closeJournalModalFunction();
+
+            await loadJournals();
+
+
+        } catch (error) {
+
+            console.error(
+                "Journal save error:",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Could not save journal entry."
+            );
+
+        }
+
+    }
+);
+
+
+// ================================
+// Edit / Delete Journal
+// ================================
+
+journalList.addEventListener(
+    "click",
+    async function (event) {
+
+
+        // ================================
+        // Edit
+        // ================================
+
+        if (
+            event.target.classList.contains(
+                "edit-journal"
+            )
+        ) {
+
+            const id =
+                Number(
+                    event.target.dataset.id
+                );
 
             const journal =
                 journals.find(
-                    item =>
-                        item.id === editingId
+                    function (item) {
+
+                        return (
+                            Number(item.id) ===
+                            id
+                        );
+
+                    }
                 );
 
-            if (journal) {
+            if (!journal) {
 
-                journal.title = title;
-                journal.date = date;
-                journal.mood = mood;
-                journal.content = content;
+                return;
+
             }
 
-        } else {
+            editingId =
+                id;
 
-            const newJournal = {
+            journalModalTitle.textContent =
+                "Edit Journal Entry";
 
-                id:
-                    Date.now().toString(),
+            journalTitle.value =
+                journal.title || "";
 
-                title:
-                    title,
+            journalDate.value =
+                journal.date || "";
 
-                date:
-                    date,
+            journalMood.value =
+                journal.mood || "";
 
-                mood:
-                    mood,
+            journalContent.value =
+                journal.content || "";
 
-                content:
-                    content
-            };
+            journalModal.classList.add(
+                "show"
+            );
 
-            journals.push(newJournal);
+            journalTitle.focus();
+
         }
 
 
-        saveJournals();
+        // ================================
+        // Delete
+        // ================================
 
-        renderJournals();
+        if (
+            event.target.classList.contains(
+                "delete-journal"
+            )
+        ) {
 
-        updateStatistics();
+            const id =
+                Number(
+                    event.target.dataset.id
+                );
 
-        closeModal();
+            const confirmDelete =
+                confirm(
+                    "Are you sure you want to delete this journal entry?"
+                );
+
+            if (!confirmDelete) {
+
+                return;
+
+            }
+
+
+            if (!currentUser || !currentUser.id) {
+
+                window.location.href = "login.html";
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/journals/${id}`,
+                        {
+                            method: "DELETE",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    userId:
+                                        currentUser.id
+
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to delete journal entry."
+                    );
+
+                }
+
+
+                await loadJournals();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Journal delete error:",
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    "Could not delete journal entry."
+                );
+
+            }
+
+        }
 
     }
 );
 
 
-/* ================================
-   Edit Journal
-================================ */
-
-function editJournal(id) {
-
-    const journal =
-        journals.find(
-            item =>
-                item.id === id
-        );
-
-    if (!journal) {
-        return;
-    }
-
-    editingId = id;
-
-    journalModalTitle.textContent =
-        "Edit Journal Entry";
-
-    journalTitle.value =
-        journal.title;
-
-    journalDate.value =
-        journal.date;
-
-    journalMood.value =
-        journal.mood;
-
-    journalContent.value =
-        journal.content;
-
-    journalModal.classList.add("show");
-}
-
-
-/* ================================
-   Delete Journal
-================================ */
-
-function deleteJournal(id) {
-
-    const confirmDelete =
-        confirm(
-            "Are you sure you want to delete this journal entry?"
-        );
-
-    if (!confirmDelete) {
-        return;
-    }
-
-    journals =
-        journals.filter(
-            journal =>
-                journal.id !== id
-        );
-
-    saveJournals();
-
-    renderJournals();
-
-    updateStatistics();
-}
-
-
-/* ================================
-   Search
-================================ */
+// ================================
+// Search
+// ================================
 
 searchJournal.addEventListener(
     "input",
-    renderJournals
+    function () {
+
+        renderJournals();
+
+    }
 );
 
 
-/* ================================
-   Filters
-================================ */
+// ================================
+// Filters
+// ================================
 
 filterButtons.forEach(
-    button => {
+    function (button) {
 
         button.addEventListener(
             "click",
             function () {
 
                 filterButtons.forEach(
-                    btn =>
-                        btn.classList.remove("active")
+                    function (btn) {
+
+                        btn.classList.remove(
+                            "active"
+                        );
+
+                    }
                 );
 
-                this.classList.add("active");
+                button.classList.add(
+                    "active"
+                );
 
                 currentFilter =
-                    this.dataset.filter;
+                    button.dataset.filter;
 
                 renderJournals();
+
             }
         );
 
@@ -531,10 +1118,8 @@ filterButtons.forEach(
 );
 
 
-/* ================================
-   Initial Load
-================================ */
+// ================================
+// Initial Load
+// ================================
 
-renderJournals();
-
-updateStatistics();
+loadJournals();

@@ -1,778 +1,910 @@
-// ================================
-// API
-// ================================
+(function () {
 
-const API_URL = "http://localhost:5000/api";
-
-
-// ================================
-// Goal Elements
-// ================================
-
-const goalList =
-    document.getElementById("goalList");
-
-const totalGoals =
-    document.getElementById("totalGoals");
-
-const activeGoals =
-    document.getElementById("activeGoals");
-
-const completedGoals =
-    document.getElementById("completedGoals");
-
-const averageProgress =
-    document.getElementById("averageProgress");
-
-
-// ================================
-// Add Goal Modal
-// ================================
-
-const goalModal =
-    document.getElementById("goalModal");
-
-const openGoalModal =
-    document.getElementById("openGoalModal");
-
-const closeGoalModal =
-    document.getElementById("closeGoalModal");
-
-const cancelGoal =
-    document.getElementById("cancelGoal");
-
-const goalForm =
-    document.getElementById("goalForm");
-
-const goalName =
-    document.getElementById("goalName");
-
-const goalProgress =
-    document.getElementById("goalProgress");
-
-const goalDeadline =
-    document.getElementById("goalDeadline");
-
-
-// ================================
-// Edit Goal Modal
-// ================================
-
-const editGoalModal =
-    document.getElementById("editGoalModal");
-
-const closeEditGoalModal =
-    document.getElementById("closeEditGoalModal");
-
-const cancelEditGoal =
-    document.getElementById("cancelEditGoal");
-
-const editGoalForm =
-    document.getElementById("editGoalForm");
-
-const editGoalName =
-    document.getElementById("editGoalName");
-
-const editGoalProgress =
-    document.getElementById("editGoalProgress");
-
-const editGoalDeadline =
-    document.getElementById("editGoalDeadline");
-
-let currentEditingGoal = null;
-
-
-// ================================
-// Current Goals
-// ================================
-
-let goals = [];
-
-
-// ================================
-// Current Filter
-// ================================
-
-let currentFilter = "all";
-
-
-// ================================
-// Load Goals From Backend
-// ================================
-
-async function loadGoals() {
-
-    try {
-
-        const response =
-            await fetch(`${API_URL}/goals`);
-
-        const data =
-            await response.json();
-
-        if (!response.ok || !data.success) {
-
-            throw new Error(
-                data.message || "Failed to load goals."
-            );
-
-        }
-
-        goals =
-            Array.isArray(data.goals)
-                ? data.goals
-                : [];
-
-        displayGoals(goals);
-
-        updateGoalStats(goals);
-
-    } catch (error) {
-
-        console.error(
-            "Error loading goals:",
-            error
-        );
-
-        goalList.innerHTML = `
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    ⚠️
-                </div>
-
-                <h3>
-                    Unable to load goals
-                </h3>
-
-                <p>
-                    Please make sure the backend server is running.
-                </p>
-
-            </div>
-        `;
-
-    }
-
-}
-
-
-// ================================
-// Display Goals
-// ================================
-
-function displayGoals(goals) {
-
-    goalList.innerHTML = "";
-
-    let filteredGoals = goals;
-
-    if (currentFilter === "active") {
-
-        filteredGoals =
-            goals.filter(function (goal) {
-
-                return Number(goal.progress) < 100;
-
-            });
-
-    }
-
-    if (currentFilter === "completed") {
-
-        filteredGoals =
-            goals.filter(function (goal) {
-
-                return Number(goal.progress) >= 100;
-
-            });
-
-    }
-
-
-    if (filteredGoals.length === 0) {
-
-        goalList.innerHTML = `
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    🎯
-                </div>
-
-                <h3>
-                    No goals found
-                </h3>
-
-                <p>
-                    Add a goal to start tracking your progress.
-                </p>
-
-            </div>
-        `;
-
+    if (window.dailyTrackerGoalsLoaded) {
         return;
     }
 
+    window.dailyTrackerGoalsLoaded = true;
 
-    filteredGoals.forEach(function (goal) {
+    const API_URL = "http://localhost:5000/api";
 
-        createGoalElement(goal);
-
-    });
-
-}
-
-
-// ================================
-// Create Goal Element
-// ================================
-
-function createGoalElement(goal) {
-
-    const progress =
-        Number(goal.progress);
-
-    const isCompleted =
-        progress >= 100;
-
-    const goalDiv =
-        document.createElement("div");
-
-    goalDiv.classList.add("goal-item");
-
-    goalDiv.innerHTML = `
-        <div class="goal-top">
-
-            <div class="goal-info">
-
-                <div class="goal-name">
-                    ${escapeHTML(goal.name)}
-                </div>
-
-                <div class="goal-deadline">
-                    ${
-                        goal.deadline
-                            ? "Deadline: " + formatDate(goal.deadline)
-                            : "No deadline"
-                    }
-                </div>
-
-            </div>
-
-            <div class="goal-progress-text">
-                ${progress}%
-            </div>
-
-        </div>
+    let goals = [];
+    let currentEditingGoal = null;
+    let currentFilter = "all";
 
 
-        <div class="goal-progress-bar">
+    // ==================================================
+    // CURRENT USER
+    // ==================================================
 
-            <div
-                class="goal-progress"
-                style="width: ${Math.min(Math.max(progress, 0), 100)}%"
-            ></div>
+    const currentUserRaw =
+        localStorage.getItem("currentUser");
 
-        </div>
-
-
-        <div class="goal-footer">
-
-            <span
-                class="goal-status ${isCompleted ? "completed" : ""}"
-            >
-                ${isCompleted ? "Completed" : "Active"}
-            </span>
-
-
-            <div class="goal-actions">
-
-                <button
-                    class="edit-goal"
-                    data-id="${goal.id}"
-                >
-                    Edit
-                </button>
-
-                <button
-                    class="delete-goal"
-                    data-id="${goal.id}"
-                >
-                    Delete
-                </button>
-
-            </div>
-
-        </div>
-    `;
-
-    goalList.appendChild(goalDiv);
-
-}
-
-
-// ================================
-// Escape HTML
-// ================================
-
-function escapeHTML(text) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent =
-        text || "";
-
-    return div.innerHTML;
-
-}
-
-
-// ================================
-// Format Date
-// ================================
-
-function formatDate(dateString) {
-
-    if (!dateString) {
-        return "";
+    if (!currentUserRaw) {
+        window.location.href = "login.html";
+        return;
     }
 
-    const date =
-        new Date(dateString + "T00:00:00");
+    let currentUser;
 
-    return date.toLocaleDateString(
-        "en-IN",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        }
-    );
+    try {
 
-}
+        currentUser = JSON.parse(currentUserRaw);
 
+    } catch (error) {
 
-// ================================
-// Update Goal Statistics
-// ================================
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+        return;
 
-function updateGoalStats(goals) {
+    }
 
-    const total =
-        goals.length;
+    if (!currentUser || !currentUser.id) {
 
-    const completed =
-        goals.filter(function (goal) {
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+        return;
 
-            return Number(goal.progress) >= 100;
+    }
 
-        }).length;
-
-    const active =
-        total - completed;
+    const currentUserId = Number(currentUser.id);
 
 
-    let progressTotal = 0;
+    // ==================================================
+    // ELEMENTS
+    // ==================================================
 
-    goals.forEach(function (goal) {
+    const goalList =
+        document.getElementById("goalList");
 
-        progressTotal +=
-            Number(goal.progress) || 0;
+    const openGoalModal =
+        document.getElementById("openGoalModal");
 
-    });
+    const goalModal =
+        document.getElementById("goalModal");
+
+    const closeGoalModal =
+        document.getElementById("closeGoalModal");
+
+    const cancelGoal =
+        document.getElementById("cancelGoal");
+
+    const goalForm =
+        document.getElementById("goalForm");
+
+    const goalName =
+        document.getElementById("goalName");
+
+    const goalProgress =
+        document.getElementById("goalProgress");
+
+    const goalDeadline =
+        document.getElementById("goalDeadline");
 
 
-    let average = 0;
+    const editGoalModal =
+        document.getElementById("editGoalModal");
 
-    if (total > 0) {
+    const closeEditGoalModal =
+        document.getElementById("closeEditGoalModal");
 
-        average =
-            Math.round(
-                progressTotal / total
-            );
+    const cancelEditGoal =
+        document.getElementById("cancelEditGoal");
+
+    const editGoalForm =
+        document.getElementById("editGoalForm");
+
+    const editGoalName =
+        document.getElementById("editGoalName");
+
+    const editGoalProgress =
+        document.getElementById("editGoalProgress");
+
+    const editGoalDeadline =
+        document.getElementById("editGoalDeadline");
+
+
+    const filterButtons =
+        document.querySelectorAll(".filter-btn");
+
+
+    // ==================================================
+    // ESCAPE HTML
+    // ==================================================
+
+    function escapeHTML(value) {
+
+        const div =
+            document.createElement("div");
+
+        div.textContent =
+            value ?? "";
+
+        return div.innerHTML;
 
     }
 
 
-    totalGoals.textContent =
-        total;
+    // ==================================================
+    // FORMAT DATE
+    // ==================================================
 
-    activeGoals.textContent =
-        active;
+    function formatDate(dateString) {
 
-    completedGoals.textContent =
-        completed;
+        if (!dateString) {
+            return "-";
+        }
 
-    averageProgress.textContent =
-        `${average}%`;
+        const date =
+            new Date(dateString);
 
-}
+        if (Number.isNaN(date.getTime())) {
+            return "-";
+        }
 
-
-// ================================
-// Open Add Goal Modal
-// ================================
-
-openGoalModal.addEventListener(
-    "click",
-    function () {
-
-        currentEditingGoal = null;
-
-        goalForm.reset();
-
-        goalProgress.value = 0;
-
-        goalModal.classList.add("active");
-
-        goalName.focus();
+        return date.toLocaleDateString(
+            undefined,
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
 
     }
-);
 
 
-// ================================
-// Close Add Goal Modal
-// ================================
+    // ==================================================
+    // GET GOALS
+    // ==================================================
 
-function closeGoalModalFunction() {
-
-    goalModal.classList.remove("active");
-
-    goalForm.reset();
-
-    currentEditingGoal = null;
-
-}
-
-
-closeGoalModal.addEventListener(
-    "click",
-    closeGoalModalFunction
-);
-
-
-cancelGoal.addEventListener(
-    "click",
-    closeGoalModalFunction
-);
-
-
-// ================================
-// Close Add Modal Outside
-// ================================
-
-goalModal.addEventListener(
-    "click",
-    function (event) {
-
-        if (event.target === goalModal) {
-
-            closeGoalModalFunction();
-
-        }
-
-    }
-);
-
-
-// ================================
-// Add Goal
-// ================================
-
-goalForm.addEventListener(
-    "submit",
-    async function (event) {
-
-        event.preventDefault();
-
-        const name =
-            goalName.value.trim();
-
-        const progress =
-            Number(goalProgress.value);
-
-        const deadline =
-            goalDeadline.value;
-
-
-        if (name === "") {
-
-            alert(
-                "Goal name is required."
-            );
-
-            return;
-
-        }
-
-
-        if (
-            progress < 0 ||
-            progress > 100
-        ) {
-
-            alert(
-                "Progress must be between 0 and 100."
-            );
-
-            return;
-
-        }
-
+    async function getGoals() {
 
         try {
 
             const response =
                 await fetch(
-                    `${API_URL}/goals`,
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            name: name,
-                            progress: progress,
-                            deadline: deadline
-                        })
-                    }
+                    `${API_URL}/goals?userId=${encodeURIComponent(currentUserId)}`
                 );
-
 
             const data =
                 await response.json();
 
 
-            if (!response.ok || !data.success) {
+            if (!response.ok) {
 
                 throw new Error(
-                    data.message || "Failed to add goal."
+                    data.message ||
+                    "Failed to load goals."
                 );
 
             }
 
 
-            closeGoalModalFunction();
+            if (Array.isArray(data)) {
 
-            await loadGoals();
+                goals = data;
 
+            } else if (
+                data &&
+                Array.isArray(data.goals)
+            ) {
+
+                goals = data.goals;
+
+            } else {
+
+                goals = [];
+
+            }
+
+
+            displayGoals();
 
         } catch (error) {
 
             console.error(
-                "Error adding goal:",
+                "Error loading goals:",
                 error
-            );
-
-            alert(
-                error.message ||
-                "Failed to add goal."
             );
 
         }
 
     }
-);
 
 
-// ================================
-// Edit / Delete Goal
-// ================================
+    // ==================================================
+    // DISPLAY GOALS
+    // ==================================================
 
-goalList.addEventListener(
-    "click",
-    async function (event) {
+    function displayGoals() {
 
-        // ============================
-        // Edit Goal
-        // ============================
+        if (!goalList) {
+            return;
+        }
 
-        if (
-            event.target.classList.contains(
-                "edit-goal"
-            )
-        ) {
 
-            const id =
-                Number(
-                    event.target.dataset.id
+        let filteredGoals =
+            [...goals];
+
+
+        // Filter
+        if (currentFilter === "active") {
+
+            filteredGoals =
+                filteredGoals.filter(
+                    goal =>
+                        Number(goal.progress) < 100
+                );
+
+        } else if (currentFilter === "completed") {
+
+            filteredGoals =
+                filteredGoals.filter(
+                    goal =>
+                        Number(goal.progress) >= 100
+                );
+
+        }
+
+
+        // Empty state
+        if (filteredGoals.length === 0) {
+
+            goalList.innerHTML = `
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🎯
+                    </div>
+
+                    <h3>
+                        No goals yet
+                    </h3>
+
+                    <p>
+                        Create your first goal to get started.
+                    </p>
+
+                </div>
+            `;
+
+            updateGoalStats();
+
+            return;
+
+        }
+
+
+        // Goal list
+        goalList.innerHTML =
+            filteredGoals.map(
+                function (goal) {
+
+                    const progress =
+                        Math.min(
+                            100,
+                            Math.max(
+                                0,
+                                Number(goal.progress) || 0
+                            )
+                        );
+
+
+                    const status =
+                        progress >= 100
+                            ? "Completed"
+                            : "Active";
+
+
+                    return `
+                        <div
+                            class="goal-item"
+                            data-id="${goal.id}"
+                        >
+
+                            <div class="goal-top">
+
+                                <div class="goal-info">
+
+                                    <div class="goal-name">
+                                        ${escapeHTML(goal.name)}
+                                    </div>
+
+                                    <div class="goal-deadline">
+                                        Deadline:
+                                        ${formatDate(goal.deadline)}
+                                    </div>
+
+                                </div>
+
+                                <div class="goal-progress-text">
+                                    ${progress}%
+                                </div>
+
+                            </div>
+
+
+                            <div class="goal-progress-bar">
+
+                                <div
+                                    class="goal-progress"
+                                    style="width: ${progress}%"
+                                ></div>
+
+                            </div>
+
+
+                            <div class="goal-footer">
+
+                                <span
+                                    class="goal-status ${progress >= 100 ? "completed" : ""}"
+                                >
+                                    ${status}
+                                </span>
+
+
+                                <div class="goal-actions">
+
+                                    <button
+                                        type="button"
+                                        class="edit-goal"
+                                        data-id="${goal.id}"
+                                    >
+                                        Edit
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="delete-goal"
+                                        data-id="${goal.id}"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                }
+            ).join("");
+
+
+        updateGoalStats();
+
+    }
+
+
+    // ==================================================
+    // UPDATE STATISTICS
+    // ==================================================
+
+    function updateGoalStats() {
+
+        const total =
+            goals.length;
+
+
+        const active =
+            goals.filter(
+                goal =>
+                    Number(goal.progress) < 100
+            ).length;
+
+
+        const completed =
+            goals.filter(
+                goal =>
+                    Number(goal.progress) >= 100
+            ).length;
+
+
+        let average = 0;
+
+
+        if (goals.length > 0) {
+
+            const totalProgress =
+                goals.reduce(
+                    function (sum, goal) {
+
+                        return sum +
+                            Math.min(
+                                100,
+                                Math.max(
+                                    0,
+                                    Number(goal.progress) || 0
+                                )
+                            );
+
+                    },
+                    0
                 );
 
 
-            const goal =
-                goals.find(function (item) {
+            average =
+                Math.round(
+                    totalProgress / goals.length
+                );
 
-                    return item.id === id;
-
-                });
+        }
 
 
-            if (!goal) {
-                return;
+        const totalGoals =
+            document.getElementById("totalGoals");
+
+        const activeGoals =
+            document.getElementById("activeGoals");
+
+        const completedGoals =
+            document.getElementById("completedGoals");
+
+        const averageProgress =
+            document.getElementById("averageProgress");
+
+
+        if (totalGoals) {
+            totalGoals.textContent = total;
+        }
+
+        if (activeGoals) {
+            activeGoals.textContent = active;
+        }
+
+        if (completedGoals) {
+            completedGoals.textContent = completed;
+        }
+
+        if (averageProgress) {
+            averageProgress.textContent =
+                `${average}%`;
+        }
+
+    }
+
+
+    // ==================================================
+    // OPEN ADD GOAL MODAL
+    // ==================================================
+
+    if (openGoalModal) {
+
+        openGoalModal.addEventListener(
+            "click",
+            function () {
+
+                if (goalForm) {
+                    goalForm.reset();
+                }
+
+                if (goalProgress) {
+                    goalProgress.value = 0;
+                }
+
+                if (goalModal) {
+
+                    goalModal.classList.add(
+                        "active"
+                    );
+
+                }
+
             }
+        );
+
+    }
 
 
-            currentEditingGoal =
-                id;
+    // ==================================================
+    // CLOSE ADD GOAL MODAL
+    // ==================================================
 
+    function closeAddGoalModal() {
+
+        if (goalModal) {
+
+            goalModal.classList.remove(
+                "active"
+            );
+
+        }
+
+    }
+
+
+    if (closeGoalModal) {
+
+        closeGoalModal.addEventListener(
+            "click",
+            closeAddGoalModal
+        );
+
+    }
+
+
+    if (cancelGoal) {
+
+        cancelGoal.addEventListener(
+            "click",
+            closeAddGoalModal
+        );
+
+    }
+
+
+    // ==================================================
+    // ADD GOAL
+    // ==================================================
+
+    if (goalForm) {
+
+        goalForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const name =
+                    goalName
+                        ? goalName.value.trim()
+                        : "";
+
+
+                const progress =
+                    goalProgress
+                        ? Number(goalProgress.value)
+                        : 0;
+
+
+                const deadline =
+                    goalDeadline
+                        ? goalDeadline.value
+                        : "";
+
+
+                if (!name) {
+
+                    alert(
+                        "Please enter a goal name."
+                    );
+
+                    return;
+
+                }
+
+
+                const safeProgress =
+                    Math.min(
+                        100,
+                        Math.max(
+                            0,
+                            Number.isFinite(progress)
+                                ? progress
+                                : 0
+                        )
+                    );
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `${API_URL}/goals`,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+
+                                    userId:
+                                        currentUserId,
+
+                                    name:
+                                        name,
+
+                                    progress:
+                                        safeProgress,
+
+                                    deadline:
+                                        deadline
+
+                                })
+
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.message ||
+                            "Failed to create goal."
+                        );
+
+                    }
+
+
+                    closeAddGoalModal();
+
+                    await getGoals();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Error creating goal:",
+                        error
+                    );
+
+                    alert(
+                        error.message ||
+                        "Failed to create goal."
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // ==================================================
+    // OPEN EDIT GOAL
+    // ==================================================
+
+    function openEditGoal(id) {
+
+        const goal =
+            goals.find(
+                item =>
+                    Number(item.id) ===
+                    Number(id)
+            );
+
+
+        if (!goal) {
+            return;
+        }
+
+
+        currentEditingGoal =
+            Number(id);
+
+
+        if (editGoalName) {
 
             editGoalName.value =
-                goal.name;
+                goal.name || "";
+
+        }
+
+
+        if (editGoalProgress) {
 
             editGoalProgress.value =
-                goal.progress;
+                Number(goal.progress) || 0;
+
+        }
+
+
+        if (editGoalDeadline) {
 
             editGoalDeadline.value =
                 goal.deadline || "";
 
+        }
+
+
+        if (editGoalModal) {
 
             editGoalModal.classList.add(
                 "active"
             );
 
-
-            editGoalName.focus();
-
         }
 
-
-        // ============================
-        // Delete Goal
-        // ============================
-
-        if (
-            event.target.classList.contains(
-                "delete-goal"
-            )
-        ) {
-
-            const id =
-                Number(
-                    event.target.dataset.id
-                );
+    }
 
 
-            const confirmDelete =
-                confirm(
-                    "Delete this goal?"
-                );
+    // ==================================================
+    // CLOSE EDIT MODAL
+    // ==================================================
+
+    function closeEditModal() {
+
+        currentEditingGoal =
+            null;
 
 
-            if (!confirmDelete) {
-                return;
-            }
+        if (editGoalModal) {
 
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${API_URL}/goals/${id}`,
-                        {
-                            method: "DELETE"
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (
-                    !response.ok ||
-                    !data.success
-                ) {
-
-                    throw new Error(
-                        data.message ||
-                        "Failed to delete goal."
-                    );
-
-                }
-
-
-                await loadGoals();
-
-
-            } catch (error) {
-
-                console.error(
-                    "Error deleting goal:",
-                    error
-                );
-
-                alert(
-                    error.message ||
-                    "Failed to delete goal."
-                );
-
-            }
+            editGoalModal.classList.remove(
+                "active"
+            );
 
         }
 
     }
-);
 
 
-// ================================
-// Save Edited Goal
-// ================================
+    if (closeEditGoalModal) {
 
-editGoalForm.addEventListener(
-    "submit",
-    async function (event) {
+        closeEditGoalModal.addEventListener(
+            "click",
+            closeEditModal
+        );
 
-        event.preventDefault();
-
-
-        if (
-            currentEditingGoal === null
-        ) {
-
-            return;
-
-        }
+    }
 
 
-        const name =
-            editGoalName.value.trim();
+    if (cancelEditGoal) {
 
-        const progress =
-            Number(
-                editGoalProgress.value
+        cancelEditGoal.addEventListener(
+            "click",
+            closeEditModal
+        );
+
+    }
+
+
+    // ==================================================
+    // UPDATE GOAL
+    // ==================================================
+
+    if (editGoalForm) {
+
+        editGoalForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                if (!currentEditingGoal) {
+                    return;
+                }
+
+
+                const name =
+                    editGoalName
+                        ? editGoalName.value.trim()
+                        : "";
+
+
+                const progress =
+                    editGoalProgress
+                        ? Number(editGoalProgress.value)
+                        : 0;
+
+
+                const deadline =
+                    editGoalDeadline
+                        ? editGoalDeadline.value
+                        : "";
+
+
+                if (!name) {
+
+                    alert(
+                        "Please enter a goal name."
+                    );
+
+                    return;
+
+                }
+
+
+                const safeProgress =
+                    Math.min(
+                        100,
+                        Math.max(
+                            0,
+                            Number.isFinite(progress)
+                                ? progress
+                                : 0
+                        )
+                    );
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `${API_URL}/goals/${currentEditingGoal}`,
+                            {
+                                method: "PUT",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+
+                                    userId:
+                                        currentUserId,
+
+                                    name:
+                                        name,
+
+                                    progress:
+                                        safeProgress,
+
+                                    deadline:
+                                        deadline
+
+                                })
+
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.message ||
+                            "Failed to update goal."
+                        );
+
+                    }
+
+
+                    closeEditModal();
+
+                    await getGoals();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Error updating goal:",
+                        error
+                    );
+
+                    alert(
+                        error.message ||
+                        "Failed to update goal."
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // ==================================================
+    // DELETE GOAL
+    // ==================================================
+
+    async function deleteGoal(id) {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to delete this goal?"
             );
 
-        const deadline =
-            editGoalDeadline.value;
 
-
-        if (name === "") {
-
-            alert(
-                "Goal name is required."
-            );
-
+        if (!confirmed) {
             return;
-
-        }
-
-
-        if (
-            progress < 0 ||
-            progress > 100
-        ) {
-
-            alert(
-                "Progress must be between 0 and 100."
-            );
-
-            return;
-
         }
 
 
@@ -780,9 +912,9 @@ editGoalForm.addEventListener(
 
             const response =
                 await fetch(
-                    `${API_URL}/goals/${currentEditingGoal}`,
+                    `${API_URL}/goals/${id}`,
                     {
-                        method: "PUT",
+                        method: "DELETE",
 
                         headers: {
                             "Content-Type":
@@ -790,10 +922,12 @@ editGoalForm.addEventListener(
                         },
 
                         body: JSON.stringify({
-                            name: name,
-                            progress: progress,
-                            deadline: deadline
+
+                            userId:
+                                currentUserId
+
                         })
+
                     }
                 );
 
@@ -802,216 +936,193 @@ editGoalForm.addEventListener(
                 await response.json();
 
 
-            if (
-                !response.ok ||
-                !data.success
-            ) {
+            if (!response.ok) {
 
                 throw new Error(
                     data.message ||
-                    "Failed to update goal."
+                    "Failed to delete goal."
                 );
 
             }
 
 
-            closeEditGoalModalFunction();
-
-            await loadGoals();
+            await getGoals();
 
 
         } catch (error) {
 
             console.error(
-                "Error updating goal:",
+                "Error deleting goal:",
                 error
             );
 
             alert(
                 error.message ||
-                "Failed to update goal."
+                "Failed to delete goal."
             );
 
         }
 
     }
-);
 
 
-// ================================
-// Close Edit Modal
-// ================================
+    // ==================================================
+    // GOAL ACTIONS
+    // ==================================================
 
-function closeEditGoalModalFunction() {
+    if (goalList) {
 
-    editGoalModal.classList.remove(
-        "active"
-    );
+        goalList.addEventListener(
+            "click",
+            function (event) {
 
-    editGoalForm.reset();
-
-    currentEditingGoal = null;
-
-}
-
-
-closeEditGoalModal.addEventListener(
-    "click",
-    closeEditGoalModalFunction
-);
+                const editButton =
+                    event.target.closest(
+                        ".edit-goal"
+                    );
 
 
-cancelEditGoal.addEventListener(
-    "click",
-    closeEditGoalModalFunction
-);
+                const deleteButton =
+                    event.target.closest(
+                        ".delete-goal"
+                    );
 
 
-// ================================
-// Close Edit Modal Outside
-// ================================
+                if (editButton) {
 
-editGoalModal.addEventListener(
-    "click",
-    function (event) {
+                    openEditGoal(
+                        editButton.dataset.id
+                    );
 
-        if (
-            event.target === editGoalModal
-        ) {
+                    return;
 
-            closeEditGoalModalFunction();
+                }
 
-        }
+
+                if (deleteButton) {
+
+                    deleteGoal(
+                        deleteButton.dataset.id
+                    );
+
+                }
+
+            }
+        );
 
     }
-);
 
 
-// ================================
-// Goal Filters
-// ================================
+    // ==================================================
+    // FILTERS
+    // ==================================================
 
-const filterButtons =
-    document.querySelectorAll(
-        ".filter-btn"
-    );
+    filterButtons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    filterButtons.forEach(
+                        function (btn) {
+
+                            btn.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
 
 
-filterButtons.forEach(function (button) {
-
-    button.addEventListener(
-        "click",
-        function () {
-
-            filterButtons.forEach(
-                function (btn) {
-
-                    btn.classList.remove(
+                    button.classList.add(
                         "active"
                     );
+
+
+                    currentFilter =
+                        button.dataset.filter ||
+                        "all";
+
+
+                    displayGoals();
 
                 }
             );
 
-
-            button.classList.add(
-                "active"
-            );
+        }
+    );
 
 
-            currentFilter =
-                button.dataset.filter;
+    // ==================================================
+    // CLOSE MODAL BY OUTSIDE CLICK
+    // ==================================================
+
+    if (goalModal) {
+
+        goalModal.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    goalModal
+                ) {
+
+                    closeAddGoalModal();
+
+                }
+
+            }
+        );
+
+    }
 
 
-            displayGoals(goals);
+    if (editGoalModal) {
+
+        editGoalModal.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    editGoalModal
+                ) {
+
+                    closeEditModal();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // ==================================================
+    // ESCAPE KEY
+    // ==================================================
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key !== "Escape") {
+                return;
+            }
+
+            closeAddGoalModal();
+            closeEditModal();
 
         }
     );
 
-});
 
+    // ==================================================
+    // INITIAL LOAD
+    // ==================================================
 
-// ================================
-// Date & Time
-// ================================
+    getGoals();
 
-function updateDateTime() {
-
-    const now =
-        new Date();
-
-
-    const dateOptions = {
-
-        weekday: "long",
-
-        day: "2-digit",
-
-        month: "long",
-
-        year: "numeric"
-
-    };
-
-
-    const timeOptions = {
-
-        hour: "2-digit",
-
-        minute: "2-digit",
-
-        second: "2-digit",
-
-        hour12: true
-
-    };
-
-
-    const currentDate =
-        document.getElementById(
-            "currentDate"
-        );
-
-    const currentTime =
-        document.getElementById(
-            "currentTime"
-        );
-
-
-    if (currentDate) {
-
-        currentDate.textContent =
-            now.toLocaleDateString(
-                "en-IN",
-                dateOptions
-            );
-
-    }
-
-
-    if (currentTime) {
-
-        currentTime.textContent =
-            now.toLocaleTimeString(
-                "en-IN",
-                timeOptions
-            );
-
-    }
-
-}
-
-
-updateDateTime();
-
-setInterval(
-    updateDateTime,
-    1000
-);
-
-
-// ================================
-// Load Goals
-// ================================
-
-loadGoals();
+})();

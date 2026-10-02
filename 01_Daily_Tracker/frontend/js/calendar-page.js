@@ -10,10 +10,160 @@ let graphDesign =
 
 let activeTooltip = null;
 
+const API_URL = "http://localhost:5000/api";
+
+let tasks = [];
+let studySessions = [];
+let journals = [];
+let goals = [];
+
+let currentUser = null;
+
+
+/* =================================
+   Current User
+================================= */
+
+function loadCurrentUser() {
+
+    const currentUserRaw =
+        localStorage.getItem("currentUser");
+
+    if (!currentUserRaw) {
+        window.location.href = "login.html";
+        return false;
+    }
+
+    try {
+
+        currentUser =
+            JSON.parse(currentUserRaw);
+
+        if (
+            !currentUser ||
+            !currentUser.id
+        ) {
+            window.location.href = "login.html";
+            return false;
+        }
+
+        return true;
+
+    } catch (error) {
+
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+        return false;
+    }
+}
+
+
+/* =================================
+   Load Backend Data
+================================= */
+
+async function loadData() {
+
+    if (!currentUser) {
+        return;
+    }
+
+    try {
+
+        const userId =
+            encodeURIComponent(
+                currentUser.id
+            );
+
+        const [
+            tasksResponse,
+            studyResponse,
+            journalsResponse,
+            goalsResponse
+        ] = await Promise.all([
+
+            fetch(
+                `${API_URL}/tasks?userId=${userId}`
+            ),
+
+            fetch(
+                `${API_URL}/study?userId=${userId}`
+            ),
+
+            fetch(
+                `${API_URL}/journals?userId=${userId}`
+            ),
+
+            fetch(
+                `${API_URL}/goals?userId=${userId}`
+            )
+
+        ]);
+
+
+        const tasksData =
+            await tasksResponse.json();
+
+        const studyData =
+            await studyResponse.json();
+
+        const journalsData =
+            await journalsResponse.json();
+
+        const goalsData =
+            await goalsResponse.json();
+
+
+        tasks =
+            Array.isArray(tasksData.tasks)
+                ? tasksData.tasks
+                : [];
+
+
+        studySessions =
+            Array.isArray(studyData.sessions)
+                ? studyData.sessions
+                : [];
+
+
+        journals =
+            Array.isArray(journalsData.journals)
+                ? journalsData.journals
+                : [];
+
+
+        goals =
+            Array.isArray(goalsData.goals)
+                ? goalsData.goals
+                : [];
+
+
+        renderCalendar();
+        renderSelectedDate();
+        renderGraphs();
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load calendar data:",
+            error
+        );
+
+        tasks = [];
+        studySessions = [];
+        journals = [];
+        goals = [];
+
+        renderCalendar();
+        renderSelectedDate();
+        renderGraphs();
+    }
+}
+
 
 /* =================================
    Date Helpers
-================================ */
+================================= */
 
 function getDateString(date) {
 
@@ -21,10 +171,14 @@ function getDateString(date) {
         date.getFullYear();
 
     const month =
-        String(date.getMonth() + 1).padStart(2, "0");
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
 
     const day =
-        String(date.getDate()).padStart(2, "0");
+        String(
+            date.getDate()
+        ).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
 }
@@ -37,7 +191,9 @@ function formatDate(dateString) {
     }
 
     const date =
-        new Date(dateString + "T00:00:00");
+        new Date(
+            dateString + "T00:00:00"
+        );
 
     return date.toLocaleDateString(
         "en-IN",
@@ -51,44 +207,32 @@ function formatDate(dateString) {
 
 
 /* =================================
-   Local Storage
-================================ */
+   Data Helpers
+================================= */
 
 function getTasks() {
-
-    return JSON.parse(
-        localStorage.getItem("tasks")
-    ) || [];
+    return tasks;
 }
 
 
 function getStudySessions() {
-
-    return JSON.parse(
-        localStorage.getItem("studySessions")
-    ) || [];
+    return studySessions;
 }
 
 
 function getJournals() {
-
-    return JSON.parse(
-        localStorage.getItem("journals")
-    ) || [];
+    return journals;
 }
 
 
 function getGoals() {
-
-    return JSON.parse(
-        localStorage.getItem("goals")
-    ) || [];
+    return goals;
 }
 
 
 /* =================================
    Current Date / Time
-================================ */
+================================= */
 
 function updateDateTime() {
 
@@ -96,10 +240,14 @@ function updateDateTime() {
         new Date();
 
     const dateElement =
-        document.getElementById("currentDate");
+        document.getElementById(
+            "currentDate"
+        );
 
     const timeElement =
-        document.getElementById("currentTime");
+        document.getElementById(
+            "currentTime"
+        );
 
     if (dateElement) {
 
@@ -137,10 +285,14 @@ function updateDateTime() {
 function renderCalendar() {
 
     const calendarGrid =
-        document.getElementById("calendarGrid");
+        document.getElementById(
+            "calendarGrid"
+        );
 
     const currentMonthElement =
-        document.getElementById("currentMonth");
+        document.getElementById(
+            "currentMonth"
+        );
 
     if (!calendarGrid) {
         return;
@@ -226,8 +378,6 @@ function renderCalendar() {
             "calendar-day";
 
 
-        /* Today */
-
         if (
             dateString ===
             getDateString(new Date())
@@ -238,8 +388,6 @@ function renderCalendar() {
             );
         }
 
-
-        /* Selected Date */
 
         if (
             selectedDate &&
@@ -266,26 +414,11 @@ function renderCalendar() {
         );
 
 
-        /* Activity Indicators */
-
         const indicators =
             document.createElement("div");
 
         indicators.className =
             "activity-indicators";
-
-
-        const tasks =
-            getTasks();
-
-        const studySessions =
-            getStudySessions();
-
-        const journals =
-            getJournals();
-
-        const goals =
-            getGoals();
 
 
         const hasTask =
@@ -389,16 +522,9 @@ function renderCalendar() {
         );
 
 
-        /* Date Click */
-
         dayElement.addEventListener(
             "click",
             function () {
-
-                /*
-                    Clicking the same selected date
-                    again returns to month view.
-                */
 
                 if (
                     selectedDate ===
@@ -413,11 +539,8 @@ function renderCalendar() {
                         dateString;
                 }
 
-
                 renderCalendar();
-
                 renderSelectedDate();
-
                 renderGraphs();
             }
         );
@@ -450,8 +573,6 @@ function renderSelectedDate() {
         return;
     }
 
-
-    /* Default Month View */
 
     if (!selectedDate) {
 
@@ -496,8 +617,8 @@ function renderActivityForDate(
     activityList.innerHTML = "";
 
 
-    const tasks =
-        getTasks().filter(
+    const filteredTasks =
+        tasks.filter(
             task =>
                 (
                     task.date ||
@@ -506,24 +627,22 @@ function renderActivityForDate(
         );
 
 
-    const studySessions =
-        getStudySessions().filter(
+    const filteredStudySessions =
+        studySessions.filter(
             session =>
-                session.date ===
-                dateString
+                session.date === dateString
         );
 
 
-    const journals =
-        getJournals().filter(
+    const filteredJournals =
+        journals.filter(
             journal =>
-                journal.date ===
-                dateString
+                journal.date === dateString
         );
 
 
-    const goals =
-        getGoals().filter(
+    const filteredGoals =
+        goals.filter(
             goal =>
                 (
                     goal.deadline ||
@@ -535,20 +654,16 @@ function renderActivityForDate(
     let activityCount = 0;
 
 
-    /* Tasks */
-
-    tasks.forEach(
+    filteredTasks.forEach(
         task => {
 
             activityCount++;
-
 
             const item =
                 document.createElement("div");
 
             item.className =
                 "activity-item";
-
 
             item.innerHTML = `
                 <div class="activity-icon">
@@ -577,7 +692,6 @@ function renderActivityForDate(
                 </div>
             `;
 
-
             activityList.appendChild(
                 item
             );
@@ -585,13 +699,10 @@ function renderActivityForDate(
     );
 
 
-    /* Study */
-
-    studySessions.forEach(
+    filteredStudySessions.forEach(
         session => {
 
             activityCount++;
-
 
             const minutes =
                 Number(
@@ -601,13 +712,11 @@ function renderActivityForDate(
                     0
                 );
 
-
             const item =
                 document.createElement("div");
 
             item.className =
                 "activity-item";
-
 
             item.innerHTML = `
                 <div class="activity-icon">
@@ -621,14 +730,11 @@ function renderActivityForDate(
                     </h3>
 
                     <p>
-                        ${
-                            minutes
-                        } minutes
+                        ${minutes} minutes
                     </p>
 
                 </div>
             `;
-
 
             activityList.appendChild(
                 item
@@ -637,20 +743,16 @@ function renderActivityForDate(
     );
 
 
-    /* Journal */
-
-    journals.forEach(
+    filteredJournals.forEach(
         journal => {
 
             activityCount++;
-
 
             const item =
                 document.createElement("div");
 
             item.className =
                 "activity-item";
-
 
             item.innerHTML = `
                 <div class="activity-icon">
@@ -670,7 +772,6 @@ function renderActivityForDate(
                 </div>
             `;
 
-
             activityList.appendChild(
                 item
             );
@@ -678,20 +779,16 @@ function renderActivityForDate(
     );
 
 
-    /* Goals */
-
-    goals.forEach(
+    filteredGoals.forEach(
         goal => {
 
             activityCount++;
-
 
             const item =
                 document.createElement("div");
 
             item.className =
                 "activity-item";
-
 
             item.innerHTML = `
                 <div class="activity-icon">
@@ -715,15 +812,12 @@ function renderActivityForDate(
                 </div>
             `;
 
-
             activityList.appendChild(
                 item
             );
         }
     );
 
-
-    /* Empty */
 
     if (activityCount === 0) {
 
@@ -771,18 +865,18 @@ function escapeHtml(value) {
    Graph Data
 ================================= */
 
-function getStudyMinutes(
-    dateString
-) {
+function getStudyMinutes(dateString) {
 
-    return getStudySessions()
+    return studySessions
         .filter(
             session =>
-                session.date ===
-                dateString
+                session.date === dateString
         )
         .reduce(
-            (total, session) => {
+            (
+                total,
+                session
+            ) => {
 
                 return total +
                     Number(
@@ -798,11 +892,9 @@ function getStudyMinutes(
 }
 
 
-function getCompletedTasks(
-    dateString
-) {
+function getCompletedTasks(dateString) {
 
-    return getTasks()
+    return tasks
         .filter(
             task =>
                 (
@@ -815,15 +907,12 @@ function getCompletedTasks(
 }
 
 
-function getJournalCount(
-    dateString
-) {
+function getJournalCount(dateString) {
 
-    return getJournals()
+    return journals
         .filter(
             journal =>
-                journal.date ===
-                dateString
+                journal.date === dateString
         )
         .length;
 }
@@ -841,26 +930,21 @@ function getNiceMax(values) {
             0
         );
 
-
     if (max <= 0) {
         return 5;
     }
-
 
     if (max <= 5) {
         return 5;
     }
 
-
     if (max <= 10) {
         return 10;
     }
 
-
     if (max <= 20) {
         return 20;
     }
-
 
     if (max <= 50) {
         return Math.ceil(
@@ -868,13 +952,11 @@ function getNiceMax(values) {
         ) * 10;
     }
 
-
     if (max <= 100) {
         return Math.ceil(
             max / 20
         ) * 20;
     }
-
 
     return Math.ceil(
         max / 50
@@ -901,7 +983,6 @@ function roundRect(
             width / 2,
             height / 2
         );
-
 
     ctx.beginPath();
 
@@ -974,13 +1055,11 @@ function setupCanvas(canvas) {
     const dpr =
         window.devicePixelRatio || 1;
 
-
     canvas.width =
         rect.width * dpr;
 
     canvas.height =
         rect.height * dpr;
-
 
     const ctx =
         canvas.getContext("2d");
@@ -993,7 +1072,6 @@ function setupCanvas(canvas) {
         0,
         0
     );
-
 
     return {
         ctx,
@@ -1012,7 +1090,6 @@ function createTooltip() {
     if (activeTooltip) {
         return activeTooltip;
     }
-
 
     const tooltip =
         document.createElement("div");
@@ -1057,7 +1134,6 @@ function createTooltip() {
         tooltip
     );
 
-
     activeTooltip =
         tooltip;
 
@@ -1074,17 +1150,14 @@ function showTooltip(
     const tooltip =
         createTooltip();
 
-
     tooltip.innerHTML = `
         <strong>${escapeHtml(title)}</strong>
         <br>
         Value: ${escapeHtml(value)}
     `;
 
-
     tooltip.style.display =
         "block";
-
 
     let left =
         event.clientX + 14;
@@ -1092,10 +1165,8 @@ function showTooltip(
     let top =
         event.clientY + 14;
 
-
     const rect =
         tooltip.getBoundingClientRect();
-
 
     if (
         left + rect.width >
@@ -1108,7 +1179,6 @@ function showTooltip(
             14;
     }
 
-
     if (
         top + rect.height >
         window.innerHeight - 10
@@ -1119,7 +1189,6 @@ function showTooltip(
             rect.height -
             14;
     }
-
 
     tooltip.style.left =
         `${left}px`;
@@ -1155,14 +1224,12 @@ function drawChart(
         return;
     }
 
-
     const {
         ctx,
         width,
         height
     } =
         setupCanvas(canvas);
-
 
     ctx.clearRect(
         0,
@@ -1171,7 +1238,6 @@ function drawChart(
         height
     );
 
-
     const padding = {
         top: 20,
         right: 20,
@@ -1179,18 +1245,15 @@ function drawChart(
         left: 42
     };
 
-
     const chartWidth =
         width -
         padding.left -
         padding.right;
 
-
     const chartHeight =
         height -
         padding.top -
         padding.bottom;
-
 
     const maxValue =
         getNiceMax(data);
@@ -1202,7 +1265,6 @@ function drawChart(
         "#1e293b";
 
     ctx.lineWidth = 1;
-
 
     for (
         let i = 0;
@@ -1219,7 +1281,6 @@ function drawChart(
                 4
             );
 
-
         ctx.beginPath();
 
         ctx.moveTo(
@@ -1234,14 +1295,12 @@ function drawChart(
 
         ctx.stroke();
 
-
         const value =
             Math.round(
                 maxValue *
                 i /
                 4
             );
-
 
         ctx.fillStyle =
             "#64748b";
@@ -1259,8 +1318,6 @@ function drawChart(
         );
     }
 
-
-    /* No Data */
 
     const hasData =
         data.some(
@@ -1288,18 +1345,13 @@ function drawChart(
     }
 
 
-    /* Single Selected Date */
-
     const isSingleDate =
         data.length === 1;
-
 
     let points = [];
 
 
-    /* =================================
-       BAR
-    ================================= */
+    /* BAR */
 
     if (type === "bar") {
 
@@ -1322,7 +1374,6 @@ function drawChart(
                     ) - barGap
                 );
 
-
         data.forEach(
             (value, index) => {
 
@@ -1341,7 +1392,6 @@ function drawChart(
                           ) +
                           barGap / 2;
 
-
                 const barHeight =
                     (
                         Number(value) /
@@ -1349,16 +1399,13 @@ function drawChart(
                     ) *
                     chartHeight;
 
-
                 const y =
                     padding.top +
                     chartHeight -
                     barHeight;
 
-
                 ctx.fillStyle =
                     "#3b82f6";
-
 
                 roundRect(
                     ctx,
@@ -1370,7 +1417,6 @@ function drawChart(
                 );
 
                 ctx.fill();
-
 
                 ctx.fillStyle =
                     "#64748b";
@@ -1391,9 +1437,7 @@ function drawChart(
     }
 
 
-    /* =================================
-       LINE / AREA / MODERN
-    ================================= */
+    /* LINE / AREA / MODERN */
 
     else {
 
@@ -1406,7 +1450,6 @@ function drawChart(
                       1
                   );
 
-
         points =
             data.map(
                 (value, index) => {
@@ -1418,7 +1461,6 @@ function drawChart(
                             : padding.left +
                               index * step;
 
-
                     const y =
                         padding.top +
                         chartHeight -
@@ -1427,7 +1469,6 @@ function drawChart(
                             maxValue
                         ) *
                         chartHeight;
-
 
                     return {
                         x,
@@ -1438,8 +1479,6 @@ function drawChart(
                 }
             );
 
-
-        /* Area */
 
         if (
             type === "area" ||
@@ -1471,7 +1510,6 @@ function drawChart(
                 }
             );
 
-
             if (points.length > 0) {
 
                 ctx.lineTo(
@@ -1490,7 +1528,6 @@ function drawChart(
 
                 ctx.closePath();
 
-
                 ctx.fillStyle =
                     "rgba(59,130,246,0.10)";
 
@@ -1498,8 +1535,6 @@ function drawChart(
             }
         }
 
-
-        /* Line */
 
         if (
             type === "line" ||
@@ -1534,7 +1569,6 @@ function drawChart(
                     }
                 );
 
-
                 ctx.strokeStyle =
                     "#3b82f6";
 
@@ -1542,8 +1576,6 @@ function drawChart(
 
                 ctx.stroke();
 
-
-                /* Points */
 
                 points.forEach(
                     point => {
@@ -1588,8 +1620,6 @@ function drawChart(
         }
 
 
-        /* X Labels */
-
         ctx.fillStyle =
             "#64748b";
 
@@ -1599,14 +1629,8 @@ function drawChart(
         ctx.textAlign =
             "center";
 
-
         points.forEach(
             point => {
-
-                /*
-                    On a full month,
-                    show labels at intervals.
-                */
 
                 if (
                     !isSingleDate &&
@@ -1619,7 +1643,6 @@ function drawChart(
                     return;
                 }
 
-
                 ctx.fillText(
                     labels[point.index],
                     point.x,
@@ -1630,9 +1653,7 @@ function drawChart(
     }
 
 
-    /* =================================
-       Mouse Tooltip Areas
-    ================================= */
+    /* Tooltip Areas */
 
     canvas.onmousemove =
         function (event) {
@@ -1647,7 +1668,6 @@ function drawChart(
             const mouseY =
                 event.clientY -
                 rect.top;
-
 
             let hoveredIndex = -1;
 
@@ -1674,7 +1694,6 @@ function drawChart(
                             barGap
                         );
 
-
                 data.forEach(
                     (
                         value,
@@ -1696,7 +1715,6 @@ function drawChart(
                                   ) +
                                   barGap / 2;
 
-
                         const barHeight =
                             (
                                 Number(value) /
@@ -1704,12 +1722,10 @@ function drawChart(
                             ) *
                             chartHeight;
 
-
                         const y =
                             padding.top +
                             chartHeight -
                             barHeight;
-
 
                         if (
                             mouseX >= x &&
@@ -1745,7 +1761,6 @@ function drawChart(
                                     2
                                 )
                             );
-
 
                         if (
                             distance <= 12
@@ -1792,9 +1807,7 @@ function drawChart(
    Graph Statistics
 ================================= */
 
-function updateGraphStats(
-    data
-) {
+function updateGraphStats(data) {
 
     const total =
         data.reduce(
@@ -1807,12 +1820,10 @@ function updateGraphStats(
             0
         );
 
-
     const average =
         data.length > 0
             ? total / data.length
             : 0;
-
 
     const highest =
         data.length > 0
@@ -1821,43 +1832,34 @@ function updateGraphStats(
             )
             : 0;
 
-
     const totalElement =
         document.getElementById(
             "graphTotal"
         );
-
 
     const averageElement =
         document.getElementById(
             "graphAverage"
         );
 
-
     const highestElement =
         document.getElementById(
             "graphHighest"
         );
 
-
     if (totalElement) {
-
         totalElement.textContent =
             Math.round(total);
     }
 
-
     if (averageElement) {
-
         averageElement.textContent =
             Number(
                 average.toFixed(1)
             );
     }
 
-
     if (highestElement) {
-
         highestElement.textContent =
             highest;
     }
@@ -1871,20 +1873,18 @@ function updateGraphStats(
 function renderGraphs() {
 
     const graphTitle =
-        document.getElementById("graphTitle");
+        document.getElementById(
+            "graphTitle"
+        );
 
-
-    /* =================================
-       DEFAULT MONTH VIEW
-    ================================= */
 
     if (!selectedDate) {
 
         if (graphTitle) {
+
             graphTitle.textContent =
                 "Monthly Activity 📊";
         }
-
 
         const year =
             currentDate.getFullYear();
@@ -1898,7 +1898,6 @@ function renderGraphs() {
                 month + 1,
                 0
             ).getDate();
-
 
         const labels = [];
         const tooltipTitles = [];
@@ -1924,53 +1923,58 @@ function renderGraphs() {
             const dateString =
                 getDateString(date);
 
-
             labels.push(
                 String(day)
             );
-
 
             tooltipTitles.push(
                 formatDate(dateString)
             );
 
-
             studyData.push(
-                getStudyMinutes(dateString)
+                getStudyMinutes(
+                    dateString
+                )
             );
-
 
             taskData.push(
-                getCompletedTasks(dateString)
+                getCompletedTasks(
+                    dateString
+                )
             );
 
-
             journalData.push(
-                getJournalCount(dateString)
+                getJournalCount(
+                    dateString
+                )
             );
         }
 
 
         drawChart(
-            document.getElementById("studyChart"),
+            document.getElementById(
+                "studyChart"
+            ),
             studyData,
             labels,
             graphDesign,
             tooltipTitles
         );
 
-
         drawChart(
-            document.getElementById("taskChart"),
+            document.getElementById(
+                "taskChart"
+            ),
             taskData,
             labels,
             graphDesign,
             tooltipTitles
         );
 
-
         drawChart(
-            document.getElementById("journalChart"),
+            document.getElementById(
+                "journalChart"
+            ),
             journalData,
             labels,
             graphDesign,
@@ -1980,25 +1984,22 @@ function renderGraphs() {
 
         const combinedData =
             studyData.map(
-                (value, index) =>
+                (
+                    value,
+                    index
+                ) =>
                     value +
                     taskData[index] +
                     journalData[index]
             );
 
-
         updateGraphStats(
             combinedData
         );
 
-
         return;
     }
 
-
-    /* =================================
-       SELECTED DATE VIEW
-    ================================= */
 
     if (graphTitle) {
 
@@ -2012,18 +2013,15 @@ function renderGraphs() {
             selectedDate
         );
 
-
-    const tasks =
+    const task =
         getCompletedTasks(
             selectedDate
         );
-
 
     const journal =
         getJournalCount(
             selectedDate
         );
-
 
     const selectedLabel =
         formatDate(
@@ -2031,38 +2029,30 @@ function renderGraphs() {
         );
 
 
-    /*
-       Study Graph
-    */
-
     drawChart(
-        document.getElementById("studyChart"),
+        document.getElementById(
+            "studyChart"
+        ),
         [study],
         ["Study"],
         graphDesign,
         [selectedLabel]
     );
 
-
-    /*
-       Task Graph
-    */
-
     drawChart(
-        document.getElementById("taskChart"),
-        [tasks],
+        document.getElementById(
+            "taskChart"
+        ),
+        [task],
         ["Tasks"],
         graphDesign,
         [selectedLabel]
     );
 
-
-    /*
-       Journal Graph
-    */
-
     drawChart(
-        document.getElementById("journalChart"),
+        document.getElementById(
+            "journalChart"
+        ),
         [journal],
         ["Journal"],
         graphDesign,
@@ -2070,13 +2060,9 @@ function renderGraphs() {
     );
 
 
-    /*
-       Statistics
-    */
-
     updateGraphStats([
         study,
-        tasks,
+        task,
         journal
     ]);
 }
@@ -2091,12 +2077,10 @@ const graphDesignSelect =
         "graphDesign"
     );
 
-
 if (graphDesignSelect) {
 
     graphDesignSelect.value =
         graphDesign;
-
 
     graphDesignSelect.addEventListener(
         "change",
@@ -2105,12 +2089,10 @@ if (graphDesignSelect) {
             graphDesign =
                 this.value;
 
-
             localStorage.setItem(
                 "calendarGraphDesign",
                 graphDesign
             );
-
 
             renderGraphs();
         }
@@ -2126,7 +2108,6 @@ const previousMonth =
     document.getElementById(
         "previousMonth"
     );
-
 
 const nextMonth =
     document.getElementById(
@@ -2144,19 +2125,10 @@ if (previousMonth) {
                 currentDate.getMonth() - 1
             );
 
-
-            /*
-                Changing month returns
-                graph to month mode.
-            */
-
             selectedDate = null;
 
-
             renderCalendar();
-
             renderSelectedDate();
-
             renderGraphs();
         }
     );
@@ -2173,19 +2145,10 @@ if (nextMonth) {
                 currentDate.getMonth() + 1
             );
 
-
-            /*
-                Changing month returns
-                graph to month mode.
-            */
-
             selectedDate = null;
 
-
             renderCalendar();
-
             renderSelectedDate();
-
             renderGraphs();
         }
     );
@@ -2209,16 +2172,15 @@ window.addEventListener(
    Initial Load
 ================================= */
 
-updateDateTime();
+if (loadCurrentUser()) {
 
-setInterval(
-    updateDateTime,
-    1000
-);
+    updateDateTime();
 
+    setInterval(
+        updateDateTime,
+        1000
+    );
 
-renderCalendar();
+    loadData();
 
-renderSelectedDate();
-
-renderGraphs();
+}

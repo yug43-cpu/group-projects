@@ -74,8 +74,14 @@ const averageGoalProgressElement =
 
 
 /* ================================
-   Load Data
+   Backend
 ================================ */
+
+const API_URL =
+    "http://localhost:5000/api";
+
+
+let currentUser = null;
 
 let tasks = [];
 
@@ -86,31 +92,213 @@ let journals = [];
 let goals = [];
 
 
-function loadData() {
+/* ================================
+   Current User
+================================ */
 
-    tasks =
-        JSON.parse(
-            localStorage.getItem("tasks")
-        ) || [];
+function loadCurrentUser() {
 
-
-    studySessions =
-        JSON.parse(
-            localStorage.getItem("studySessions")
-        ) || [];
+    const currentUserRaw =
+        localStorage.getItem("currentUser");
 
 
-    journals =
-        JSON.parse(
-            localStorage.getItem("journals")
-        ) || [];
+    if (!currentUserRaw) {
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
 
 
-    goals =
-        JSON.parse(
-            localStorage.getItem("goals")
-        ) || [];
+    try {
 
+        currentUser =
+            JSON.parse(
+                currentUserRaw
+            );
+
+
+        if (
+            !currentUser ||
+            !currentUser.id
+        ) {
+
+            window.location.href =
+                "login.html";
+
+            return false;
+        }
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Invalid current user:",
+            error
+        );
+
+
+        localStorage.removeItem(
+            "currentUser"
+        );
+
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
+}
+
+
+/* ================================
+   Load Data From Backend
+================================ */
+
+async function loadData() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    try {
+
+        const userId =
+            encodeURIComponent(
+                currentUser.id
+            );
+
+
+        const [
+            tasksResponse,
+            studyResponse,
+            journalsResponse,
+            goalsResponse
+        ] = await Promise.all([
+
+            fetch(
+                `${API_URL}/tasks?userId=${userId}`
+            ),
+
+            fetch(
+                `${API_URL}/study?userId=${userId}`
+            ),
+
+            fetch(
+                `${API_URL}/journals?userId=${userId}`
+            ),
+
+            fetch(
+                `${API_URL}/goals?userId=${userId}`
+            )
+
+        ]);
+
+
+        if (
+            !tasksResponse.ok ||
+            !studyResponse.ok ||
+            !journalsResponse.ok ||
+            !goalsResponse.ok
+        ) {
+
+            throw new Error(
+                "Failed to load statistics data."
+            );
+        }
+
+
+        const tasksData =
+            await tasksResponse.json();
+
+        const studyData =
+            await studyResponse.json();
+
+        const journalsData =
+            await journalsResponse.json();
+
+        const goalsData =
+            await goalsResponse.json();
+
+
+        /* ================================
+           User Specific Data
+        ================================ */
+
+        tasks =
+            Array.isArray(
+                tasksData.tasks
+            )
+                ? tasksData.tasks
+                : [];
+
+
+        studySessions =
+            Array.isArray(
+                studyData.sessions
+            )
+                ? studyData.sessions
+                : [];
+
+
+        journals =
+            Array.isArray(
+                journalsData.journals
+            )
+                ? journalsData.journals
+                : [];
+
+
+        goals =
+            Array.isArray(
+                goalsData.goals
+            )
+                ? goalsData.goals
+                : [];
+
+
+        /*
+           Update UI only.
+           Do NOT call loadData() from updateStatistics().
+        */
+
+        updateTotalStatistics();
+
+        updateWeeklyStatistics();
+
+        updateMonthlyStatistics();
+
+        updateGoalStatistics();
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load statistics data:",
+            error
+        );
+
+
+        tasks = [];
+
+        studySessions = [];
+
+        journals = [];
+
+        goals = [];
+
+
+        updateTotalStatistics();
+
+        updateWeeklyStatistics();
+
+        updateMonthlyStatistics();
+
+        updateGoalStatistics();
+    }
 }
 
 
@@ -120,7 +308,8 @@ function loadData() {
 
 function updateDateTime() {
 
-    const now = new Date();
+    const now =
+        new Date();
 
 
     const dateOptions = {
@@ -149,29 +338,25 @@ function updateDateTime() {
     };
 
 
-    currentDateElement.textContent =
-        now.toLocaleDateString(
-            "en-IN",
-            dateOptions
-        );
+    if (currentDateElement) {
+
+        currentDateElement.textContent =
+            now.toLocaleDateString(
+                "en-IN",
+                dateOptions
+            );
+    }
 
 
-    currentTimeElement.textContent =
-        now.toLocaleTimeString(
-            "en-IN",
-            timeOptions
-        );
+    if (currentTimeElement) {
 
+        currentTimeElement.textContent =
+            now.toLocaleTimeString(
+                "en-IN",
+                timeOptions
+            );
+    }
 }
-
-
-updateDateTime();
-
-
-setInterval(
-    updateDateTime,
-    1000
-);
 
 
 /* ================================
@@ -207,7 +392,6 @@ function getToday() {
 
 
     return `${year}-${month}-${day}`;
-
 }
 
 
@@ -223,21 +407,18 @@ function getDateValue(item) {
         item.deadline ||
         ""
     );
-
 }
 
 
 function getStudyDate(session) {
 
     return session.date || "";
-
 }
 
 
 function getJournalDate(journal) {
 
     return journal.date || "";
-
 }
 
 
@@ -251,7 +432,6 @@ function isTaskCompleted(task) {
         task.completed === true ||
         task.completed === "true"
     );
-
 }
 
 
@@ -265,9 +445,10 @@ function isGoalCompleted(goal) {
         goal.completed === true ||
         goal.completed === "true" ||
         goal.status === "completed" ||
-        Number(goal.progress || 0) >= 100
+        Number(
+            goal.progress || 0
+        ) >= 100
     );
-
 }
 
 
@@ -280,14 +461,26 @@ function parseDate(dateString) {
     if (!dateString) {
 
         return null;
-
     }
 
 
-    return new Date(
-        dateString + "T00:00:00"
-    );
+    const date =
+        new Date(
+            dateString + "T00:00:00"
+        );
 
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return null;
+    }
+
+
+    return date;
 }
 
 
@@ -343,12 +536,10 @@ function getLast7Days() {
         dates.push(
             `${year}-${month}-${day}`
         );
-
     }
 
 
     return dates;
-
 }
 
 
@@ -367,7 +558,6 @@ function isCurrentMonth(dateString) {
     if (!date) {
 
         return false;
-
     }
 
 
@@ -382,7 +572,6 @@ function isCurrentMonth(dateString) {
         date.getFullYear() ===
             now.getFullYear()
     );
-
 }
 
 
@@ -425,23 +614,37 @@ function updateTotalStatistics() {
         journals.length;
 
 
-    totalTasksElement.textContent =
-        totalTasks;
+    if (totalTasksElement) {
+
+        totalTasksElement.textContent =
+            totalTasks;
+    }
 
 
-    completedTasksElement.textContent =
-        completedTasks;
+    if (completedTasksElement) {
+
+        completedTasksElement.textContent =
+            completedTasks;
+    }
 
 
-    totalStudyElement.textContent =
-        totalStudy;
+    if (totalStudyElement) {
+
+        totalStudyElement.textContent =
+            totalStudy;
+    }
 
 
-    totalJournalsElement.textContent =
-        totalJournals;
+    if (totalJournalsElement) {
+
+        totalJournalsElement.textContent =
+            totalJournals;
+    }
 
 
-    /* Task Percentage */
+    /* ================================
+       Task Percentage
+    ================================ */
 
     let percentage = 0;
 
@@ -457,21 +660,28 @@ function updateTotalStatistics() {
                     totalTasks
                 ) * 100
             );
-
     }
 
 
-    taskPercentageElement.textContent =
-        `${percentage}%`;
+    if (taskPercentageElement) {
+
+        taskPercentageElement.textContent =
+            `${percentage}%`;
+    }
 
 
-    taskProgressBar.style.width =
-        `${percentage}%`;
+    if (taskProgressBar) {
+
+        taskProgressBar.style.width =
+            `${percentage}%`;
+    }
 
 
-    taskRateElement.textContent =
-        `${percentage}%`;
+    if (taskRateElement) {
 
+        taskRateElement.textContent =
+            `${percentage}%`;
+    }
 }
 
 
@@ -485,7 +695,9 @@ function updateWeeklyStatistics() {
         getLast7Days();
 
 
-    /* Weekly Study */
+    /* ================================
+       Weekly Study
+    ================================ */
 
     const weeklyStudy =
         studySessions
@@ -513,7 +725,9 @@ function updateWeeklyStatistics() {
             );
 
 
-    /* Weekly Tasks */
+    /* ================================
+       Weekly Tasks
+    ================================ */
 
     const weeklyTasks =
         tasks.filter(
@@ -523,48 +737,69 @@ function updateWeeklyStatistics() {
                     last7Days.includes(
                         getDateValue(task)
                     ) &&
-                    isTaskCompleted(task)
-                );
 
+                    isTaskCompleted(
+                        task
+                    )
+                );
             }
         ).length;
 
 
-    /* Weekly Journals */
+    /* ================================
+       Weekly Journals
+    ================================ */
 
     const weeklyJournals =
         journals.filter(
             journal =>
                 last7Days.includes(
-                    getJournalDate(journal)
+                    getJournalDate(
+                        journal
+                    )
                 )
         ).length;
 
 
-    /* Active Goals */
+    /* ================================
+       Active Goals
+    ================================ */
 
     const activeGoals =
         goals.filter(
             goal =>
-                !isGoalCompleted(goal)
+                !isGoalCompleted(
+                    goal
+                )
         ).length;
 
 
-    weeklyStudyElement.textContent =
-        `${weeklyStudy} minutes`;
+    if (weeklyStudyElement) {
+
+        weeklyStudyElement.textContent =
+            `${weeklyStudy} minutes`;
+    }
 
 
-    weeklyTasksElement.textContent =
-        weeklyTasks;
+    if (weeklyTasksElement) {
+
+        weeklyTasksElement.textContent =
+            weeklyTasks;
+    }
 
 
-    weeklyJournalsElement.textContent =
-        weeklyJournals;
+    if (weeklyJournalsElement) {
+
+        weeklyJournalsElement.textContent =
+            weeklyJournals;
+    }
 
 
-    activeGoalsElement.textContent =
-        activeGoals;
+    if (activeGoalsElement) {
 
+        activeGoalsElement.textContent =
+            activeGoals;
+    }
 }
 
 
@@ -574,18 +809,24 @@ function updateWeeklyStatistics() {
 
 function updateMonthlyStatistics() {
 
-    /* Study Sessions */
+    /* ================================
+       Study Sessions
+    ================================ */
 
     const monthlyStudySessions =
         studySessions.filter(
             session =>
                 isCurrentMonth(
-                    getStudyDate(session)
+                    getStudyDate(
+                        session
+                    )
                 )
         );
 
 
-    /* Study Minutes */
+    /* ================================
+       Study Minutes
+    ================================ */
 
     const monthlyStudyMinutes =
         monthlyStudySessions.reduce(
@@ -606,7 +847,9 @@ function updateMonthlyStatistics() {
         );
 
 
-    /* Completed Tasks */
+    /* ================================
+       Completed Tasks
+    ================================ */
 
     const monthlyCompletedTasks =
         tasks.filter(
@@ -614,41 +857,60 @@ function updateMonthlyStatistics() {
 
                 return (
                     isCurrentMonth(
-                        getDateValue(task)
+                        getDateValue(
+                            task
+                        )
                     ) &&
-                    isTaskCompleted(task)
-                );
 
+                    isTaskCompleted(
+                        task
+                    )
+                );
             }
         ).length;
 
 
-    /* Journal Entries */
+    /* ================================
+       Journal Entries
+    ================================ */
 
     const monthlyJournals =
         journals.filter(
             journal =>
                 isCurrentMonth(
-                    getJournalDate(journal)
+                    getJournalDate(
+                        journal
+                    )
                 )
         ).length;
 
 
-    monthlyStudySessionsElement.textContent =
-        monthlyStudySessions.length;
+    if (monthlyStudySessionsElement) {
+
+        monthlyStudySessionsElement.textContent =
+            monthlyStudySessions.length;
+    }
 
 
-    monthlyStudyMinutesElement.textContent =
-        monthlyStudyMinutes;
+    if (monthlyStudyMinutesElement) {
+
+        monthlyStudyMinutesElement.textContent =
+            monthlyStudyMinutes;
+    }
 
 
-    monthlyCompletedTasksElement.textContent =
-        monthlyCompletedTasks;
+    if (monthlyCompletedTasksElement) {
+
+        monthlyCompletedTasksElement.textContent =
+            monthlyCompletedTasks;
+    }
 
 
-    monthlyJournalsElement.textContent =
-        monthlyJournals;
+    if (monthlyJournalsElement) {
 
+        monthlyJournalsElement.textContent =
+            monthlyJournals;
+    }
 }
 
 
@@ -699,21 +961,28 @@ function updateGoalStatistics() {
                 totalProgress /
                 totalGoals
             );
-
     }
 
 
-    totalGoalsElement.textContent =
-        totalGoals;
+    if (totalGoalsElement) {
+
+        totalGoalsElement.textContent =
+            totalGoals;
+    }
 
 
-    completedGoalsElement.textContent =
-        completedGoals;
+    if (completedGoalsElement) {
+
+        completedGoalsElement.textContent =
+            completedGoals;
+    }
 
 
-    averageGoalProgressElement.textContent =
-        `${averageProgress}%`;
+    if (averageGoalProgressElement) {
 
+        averageGoalProgressElement.textContent =
+            `${averageProgress}%`;
+    }
 }
 
 
@@ -723,7 +992,21 @@ function updateGoalStatistics() {
 
 function updateStatistics() {
 
-    loadData();
+    /*
+       Only update the UI here.
+
+       IMPORTANT:
+       Do NOT call loadData() here.
+       Otherwise:
+
+       updateStatistics()
+       -> loadData()
+       -> updateStatistics()
+       -> loadData()
+
+       would create an infinite loop.
+    */
+
 
     updateTotalStatistics();
 
@@ -732,7 +1015,6 @@ function updateStatistics() {
     updateMonthlyStatistics();
 
     updateGoalStatistics();
-
 }
 
 
@@ -744,7 +1026,7 @@ window.addEventListener(
     "focus",
     function () {
 
-        updateStatistics();
+        loadData();
 
     }
 );
@@ -754,4 +1036,14 @@ window.addEventListener(
    Initial Load
 ================================ */
 
-updateStatistics();
+if (loadCurrentUser()) {
+
+    updateDateTime();
+
+    setInterval(
+        updateDateTime,
+        1000
+    );
+
+    loadData();
+}

@@ -1,6 +1,6 @@
 // =================================
 // Daily Tracker - Tasks
-// Backend Connected Version
+// User-Specific Backend Connected Version
 // =================================
 
 
@@ -22,6 +22,52 @@ if (window.dailyTrackerTasksLoaded) {
     // =================================
 
     const API_URL = "http://localhost:5000/api";
+
+
+    // =================================
+    // Current User
+    // =================================
+
+    const currentUserData =
+        localStorage.getItem("currentUser");
+
+
+    if (!currentUserData) {
+
+        window.location.href = "login.html";
+
+    }
+
+
+    let currentUser = null;
+
+
+    try {
+
+        currentUser =
+            JSON.parse(currentUserData);
+
+    } catch (error) {
+
+        console.error(
+            "Invalid current user data:",
+            error
+        );
+
+        localStorage.removeItem("currentUser");
+
+        window.location.href = "login.html";
+
+    }
+
+
+    if (!currentUser || !currentUser.id) {
+
+        localStorage.removeItem("currentUser");
+
+        window.location.href = "login.html";
+
+    }
 
 
     // =================================
@@ -164,7 +210,7 @@ if (window.dailyTrackerTasksLoaded) {
 
             const response =
                 await fetch(
-                    `${API_URL}/tasks`
+                    `${API_URL}/tasks?userId=${encodeURIComponent(currentUser.id)}`
                 );
 
 
@@ -801,13 +847,19 @@ if (window.dailyTrackerTasksLoaded) {
 
                             body:
                                 JSON.stringify({
+                                    userId:
+                                        currentUser.id,
+
                                     name: name,
+
                                     priority:
                                         priority ||
                                         "Medium",
+
                                     dueTime:
                                         dueTime ||
                                         "",
+
                                     date: date
                                 })
                         }
@@ -1038,13 +1090,19 @@ if (window.dailyTrackerTasksLoaded) {
 
                             body:
                                 JSON.stringify({
+                                    userId:
+                                        currentUser.id,
+
                                     name: name,
+
                                     priority:
                                         priority ||
                                         "Medium",
+
                                     dueTime:
                                         dueTime ||
                                         "",
+
                                     date: date
                                 })
                         }
@@ -1142,7 +1200,18 @@ if (window.dailyTrackerTasksLoaded) {
                 await fetch(
                     `${API_URL}/tasks/${id}`,
                     {
-                        method: "DELETE"
+                        method: "DELETE",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                userId:
+                                    currentUser.id
+                            })
                     }
                 );
 
@@ -1186,86 +1255,89 @@ if (window.dailyTrackerTasksLoaded) {
     // Complete / Uncomplete Task
     // =================================
 
-    async function toggleTask(id) {
+async function toggleTask(id) {
 
-        try {
+    try {
 
-            const tasks =
-                await getTasks();
-
-
-            const task =
-                tasks.find(
-                    item =>
-                        String(item.id) ===
-                        String(id)
-                );
+        const tasks =
+            await getTasks();
 
 
-            if (!task) {
-
-                alert(
-                    "Task not found."
-                );
-
-                return;
-
-            }
-
-
-            const response =
-                await fetch(
-                    `${API_URL}/tasks/${id}`,
-                    {
-                        method: "PUT",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify({
-                                completed:
-                                    task.completed !== true
-                            })
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    data.message ||
-                    "Failed to update task."
-                );
-
-            }
-
-
-            await displayTasks();
-
-
-        } catch (error) {
-
-            console.error(
-                "Error toggling task:",
-                error
+        const task =
+            tasks.find(
+                item =>
+                    String(item.id) ===
+                    String(id)
             );
 
 
+        if (!task) {
+
             alert(
-                error.message ||
-                "Unable to update task."
+                "Task not found."
+            );
+
+            return;
+
+        }
+
+
+        const response =
+            await fetch(
+                `${API_URL}/tasks/${id}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            userId:
+                                currentUser.id,
+
+                            completed:
+                                task.completed !== true
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Failed to update task."
             );
 
         }
 
+
+        await displayTasks();
+
+
+    } catch (error) {
+
+        console.error(
+            "Error toggling task:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Unable to update task."
+        );
+
     }
+
+}
 
 
     // =================================

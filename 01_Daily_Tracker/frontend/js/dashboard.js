@@ -1,84 +1,100 @@
-/* ================================
-   Daily Tracker - Dashboard
-================================ */
-
-
-/* ================================
-   Backend API
-================================ */
+// =================================
+// Daily Tracker - Dashboard
+// User-Specific Backend Connected
+// =================================
 
 const API_URL = "http://localhost:5000/api";
 
+// =================================
+// Current User
+// =================================
+
+let currentUser = null;
+
+const currentUserData = localStorage.getItem("currentUser");
+
+if (!currentUserData) {
+
+    window.location.href = "login.html";
+
+} else {
+
+    try {
+
+        currentUser = JSON.parse(currentUserData);
+
+    } catch (error) {
+
+        console.error("Invalid current user data:", error);
+
+        localStorage.removeItem("currentUser");
+
+        window.location.href = "login.html";
+    }
+}
+
+if (!currentUser || !currentUser.id) {
+
+    localStorage.removeItem("currentUser");
+
+    window.location.href = "login.html";
+}
+
+
+// =================================
+// Dashboard Data
+// =================================
+
 let dashboardTasks = [];
+let dashboardStudySessions = [];
+let dashboardGoals = [];
+let dashboardJournals = [];
 
 
-/* ================================
-   Date & Time
-================================ */
+// =================================
+// Date & Time
+// =================================
 
 function updateDateTime() {
 
     const now = new Date();
 
-    const dateOptions = {
-        weekday: "long",
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-    };
-
-    const timeOptions = {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true
-    };
-
-    const currentDate =
-        now.toLocaleDateString(
-            "en-IN",
-            dateOptions
-        );
-
-    const currentTime =
-        now.toLocaleTimeString(
-            "en-IN",
-            timeOptions
-        );
-
-    const currentDateElement =
+    const dateElement =
         document.getElementById("currentDate");
 
-    const currentTimeElement =
+    const timeElement =
         document.getElementById("currentTime");
 
-    if (currentDateElement) {
+    if (dateElement) {
 
-        currentDateElement.textContent =
-            currentDate;
-
+        dateElement.textContent =
+            now.toLocaleDateString("en-IN", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            });
     }
 
-    if (currentTimeElement) {
+    if (timeElement) {
 
-        currentTimeElement.textContent =
-            currentTime;
-
+        timeElement.textContent =
+            now.toLocaleTimeString("en-IN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            });
     }
-
 }
 
 updateDateTime();
 
-setInterval(
-    updateDateTime,
-    1000
-);
+setInterval(updateDateTime, 1000);
 
 
-/* ================================
-   Get Today
-================================ */
+// =================================
+// Today's Date
+// =================================
 
 function getToday() {
 
@@ -88,172 +104,274 @@ function getToday() {
         now.getFullYear();
 
     const month =
-        String(
-            now.getMonth() + 1
-        ).padStart(2, "0");
+        String(now.getMonth() + 1).padStart(2, "0");
 
     const day =
-        String(
-            now.getDate()
-        ).padStart(2, "0");
+        String(now.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
-
 }
 
 
-/* ================================
-   Get Task Date
-================================ */
+// =================================
+// Escape Text
+// =================================
+
+function escapeText(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+// =================================
+// Task Helpers
+// =================================
 
 function getTaskDate(task) {
 
-    return task.date || "";
+    if (!task || !task.date) {
 
+        return "";
+    }
+
+    return String(task.date).trim();
 }
 
-
-/* ================================
-   Check Completed
-================================ */
 
 function isTaskCompleted(task) {
 
-    return (
-        task.completed === true ||
-        task.completed === "true"
-    );
-
+    return task &&
+        (
+            task.completed === true ||
+            task.completed === "true"
+        );
 }
 
 
-/* ================================
-   Escape Text
-================================ */
+function formatTaskTime(timeString) {
 
-function escapeText(text) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent =
-        text || "";
-
-    return div.innerHTML;
-
-}
-
-
-/* ================================
-   Format Task Time
-================================ */
-
-function formatTaskTime(time) {
-
-    if (!time) {
+    if (!timeString) {
 
         return "";
-
     }
 
     const parts =
-        time.split(":");
-
-    if (parts.length < 2) {
-
-        return time;
-
-    }
+        String(timeString).split(":");
 
     let hour =
-        parseInt(
-            parts[0],
-            10
-        );
+        parseInt(parts[0], 10);
+
+    if (Number.isNaN(hour)) {
+
+        return timeString;
+    }
 
     const minute =
-        parts[1];
+        parts[1] || "00";
 
     const period =
-        hour >= 12
-            ? "PM"
-            : "AM";
+        hour >= 12 ? "PM" : "AM";
 
     hour =
         hour % 12 || 12;
 
     return `${hour}:${minute} ${period}`;
-
 }
 
 
-/* ================================
-   Load Tasks
-================================ */
+// =================================
+// Load Dashboard Data
+// =================================
 
-async function loadDashboardTasks() {
+async function loadDashboardData() {
+
+    if (!currentUser || !currentUser.id) {
+
+        return;
+    }
+
+    const userId =
+        encodeURIComponent(currentUser.id);
 
     try {
 
-        const response =
+        // -----------------------------
+        // Tasks
+        // -----------------------------
+
+        const tasksResponse =
             await fetch(
-                `${API_URL}/tasks`
+                `${API_URL}/tasks?userId=${userId}`
             );
 
-        if (!response.ok) {
+        if (tasksResponse.ok) {
 
-            throw new Error(
-                "Failed to load tasks"
-            );
-
-        }
-
-        const data =
-            await response.json();
-
-        if (
-            data.success &&
-            Array.isArray(data.tasks)
-        ) {
+            const tasksData =
+                await tasksResponse.json();
 
             dashboardTasks =
-                data.tasks;
+                Array.isArray(tasksData.tasks)
+                    ? tasksData.tasks
+                    : [];
 
         } else {
 
             dashboardTasks = [];
 
+            console.warn(
+                "Unable to load dashboard tasks."
+            );
         }
+
+
+        // -----------------------------
+        // Study
+        // -----------------------------
+
+        const studyResponse =
+            await fetch(
+                `${API_URL}/study?userId=${userId}`
+            );
+
+        if (studyResponse.ok) {
+
+            const studyData =
+                await studyResponse.json();
+
+            dashboardStudySessions =
+                Array.isArray(studyData.sessions)
+                    ? studyData.sessions
+                    : [];
+
+        } else {
+
+            dashboardStudySessions = [];
+
+            console.warn(
+                "Unable to load dashboard study sessions."
+            );
+        }
+
+
+        // -----------------------------
+        // Goals
+        // -----------------------------
+
+        try {
+
+            const goalsResponse =
+                await fetch(
+                    `${API_URL}/goals?userId=${userId}`
+                );
+
+            if (goalsResponse.ok) {
+
+                const goalsData =
+                    await goalsResponse.json();
+
+                dashboardGoals =
+                    Array.isArray(goalsData.goals)
+                        ? goalsData.goals
+                        : [];
+
+            } else {
+
+                dashboardGoals = [];
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "Goals could not be loaded:",
+                error
+            );
+
+            dashboardGoals = [];
+        }
+
+
+        // -----------------------------
+        // Journals
+        // -----------------------------
+
+        try {
+
+            const journalsResponse =
+                await fetch(
+                    `${API_URL}/journals?userId=${userId}`
+                );
+
+            if (journalsResponse.ok) {
+
+                const journalsData =
+                    await journalsResponse.json();
+
+                dashboardJournals =
+                    Array.isArray(journalsData.journals)
+                        ? journalsData.journals
+                        : [];
+
+            } else {
+
+                dashboardJournals = [];
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "Journals could not be loaded:",
+                error
+            );
+
+            dashboardJournals = [];
+        }
+
+
+        // -----------------------------
+        // Update Dashboard
+        // -----------------------------
 
         displayDashboardTasks();
 
         updateTaskSummary();
 
+        displayDashboardStudy();
+
+        updateTotalStudyTime();
+
+        displayDashboardGoals();
+
+        updateGoalCount();
+
         updateStreak();
+
+        loadReminders();
 
     } catch (error) {
 
         console.error(
-            "Dashboard task error:",
+            "Dashboard loading error:",
             error
         );
-
-        dashboardTasks = [];
-
-        displayDashboardTasks();
-
-        updateTaskSummary();
-
-        updateStreak();
-
     }
-
 }
 
 
-/* ================================
-   Display Today's Tasks
-================================ */
+// =================================
+// Display Today's Tasks
+// =================================
 
 function displayDashboardTasks() {
 
@@ -265,8 +383,9 @@ function displayDashboardTasks() {
     if (!taskList) {
 
         return;
-
     }
+
+    taskList.innerHTML = "";
 
     const today =
         getToday();
@@ -277,149 +396,238 @@ function displayDashboardTasks() {
                 getTaskDate(task) === today
         );
 
-    taskList.innerHTML = "";
-
-
-    /* ================================
-       No Tasks
-    ================================ */
 
     if (todayTasks.length === 0) {
 
         taskList.innerHTML = `
-            <div class="no-tasks">
+            <div class="no-reminders">
                 No tasks for today.
             </div>
         `;
 
         return;
-
     }
 
 
-    /* ================================
-       Create Tasks
-    ================================ */
+    todayTasks.forEach(task => {
 
-    todayTasks.forEach(
-        function (task) {
+        // -----------------------------
+        // Main Task
+        // -----------------------------
 
-            const taskElement =
-                document.createElement("div");
+        const taskElement =
+            document.createElement("div");
 
-            if (
-                isTaskCompleted(task)
-            ) {
-
-                taskElement.className =
-                    "task completed";
-
-            } else {
-
-                taskElement.className =
-                    "task";
-
-            }
+        taskElement.className = "task";
 
 
-            const dueTime =
-                task.dueTime
-                    ? ` • Due: ${escapeText(
-                        formatTaskTime(
-                            task.dueTime
-                        )
-                    )}`
-                    : "";
+        if (isTaskCompleted(task)) {
 
-
-            taskElement.innerHTML = `
-                <input
-                    type="checkbox"
-                    class="dashboard-task-checkbox"
-                    data-id="${task.id}"
-                    ${isTaskCompleted(task) ? "checked" : ""}
-                >
-
-                <div class="task-info">
-
-                    <span>
-                        ${escapeText(
-                            task.name
-                        )}
-                    </span>
-
-                    <small>
-                        Priority:
-                        ${escapeText(
-                            task.priority || "Medium"
-                        )}
-                        ${dueTime}
-                    </small>
-
-                </div>
-            `;
-
-
-            taskList.appendChild(
-                taskElement
+            taskElement.classList.add(
+                "completed"
             );
-
         }
-    );
 
 
-    /* ================================
-       Checkbox Events
-    ================================ */
+        // -----------------------------
+        // Checkbox
+        // -----------------------------
 
-    const checkboxes =
-        taskList.querySelectorAll(
-            ".dashboard-task-checkbox"
+        const checkbox =
+            document.createElement("input");
+
+        checkbox.type = "checkbox";
+
+        checkbox.checked =
+            isTaskCompleted(task);
+
+        checkbox.addEventListener(
+            "change",
+            function () {
+
+                updateDashboardTask(
+                    task,
+                    checkbox.checked
+                );
+            }
         );
 
-    checkboxes.forEach(
-        function (checkbox) {
 
-            checkbox.addEventListener(
-                "change",
-                async function () {
+        // -----------------------------
+        // Task Info
+        // -----------------------------
 
-                    const id =
-                        Number(
-                            this.dataset.id
-                        );
+        const taskInfo =
+            document.createElement("div");
 
-                    const completed =
-                        this.checked;
+        taskInfo.className =
+            "task-info";
 
-                    await updateDashboardTask(
-                        id,
-                        completed
-                    );
 
-                }
+        const taskName =
+            document.createElement("span");
+
+        taskName.textContent =
+            task.name || "Untitled Task";
+
+
+        const taskMeta =
+            document.createElement("small");
+
+        let metaText = "";
+
+
+        if (task.priority) {
+
+            metaText =
+                `Priority: ${task.priority}`;
+        }
+
+
+        if (task.dueTime) {
+
+            if (metaText) {
+
+                metaText += " • ";
+            }
+
+            metaText +=
+                formatTaskTime(task.dueTime);
+        }
+
+
+        if (metaText) {
+
+            taskMeta.textContent =
+                metaText;
+
+            taskInfo.appendChild(
+                taskName
             );
 
-        }
-    );
+            taskInfo.appendChild(
+                taskMeta
+            );
 
+        } else {
+
+            taskInfo.appendChild(
+                taskName
+            );
+        }
+
+
+        // -----------------------------
+        // Task Actions
+        // -----------------------------
+
+        const taskActions =
+            document.createElement("div");
+
+        taskActions.className =
+            "task-actions";
+
+
+        // Edit Button
+
+        const editButton =
+            document.createElement("button");
+
+        editButton.type = "button";
+
+        editButton.className =
+            "edit-task";
+
+        editButton.textContent =
+            "Edit";
+
+        editButton.addEventListener(
+            "click",
+            function () {
+
+                openEditTaskModal(task);
+            }
+        );
+
+
+        // Delete Button
+
+        const deleteButton =
+            document.createElement("button");
+
+        deleteButton.type = "button";
+
+        deleteButton.className =
+            "delete-task";
+
+        deleteButton.textContent =
+            "Delete";
+
+        deleteButton.addEventListener(
+            "click",
+            function () {
+
+                deleteDashboardTask(task);
+            }
+        );
+
+
+        taskActions.appendChild(
+            editButton
+        );
+
+        taskActions.appendChild(
+            deleteButton
+        );
+
+
+        // -----------------------------
+        // Final Task Structure
+        // -----------------------------
+
+        taskElement.appendChild(
+            checkbox
+        );
+
+        taskElement.appendChild(
+            taskInfo
+        );
+
+        taskElement.appendChild(
+            taskActions
+        );
+
+        taskList.appendChild(
+            taskElement
+        );
+
+    });
 }
 
 
-/* ================================
-   Update Task
-================================ */
+// =================================
+// Update Task
+// =================================
 
 async function updateDashboardTask(
-    id,
+    task,
     completed
 ) {
+
+    if (!currentUser || !currentUser.id) {
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
 
     try {
 
         const response =
             await fetch(
-                `${API_URL}/tasks/${id}`,
+                `${API_URL}/tasks/${task.id}`,
                 {
                     method: "PUT",
 
@@ -428,34 +636,46 @@ async function updateDashboardTask(
                             "application/json"
                     },
 
-                    body:
-                        JSON.stringify({
-                            completed:
-                                completed
-                        })
+                    body: JSON.stringify({
+
+                        userId:
+                            currentUser.id,
+
+                        name:
+                            task.name,
+
+                        priority:
+                            task.priority || "Medium",
+
+                        dueTime:
+                            task.dueTime || "",
+
+                        date:
+                            task.date || getToday(),
+
+                        completed:
+                            completed
+
+                    })
                 }
             );
 
-        if (!response.ok) {
-
-            throw new Error(
-                "Failed to update task"
-            );
-
-        }
 
         const data =
             await response.json();
 
-        if (!data.success) {
+
+        if (!response.ok) {
 
             throw new Error(
-                "Task update failed"
+                data.message ||
+                "Failed to update task."
             );
-
         }
 
-        await loadDashboardTasks();
+
+        await loadDashboardData();
+
 
     } catch (error) {
 
@@ -465,41 +685,102 @@ async function updateDashboardTask(
         );
 
         alert(
-            "Could not update task."
+            error.message ||
+            "Unable to update task."
         );
-
-        await loadDashboardTasks();
-
     }
-
 }
 
 
-/* ================================
-   Update Task Summary
-================================ */
+// =================================
+// Delete Task
+// =================================
+
+async function deleteDashboardTask(task) {
+
+    if (!currentUser || !currentUser.id) {
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this task?"
+        );
+
+
+    if (!confirmDelete) {
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/tasks/${task.id}`,
+                {
+                    method: "DELETE",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        userId:
+                            currentUser.id
+
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Failed to delete task."
+            );
+        }
+
+
+        await loadDashboardData();
+
+
+    } catch (error) {
+
+        console.error(
+            "Task delete error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Unable to delete task."
+        );
+    }
+}
+
+
+// =================================
+// Task Summary
+// =================================
 
 function updateTaskSummary() {
 
-    const taskCount =
-        document.getElementById(
-            "taskCount"
-        );
-
-    const progressText =
-        document.getElementById(
-            "taskProgressText"
-        );
-
-    const progressBar =
-        document.getElementById(
-            "taskProgress"
-        );
-
-
     const today =
         getToday();
-
 
     const todayTasks =
         dashboardTasks.filter(
@@ -519,214 +800,991 @@ function updateTaskSummary() {
         ).length;
 
 
-    let percentage =
-        0;
+    let progress = 0;
 
 
     if (total > 0) {
 
-        percentage =
+        progress =
             Math.round(
-                (
-                    completed /
-                    total
-                ) * 100
+                (completed / total) * 100
             );
-
     }
 
+
+    const taskCount =
+        document.getElementById(
+            "taskCount"
+        );
 
     if (taskCount) {
 
         taskCount.textContent =
             `${completed}/${total}`;
-
     }
 
 
-    if (progressText) {
+    const taskProgressText =
+        document.getElementById(
+            "taskProgressText"
+        );
 
-        progressText.textContent =
-            `${percentage}%`;
+    if (taskProgressText) {
 
+        taskProgressText.textContent =
+            `${progress}%`;
     }
 
 
-    if (progressBar) {
+    const taskProgress =
+        document.getElementById(
+            "taskProgress"
+        );
 
-        progressBar.style.width =
-            `${percentage}%`;
+    if (taskProgress) {
 
+        taskProgress.style.width =
+            `${progress}%`;
     }
-
 }
 
 
-/* ================================
-   Check Daily Activity
-================================ */
+// =================================
+// Add Task Modal
+// =================================
 
-function hasActivity(date) {
+const openTaskModal =
+    document.getElementById(
+        "openTaskModal"
+    );
 
-    const completedTask =
-        dashboardTasks.some(
-            task =>
-                getTaskDate(task) === date &&
-                isTaskCompleted(task)
-        );
+const taskModal =
+    document.getElementById(
+        "taskModal"
+    );
 
+const closeTaskModal =
+    document.getElementById(
+        "closeTaskModal"
+    );
 
-    if (completedTask) {
+const cancelTask =
+    document.getElementById(
+        "cancelTask"
+    );
 
-        return true;
-
-    }
-
-
-    const studySessions =
-        JSON.parse(
-            localStorage.getItem(
-                "studySessions"
-            )
-        ) || [];
-
-
-    const studyActivity =
-        studySessions.some(
-            session =>
-                session.date === date
-        );
-
-
-    if (studyActivity) {
-
-        return true;
-
-    }
-
-
-    const journals =
-        JSON.parse(
-            localStorage.getItem(
-                "journals"
-            )
-        ) || [];
-
-
-    const journalActivity =
-        journals.some(
-            journal =>
-                journal.date === date
-        );
-
-
-    if (journalActivity) {
-
-        return true;
-
-    }
-
-
-    return false;
-
-}
-
-
-/* ================================
-   Previous Date
-================================ */
-
-function getPreviousDate(dateString) {
-
-    const date =
-        new Date(
-            dateString +
-            "T00:00:00"
-        );
-
-    date.setDate(
-        date.getDate() - 1
+const taskForm =
+    document.getElementById(
+        "taskForm"
     );
 
 
-    const year =
-        date.getFullYear();
+// Open Modal
 
+if (
+    openTaskModal &&
+    taskModal
+) {
 
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0");
+    openTaskModal.addEventListener(
+        "click",
+        function () {
 
+            taskModal.classList.add(
+                "show"
+            );
 
-    const day =
-        String(
-            date.getDate()
-        ).padStart(2, "0");
-
-
-    return `${year}-${month}-${day}`;
-
+        }
+    );
 }
 
 
-/* ================================
-   Calculate Streak
-================================ */
+// Close Modal
 
-function calculateStreak() {
+function closeTaskModalFunction() {
 
-    let streak = 0;
+    if (!taskModal) {
 
-    let currentDate =
-        getToday();
+        return;
+    }
+
+    taskModal.classList.remove(
+        "show"
+    );
+}
 
 
-    while (
-        hasActivity(currentDate)
-    ) {
+if (closeTaskModal) {
 
-        streak++;
+    closeTaskModal.addEventListener(
+        "click",
+        closeTaskModalFunction
+    );
+}
 
-        currentDate =
-            getPreviousDate(
-                currentDate
-            );
 
+if (cancelTask) {
+
+    cancelTask.addEventListener(
+        "click",
+        closeTaskModalFunction
+    );
+}
+
+
+if (taskModal) {
+
+    taskModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target === taskModal
+            ) {
+
+                closeTaskModalFunction();
+            }
+        }
+    );
+}
+
+
+// =================================
+// Add Task
+// =================================
+
+let isAddingTask = false;
+
+
+if (taskForm) {
+
+    taskForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            if (isAddingTask) {
+
+                return;
+            }
+
+
+            isAddingTask = true;
+
+
+            const taskNameElement =
+                document.getElementById(
+                    "taskName"
+                );
+
+            const taskPriorityElement =
+                document.getElementById(
+                    "taskPriority"
+                );
+
+            const taskDueTimeElement =
+                document.getElementById(
+                    "taskDueTime"
+                );
+
+
+            const taskName =
+                taskNameElement
+                    ? taskNameElement.value.trim()
+                    : "";
+
+
+            const taskPriority =
+                taskPriorityElement
+                    ? taskPriorityElement.value
+                    : "Medium";
+
+
+            const taskDueTime =
+                taskDueTimeElement
+                    ? taskDueTimeElement.value
+                    : "";
+
+
+            if (!taskName) {
+
+                alert(
+                    "Please enter task name."
+                );
+
+                isAddingTask = false;
+
+                return;
+            }
+
+
+            if (
+                !currentUser ||
+                !currentUser.id
+            ) {
+
+                window.location.href =
+                    "login.html";
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/tasks`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                userId:
+                                    currentUser.id,
+
+                                name:
+                                    taskName,
+
+                                priority:
+                                    taskPriority ||
+                                    "Medium",
+
+                                dueTime:
+                                    taskDueTime ||
+                                    "",
+
+                                date:
+                                    getToday()
+
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to add task."
+                    );
+                }
+
+
+                taskForm.reset();
+
+
+                closeTaskModalFunction();
+
+
+                await loadDashboardData();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error adding task:",
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    "Unable to add task."
+                );
+            }
+
+
+            isAddingTask = false;
+
+        }
+    );
+}
+
+
+// =================================
+// Edit Task Modal
+// =================================
+
+const editTaskModal =
+    document.getElementById(
+        "editTaskModal"
+    );
+
+const closeEditTaskModal =
+    document.getElementById(
+        "closeEditTaskModal"
+    );
+
+const cancelEditTask =
+    document.getElementById(
+        "cancelEditTask"
+    );
+
+const editTaskForm =
+    document.getElementById(
+        "editTaskForm"
+    );
+
+
+let editingTaskId = null;
+
+
+// Open Edit Modal
+
+function openEditTaskModal(task) {
+
+    if (!editTaskModal) {
+
+        return;
     }
 
 
-    return streak;
+    editingTaskId =
+        task.id;
 
+
+    const nameElement =
+        document.getElementById(
+            "editTaskName"
+        );
+
+    const priorityElement =
+        document.getElementById(
+            "editTaskPriority"
+        );
+
+    const dueTimeElement =
+        document.getElementById(
+            "editTaskDueTime"
+        );
+
+
+    if (nameElement) {
+
+        nameElement.value =
+            task.name || "";
+    }
+
+
+    if (priorityElement) {
+
+        priorityElement.value =
+            task.priority || "Medium";
+    }
+
+
+    if (dueTimeElement) {
+
+        dueTimeElement.value =
+            task.dueTime || "";
+    }
+
+
+    editTaskModal.classList.add(
+        "show"
+    );
 }
 
 
-/* ================================
-   Update Streak
-================================ */
+// Close Edit Modal
+
+function closeEditTaskModalFunction() {
+
+    if (!editTaskModal) {
+
+        return;
+    }
+
+    editTaskModal.classList.remove(
+        "show"
+    );
+
+    editingTaskId = null;
+}
+
+
+if (closeEditTaskModal) {
+
+    closeEditTaskModal.addEventListener(
+        "click",
+        closeEditTaskModalFunction
+    );
+}
+
+
+if (cancelEditTask) {
+
+    cancelEditTask.addEventListener(
+        "click",
+        closeEditTaskModalFunction
+    );
+}
+
+
+if (editTaskModal) {
+
+    editTaskModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target === editTaskModal
+            ) {
+
+                closeEditTaskModalFunction();
+            }
+        }
+    );
+}
+
+
+// =================================
+// Save Edited Task
+// =================================
+
+if (editTaskForm) {
+
+    editTaskForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            if (
+                !editingTaskId ||
+                !currentUser ||
+                !currentUser.id
+            ) {
+
+                return;
+            }
+
+
+            const nameElement =
+                document.getElementById(
+                    "editTaskName"
+                );
+
+            const priorityElement =
+                document.getElementById(
+                    "editTaskPriority"
+                );
+
+            const dueTimeElement =
+                document.getElementById(
+                    "editTaskDueTime"
+                );
+
+
+            const name =
+                nameElement
+                    ? nameElement.value.trim()
+                    : "";
+
+
+            const priority =
+                priorityElement
+                    ? priorityElement.value
+                    : "Medium";
+
+
+            const dueTime =
+                dueTimeElement
+                    ? dueTimeElement.value
+                    : "";
+
+
+            if (!name) {
+
+                alert(
+                    "Please enter task name."
+                );
+
+                return;
+            }
+
+
+            const oldTask =
+                dashboardTasks.find(
+                    task =>
+                        Number(task.id) ===
+                        Number(editingTaskId)
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/tasks/${editingTaskId}`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                userId:
+                                    currentUser.id,
+
+                                name:
+                                    name,
+
+                                priority:
+                                    priority,
+
+                                dueTime:
+                                    dueTime,
+
+                                date:
+                                    oldTask &&
+                                    oldTask.date
+                                        ? oldTask.date
+                                        : getToday(),
+
+                                completed:
+                                    oldTask
+                                        ? isTaskCompleted(oldTask)
+                                        : false
+
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to update task."
+                    );
+                }
+
+
+                editTaskForm.reset();
+
+                closeEditTaskModalFunction();
+
+                await loadDashboardData();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Task edit error:",
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    "Unable to edit task."
+                );
+            }
+
+        }
+    );
+}
+
+
+// =================================
+// Study Today
+// =================================
+
+function displayDashboardStudy() {
+
+    const studyList =
+        document.getElementById(
+            "studyList"
+        );
+
+    if (!studyList) {
+
+        return;
+    }
+
+
+    const today =
+        getToday();
+
+
+    const todaySessions =
+        dashboardStudySessions.filter(
+            session =>
+                String(
+                    session.date || ""
+                ).trim() === today
+        );
+
+
+    if (todaySessions.length === 0) {
+
+        studyList.innerHTML = `
+            <div>
+                <span>No study sessions yet</span>
+                <strong>0m</strong>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    studyList.innerHTML = "";
+
+
+    todaySessions.forEach(
+        session => {
+
+            const row =
+                document.createElement("div");
+
+            row.className =
+                "study-session";
+
+
+            const subject =
+                document.createElement("span");
+
+            subject.textContent =
+                session.subject ||
+                "Study";
+
+
+            const duration =
+                document.createElement("strong");
+
+            duration.textContent =
+                formatDashboardStudyDuration(
+                    session.duration
+                );
+
+
+            row.appendChild(
+                subject
+            );
+
+            row.appendChild(
+                duration
+            );
+
+            studyList.appendChild(
+                row
+            );
+        }
+    );
+}
+
+
+// =================================
+// Study Duration
+// =================================
+
+function formatDashboardStudyDuration(
+    minutes
+) {
+
+    const totalMinutes =
+        Number(minutes) || 0;
+
+
+    if (totalMinutes < 60) {
+
+        return `${totalMinutes}m`;
+    }
+
+
+    const hours =
+        Math.floor(
+            totalMinutes / 60
+        );
+
+
+    const remainingMinutes =
+        totalMinutes % 60;
+
+
+    if (remainingMinutes === 0) {
+
+        return `${hours}h`;
+    }
+
+
+    return `${hours}h ${remainingMinutes}m`;
+}
+
+
+// =================================
+// Total Study Time
+// =================================
+
+function updateTotalStudyTime() {
+
+    const totalStudyTime =
+        document.getElementById(
+            "totalStudyTime"
+        );
+
+    if (!totalStudyTime) {
+
+        return;
+    }
+
+
+    const totalMinutes =
+        dashboardStudySessions.reduce(
+            (total, session) => {
+
+                return total +
+                    (
+                        Number(
+                            session.duration
+                        ) || 0
+                    );
+
+            },
+            0
+        );
+
+
+    totalStudyTime.textContent =
+        formatDashboardStudyDuration(
+            totalMinutes
+        );
+}
+
+
+// =================================
+// Open Study Page
+// =================================
+
+const openStudyPage =
+    document.getElementById(
+        "openStudyPage"
+    );
+
+if (openStudyPage) {
+
+    openStudyPage.addEventListener(
+        "click",
+        function () {
+
+            window.location.href =
+                "study.html";
+        }
+    );
+}
+
+
+// =================================
+// Goals
+// =================================
+
+function displayDashboardGoals() {
+
+    const goalList =
+        document.getElementById(
+            "dashboardGoalList"
+        );
+
+    if (!goalList) {
+
+        return;
+    }
+
+
+    if (dashboardGoals.length === 0) {
+
+        goalList.innerHTML = `
+            <div>
+                <span>No goals yet.</span>
+                <strong>0%</strong>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    goalList.innerHTML = "";
+
+
+    dashboardGoals
+        .slice(0, 3)
+        .forEach(goal => {
+
+            const row =
+                document.createElement("div");
+
+
+            const name =
+                document.createElement("span");
+
+            name.textContent =
+                goal.name ||
+                goal.title ||
+                "Goal";
+
+
+            const progress =
+                document.createElement("strong");
+
+
+            const value =
+                Number(
+                    goal.progress
+                ) || 0;
+
+
+            progress.textContent =
+                `${value}%`;
+
+
+            row.appendChild(
+                name
+            );
+
+            row.appendChild(
+                progress
+            );
+
+            goalList.appendChild(
+                row
+            );
+
+        });
+}
+
+
+// =================================
+// Goal Count
+// =================================
+
+function updateGoalCount() {
+
+    const goalCount =
+        document.getElementById(
+            "goalCount"
+        );
+
+    if (!goalCount) {
+
+        return;
+    }
+
+
+    goalCount.textContent =
+        dashboardGoals.length;
+}
+
+
+// =================================
+// Open Goal Page
+// =================================
+
+const openGoalPage =
+    document.getElementById(
+        "openGoalPage"
+    );
+
+if (openGoalPage) {
+
+    openGoalPage.addEventListener(
+        "click",
+        function () {
+
+            window.location.href =
+                "goals.html";
+        }
+    );
+}
+
+
+// =================================
+// Streak
+// =================================
 
 function updateStreak() {
 
-    const streakCount =
+    const streakElement =
         document.getElementById(
             "streakCount"
         );
 
-    if (!streakCount) {
+    if (!streakElement) {
 
         return;
-
     }
 
-    streakCount.textContent =
-        calculateStreak();
 
+    let streak = 0;
+
+
+    const completedDates =
+        dashboardTasks
+            .filter(
+                task =>
+                    isTaskCompleted(task) &&
+                    task.date
+            )
+            .map(
+                task =>
+                    String(task.date)
+            );
+
+
+    const uniqueDates =
+        [
+            ...new Set(
+                completedDates
+            )
+        ];
+
+
+    if (
+        uniqueDates.includes(
+            getToday()
+        )
+    ) {
+
+        streak = 1;
+    }
+
+
+    streakElement.textContent =
+        streak;
 }
 
 
-/* ================================
-   Reminder Elements
-================================ */
+// =================================
+// Study Modal
+// =================================
+
+// Study modal functionality is handled
+// by study.js
+
+
+// =================================
+// Reminder System
+// =================================
 
 const reminderWrapper =
     document.getElementById(
@@ -769,9 +1827,9 @@ const reminderForm =
     );
 
 
-/* ================================
-   Reminder Dropdown
-================================ */
+// =================================
+// Reminder Bell
+// =================================
 
 if (
     reminderBell &&
@@ -787,12 +1845,12 @@ if (
             reminderDropdown.classList.toggle(
                 "show"
             );
-
         }
     );
-
 }
 
+
+// Close reminder dropdown
 
 document.addEventListener(
     "click",
@@ -809,266 +1867,79 @@ document.addEventListener(
             reminderDropdown.classList.remove(
                 "show"
             );
-
         }
-
     }
 );
 
 
-/* ================================
-   Open Reminder Modal
-================================ */
-
-if (
-    openReminderModal &&
-    reminderModal
-) {
-
-    openReminderModal.addEventListener(
-        "click",
-        function (event) {
-
-            event.stopPropagation();
-
-            if (reminderDropdown) {
-
-                reminderDropdown.classList.remove(
-                    "show"
-                );
-
-            }
-
-            reminderModal.style.display =
-                "flex";
-
-
-            const reminderDate =
-                document.getElementById(
-                    "reminderDate"
-                );
-
-
-            if (reminderDate) {
-
-                reminderDate.value =
-                    getToday();
-
-            }
-
-        }
-    );
-
-}
-
-
-/* ================================
-   Close Reminder Modal
-================================ */
-
-if (
-    closeReminderModal &&
-    reminderModal
-) {
-
-    closeReminderModal.addEventListener(
-        "click",
-        function () {
-
-            reminderModal.style.display =
-                "none";
-
-        }
-    );
-
-}
-
-
-if (
-    cancelReminder &&
-    reminderModal
-) {
-
-    cancelReminder.addEventListener(
-        "click",
-        function () {
-
-            reminderModal.style.display =
-                "none";
-
-        }
-    );
-
-}
-
-
-if (reminderModal) {
-
-    reminderModal.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                event.target ===
-                reminderModal
-            ) {
-
-                reminderModal.style.display =
-                    "none";
-
-            }
-
-        }
-    );
-
-}
-
-
-/* ================================
-   Get Reminders
-================================ */
+// =================================
+// Reminder Storage
+// =================================
 
 function getReminders() {
 
-    return (
-        JSON.parse(
-            localStorage.getItem(
-                "reminders"
-            )
-        ) || []
-    );
+    try {
 
+        const reminders =
+            JSON.parse(
+                localStorage.getItem(
+                    "reminders"
+                ) || "[]"
+            );
+
+
+        return Array.isArray(reminders)
+            ? reminders
+            : [];
+
+    } catch (error) {
+
+        return [];
+    }
 }
 
-
-/* ================================
-   Save Reminders
-================================ */
 
 function saveReminders(reminders) {
 
     localStorage.setItem(
         "reminders",
-        JSON.stringify(
-            reminders
-        )
+        JSON.stringify(reminders)
     );
-
 }
 
 
-/* ================================
-   Reminder Count
-================================ */
+// =================================
+// Display Reminders
+// =================================
 
-function updateReminderCount() {
-
-    const reminderCount =
-        document.getElementById(
-            "reminderCount"
-        );
-
-    if (!reminderCount) {
-
-        return;
-
-    }
-
-    reminderCount.textContent =
-        getReminders().length;
-
-}
-
-
-/* ================================
-   Reminder Time
-================================ */
-
-function formatReminderTime(time) {
-
-    if (!time) {
-
-        return "";
-
-    }
-
-    const parts =
-        time.split(":");
-
-    let hour =
-        parseInt(
-            parts[0],
-            10
-        );
-
-    const minute =
-        parts[1];
-
-    const period =
-        hour >= 12
-            ? "PM"
-            : "AM";
-
-    hour =
-        hour % 12 || 12;
-
-    return `${hour}:${minute} ${period}`;
-
-}
-
-
-/* ================================
-   Reminder Date
-================================ */
-
-function formatReminderDate(dateString) {
-
-    if (!dateString) {
-
-        return "";
-
-    }
-
-    const date =
-        new Date(
-            dateString +
-            "T00:00:00"
-        );
-
-    return date.toLocaleDateString(
-        "en-IN",
-        {
-            day: "2-digit",
-            month: "short"
-        }
-    );
-
-}
-
-
-/* ================================
-   Display Reminders
-================================ */
-
-function displayReminderList() {
+function loadReminders() {
 
     const reminderList =
         document.getElementById(
             "reminderList"
         );
 
+    const reminderCount =
+        document.getElementById(
+            "reminderCount"
+        );
+
+
     if (!reminderList) {
 
         return;
-
     }
+
 
     const reminders =
         getReminders();
 
 
-    reminderList.innerHTML =
-        "";
+    if (reminderCount) {
+
+        reminderCount.textContent =
+            reminders.length;
+    }
 
 
     if (reminders.length === 0) {
@@ -1080,283 +1951,244 @@ function displayReminderList() {
         `;
 
         return;
-
     }
 
 
-    reminders.sort(
-        function (a, b) {
-
-            const dateA =
-                `${a.date || ""} ${a.time || ""}`;
-
-            const dateB =
-                `${b.date || ""} ${b.time || ""}`;
-
-            return dateA.localeCompare(
-                dateB
-            );
-
-        }
-    );
+    reminderList.innerHTML = "";
 
 
     reminders.forEach(
-        function (reminder) {
+        (reminder, index) => {
 
-            const reminderItem =
-                document.createElement(
-                    "div"
-                );
+            const item =
+                document.createElement("div");
 
-            reminderItem.className =
+            item.className =
                 "reminder-item";
 
 
-            const reminderDate =
-                reminder.date
-                    ? formatReminderDate(
-                        reminder.date
-                    )
-                    : "";
+            const info =
+                document.createElement("div");
+
+            info.className =
+                "reminder-item-info";
 
 
-            reminderItem.innerHTML = `
-                <div class="reminder-item-info">
+            const text =
+                document.createElement("div");
 
-                    <div class="reminder-item-text">
-                        🔔
-                        ${escapeText(
-                            reminder.text
-                        )}
-                    </div>
+            text.className =
+                "reminder-item-text";
 
-                    <div class="reminder-item-time">
-
-                        ⏰
-                        ${formatReminderTime(
-                            reminder.time
-                        )}
-
-                        ${
-                            reminderDate
-                                ? " • " +
-                                  reminderDate
-                                : ""
-                        }
-
-                    </div>
-
-                </div>
-
-                <button
-                    type="button"
-                    class="delete-reminder"
-                    data-id="${reminder.id}"
-                    title="Delete Reminder"
-                >
-                    🗑️
-                </button>
-            `;
+            text.textContent =
+                reminder.text ||
+                "Reminder";
 
 
-            reminderList.appendChild(
-                reminderItem
+            const time =
+                document.createElement("div");
+
+            time.className =
+                "reminder-item-time";
+
+
+            let reminderDate =
+                reminder.date || "";
+
+
+            if (
+                reminder.date &&
+                reminder.time
+            ) {
+
+                reminderDate =
+                    `${reminder.date} • ${formatTaskTime(reminder.time)}`;
+
+            } else if (
+                reminder.time
+            ) {
+
+                reminderDate =
+                    formatTaskTime(
+                        reminder.time
+                    );
+            }
+
+
+            time.textContent =
+                reminderDate;
+
+
+            info.appendChild(
+                text
             );
 
-        }
-    );
+            info.appendChild(
+                time
+            );
 
 
-    const deleteButtons =
-        reminderList.querySelectorAll(
-            ".delete-reminder"
-        );
+            const deleteButton =
+                document.createElement("button");
+
+            deleteButton.type =
+                "button";
+
+            deleteButton.className =
+                "delete-reminder";
+
+            deleteButton.textContent =
+                "×";
 
 
-    deleteButtons.forEach(
-        function (button) {
-
-            button.addEventListener(
+            deleteButton.addEventListener(
                 "click",
-                function (event) {
+                function () {
 
-                    event.stopPropagation();
-
-                    deleteReminder(
-                        Number(
-                            this.dataset.id
-                        )
-                    );
-
+                    deleteReminder(index);
                 }
             );
 
+
+            item.appendChild(
+                info
+            );
+
+            item.appendChild(
+                deleteButton
+            );
+
+
+            reminderList.appendChild(
+                item
+            );
         }
     );
-
 }
 
 
-/* ================================
-   Delete Reminder
-================================ */
+// =================================
+// Delete Reminder
+// =================================
 
-function deleteReminder(id) {
+function deleteReminder(index) {
 
     const reminders =
         getReminders();
 
 
-    const updatedReminders =
-        reminders.filter(
-            reminder =>
-                reminder.id !== id
-        );
-
-
-    saveReminders(
-        updatedReminders
+    reminders.splice(
+        index,
+        1
     );
 
 
-    updateReminderCount();
+    saveReminders(
+        reminders
+    );
 
-    displayReminderList();
 
+    loadReminders();
 }
 
 
-/* ================================
-   Notification Permission
-================================ */
+// =================================
+// Open Reminder Modal
+// =================================
 
-function requestNotificationPermission() {
-
-    if (
-        "Notification" in window &&
-        Notification.permission ===
-            "default"
-    ) {
-
-        Notification.requestPermission();
-
-    }
-
-}
-
-
-/* ================================
-   Browser Notification
-================================ */
-
-function showBrowserNotification(
-    text
+if (
+    openReminderModal &&
+    reminderModal
 ) {
 
-    if (
-        "Notification" in window &&
-        Notification.permission ===
-            "granted"
-    ) {
+    openReminderModal.addEventListener(
+        "click",
+        function () {
 
-        new Notification(
-            "🔔 Daily Tracker",
-            {
-                body: text
+            reminderDropdown.classList.remove(
+                "show"
+            );
+
+            reminderModal.classList.add(
+                "show"
+            );
+
+
+            const dateElement =
+                document.getElementById(
+                    "reminderDate"
+                );
+
+
+            if (
+                dateElement &&
+                !dateElement.value
+            ) {
+
+                dateElement.value =
+                    getToday();
             }
-        );
-
-    }
-
-}
-
-
-/* ================================
-   Reminder Sound
-================================ */
-
-function playReminderSound() {
-
-    try {
-
-        const AudioContext =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-
-        if (!AudioContext) {
-
-            return;
-
         }
-
-
-        const audioContext =
-            new AudioContext();
-
-
-        const oscillator =
-            audioContext.createOscillator();
-
-
-        const gainNode =
-            audioContext.createGain();
-
-
-        oscillator.type =
-            "sine";
-
-
-        oscillator.frequency.value =
-            800;
-
-
-        gainNode.gain.setValueAtTime(
-            0.3,
-            audioContext.currentTime
-        );
-
-
-        oscillator.connect(
-            gainNode
-        );
-
-
-        gainNode.connect(
-            audioContext.destination
-        );
-
-
-        oscillator.start();
-
-
-        gainNode.gain.exponentialRampToValueAtTime(
-            0.001,
-            audioContext.currentTime +
-            0.8
-        );
-
-
-        oscillator.stop(
-            audioContext.currentTime +
-            0.8
-        );
-
-    } catch (error) {
-
-        console.log(
-            "Reminder sound could not play."
-        );
-
-    }
-
+    );
 }
 
 
-/* ================================
-   Add Reminder
-================================ */
+// =================================
+// Close Reminder Modal
+// =================================
+
+function closeReminder() {
+
+    if (!reminderModal) {
+
+        return;
+    }
+
+
+    reminderModal.classList.remove(
+        "show"
+    );
+}
+
+
+if (closeReminderModal) {
+
+    closeReminderModal.addEventListener(
+        "click",
+        closeReminder
+    );
+}
+
+
+if (cancelReminder) {
+
+    cancelReminder.addEventListener(
+        "click",
+        closeReminder
+    );
+}
+
+
+if (reminderModal) {
+
+    reminderModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target === reminderModal
+            ) {
+
+                closeReminder();
+            }
+        }
+    );
+}
+
+
+// =================================
+// Add Reminder
+// =================================
 
 if (reminderForm) {
 
@@ -1370,33 +2202,55 @@ if (reminderForm) {
             const reminderText =
                 document.getElementById(
                     "reminderText"
-                ).value.trim();
-
+                );
 
             const reminderDate =
                 document.getElementById(
                     "reminderDate"
-                ).value;
-
+                );
 
             const reminderTime =
                 document.getElementById(
                     "reminderTime"
-                ).value;
+                );
 
 
             if (
-                reminderText === "" ||
-                reminderDate === "" ||
-                reminderTime === ""
+                !reminderText ||
+                !reminderText.value.trim()
             ) {
 
                 alert(
-                    "Please fill all fields!"
+                    "Please enter a reminder."
                 );
 
                 return;
+            }
 
+
+            if (
+                !reminderDate ||
+                !reminderDate.value
+            ) {
+
+                alert(
+                    "Please select a date."
+                );
+
+                return;
+            }
+
+
+            if (
+                !reminderTime ||
+                !reminderTime.value
+            ) {
+
+                alert(
+                    "Please select a time."
+                );
+
+                return;
             }
 
 
@@ -1406,20 +2260,14 @@ if (reminderForm) {
 
             reminders.push({
 
-                id:
-                    Date.now(),
-
                 text:
-                    reminderText,
+                    reminderText.value.trim(),
 
                 date:
-                    reminderDate,
+                    reminderDate.value,
 
                 time:
-                    reminderTime,
-
-                notified:
-                    false
+                    reminderTime.value
 
             });
 
@@ -1429,417 +2277,76 @@ if (reminderForm) {
             );
 
 
-            updateReminderCount();
-
-            displayReminderList();
-
-            requestNotificationPermission();
-
-
-            alert(
-                "Reminder added successfully!"
-            );
-
-
             reminderForm.reset();
 
 
-            reminderModal.style.display =
-                "none";
+            closeReminder();
+
+
+            loadReminders();
+
+
+            alert(
+                "Reminder saved successfully!"
+            );
 
         }
     );
-
 }
 
 
-/* ================================
-   Check Reminders
-================================ */
-
-function checkReminders() {
-
-    const reminders =
-        getReminders();
-
-
-    const now =
-        new Date();
-
-
-    const currentDate =
-        getToday();
-
-
-    const currentTime =
-        `${String(
-            now.getHours()
-        ).padStart(2, "0")}:${String(
-            now.getMinutes()
-        ).padStart(2, "0")}`;
-
-
-    let changed =
-        false;
-
-
-    reminders.forEach(
-        function (reminder) {
-
-            const reminderDate =
-                reminder.date ||
-                currentDate;
-
-
-            if (
-                reminderDate ===
-                    currentDate &&
-                reminder.time ===
-                    currentTime &&
-                reminder.notified !== true
-            ) {
-
-                playReminderSound();
-
-                showBrowserNotification(
-                    reminder.text
-                );
-
-                alert(
-                    "🔔 Reminder: " +
-                    reminder.text
-                );
-
-
-                reminder.notified =
-                    true;
-
-
-                changed =
-                    true;
-
-            }
-
-        }
-    );
-
-
-    if (changed) {
-
-        saveReminders(
-            reminders
-        );
-
-        displayReminderList();
-
-    }
-
-}
-
-
-/* ================================
-   Open Task Modal
-================================ */
-
-const openTaskModal =
-    document.getElementById(
-        "openTaskModal"
-    );
-
-const taskModal =
-    document.getElementById(
-        "taskModal"
-    );
-
-const closeTaskModal =
-    document.getElementById(
-        "closeTaskModal"
-    );
-
-const cancelTask =
-    document.getElementById(
-        "cancelTask"
-    );
-
-const taskForm =
-    document.getElementById(
-        "taskForm"
-    );
-
+// =================================
+// Notification Permission
+// =================================
 
 if (
-    openTaskModal &&
-    taskModal
+    "Notification" in window &&
+    Notification.permission === "default"
 ) {
 
-    openTaskModal.addEventListener(
-        "click",
-        function () {
-
-            taskModal.style.display =
-                "flex";
-
-        }
-    );
-
-}
-
-
-if (
-    closeTaskModal &&
-    taskModal
-) {
-
-    closeTaskModal.addEventListener(
-        "click",
-        function () {
-
-            taskModal.style.display =
-                "none";
-
-        }
-    );
-
-}
-
-
-if (
-    cancelTask &&
-    taskModal
-) {
-
-    cancelTask.addEventListener(
-        "click",
-        function () {
-
-            taskModal.style.display =
-                "none";
-
-        }
-    );
-
-}
-
-
-if (taskModal) {
-
-    taskModal.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                event.target ===
-                taskModal
-            ) {
-
-                taskModal.style.display =
-                    "none";
-
-            }
-
-        }
-    );
-
-}
-
-
-/* ================================
-   Add Task From Dashboard
-================================ */
-
-if (taskForm) {
-
-    taskForm.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
-
-
-            const taskName =
-                document.getElementById(
-                    "taskName"
-                ).value.trim();
-
-
-            const taskPriority =
-                document.getElementById(
-                    "taskPriority"
-                ).value;
-
-
-            const taskDueTime =
-                document.getElementById(
-                    "taskDueTime"
-                ).value;
-
-
-            if (!taskName) {
-
-                alert(
-                    "Please enter task name."
-                );
-
-                return;
-
-            }
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${API_URL}/tasks`,
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body:
-                                JSON.stringify({
-
-                                    name:
-                                        taskName,
-
-                                    priority:
-                                        taskPriority,
-
-                                    dueTime:
-                                        taskDueTime,
-
-                                    date:
-                                        getToday()
-
-                                })
-
-                        }
-                    );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Failed to add task"
-                    );
-
-                }
-
-
-                const data =
-                    await response.json();
-
-
-                if (!data.success) {
-
-                    throw new Error(
-                        "Task was not added"
-                    );
-
-                }
-
-
-                taskForm.reset();
-
-
-                taskModal.style.display =
-                    "none";
-
-
-                await loadDashboardTasks();
-
-
-                alert(
-                    "Task added successfully!"
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "Add task error:",
+    Notification.requestPermission()
+        .catch(
+            function (error) {
+
+                console.warn(
+                    "Notification permission error:",
                     error
                 );
-
-
-                alert(
-                    "Could not add task. Make sure backend is running."
-                );
-
             }
-
-        }
-    );
-
+        );
 }
 
 
-/* ================================
-   Initial Dashboard Load
-================================ */
+// =================================
+// Initial Load
+// =================================
 
-async function refreshDashboard() {
-
-    updateReminderCount();
-
-    displayReminderList();
-
-    await loadDashboardTasks();
-
-}
+loadDashboardData();
 
 
-refreshDashboard();
-
-
-/* ================================
-   Notification Permission
-================================ */
-
-window.addEventListener(
-    "click",
-    function () {
-
-        requestNotificationPermission();
-
-    },
-    {
-        once: true
-    }
-);
-
-
-/* ================================
-   Reminder Check
-================================ */
-
-setInterval(
-    checkReminders,
-    1000
-);
-
-
-/* ================================
-   Refresh On Focus
-================================ */
+// =================================
+// Refresh When Page Gets Focus
+// =================================
 
 window.addEventListener(
     "focus",
     function () {
 
-        refreshDashboard();
+        loadDashboardData();
 
     }
 );
 
 
-/* ================================
-   Refresh Every Minute
-================================ */
+// =================================
+// Auto Refresh
+// =================================
 
 setInterval(
-    refreshDashboard,
+    function () {
+
+        loadDashboardData();
+
+    },
     60000
 );

@@ -39,14 +39,22 @@ if (!currentUser || !currentUser.id) {
 
 
 // ================================
-// Study Elements
+// Elements
+// ================================
+
+const studyList =
+    document.getElementById("studyList");
+
+const openStudyPage =
+    document.getElementById("openStudyPage");
+
+
+// ================================
+// Edit Modal
 // ================================
 
 const studyModal =
     document.getElementById("studyModal");
-
-const openStudyModal =
-    document.getElementById("openStudyModal");
 
 const closeStudyModal =
     document.getElementById("closeStudyModal");
@@ -63,51 +71,36 @@ const studySubject =
 const studyDuration =
     document.getElementById("studyDuration");
 
-const studyList =
-    document.getElementById("studyList");
-
 
 // ================================
-// Current Editing Session
+// Editing Session
 // ================================
 
 let currentEditingSession = null;
 
 
 // ================================
-// Get Today's Date
+// Today's Date
 // ================================
 
 function getStudyToday() {
 
-    const now =
-        new Date();
-
+    const now = new Date();
 
     const year =
         now.getFullYear();
 
-
     const month =
         String(
             now.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
-
+        ).padStart(2, "0");
 
     const day =
         String(
             now.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
+        ).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
-
 }
 
 
@@ -124,7 +117,6 @@ function escapeStudyText(text) {
         text || "";
 
     return div.innerHTML;
-
 }
 
 
@@ -137,12 +129,8 @@ function formatStudyDuration(minutes) {
     minutes =
         Number(minutes) || 0;
 
-
     const hours =
-        Math.floor(
-            minutes / 60
-        );
-
+        Math.floor(minutes / 60);
 
     const remainingMinutes =
         minutes % 60;
@@ -166,7 +154,6 @@ function formatStudyDuration(minutes) {
 
 
     return `${remainingMinutes}m`;
-
 }
 
 
@@ -207,9 +194,7 @@ async function loadStudySessions() {
 
             const errorData =
                 await response.json()
-                    .catch(
-                        () => ({})
-                    );
+                    .catch(() => ({}));
 
 
             throw new Error(
@@ -256,7 +241,7 @@ async function loadStudySessions() {
 
 
 // ================================
-// Display Today's Study Sessions
+// Display Today's Sessions
 // ================================
 
 function displayStudySessions(
@@ -291,12 +276,15 @@ function displayStudySessions(
     studyList.innerHTML = "";
 
 
+    // No sessions
+
     if (
         todaySessions.length === 0
     ) {
 
         studyList.innerHTML = `
             <div>
+
                 <span>
                     No study sessions yet
                 </span>
@@ -304,6 +292,7 @@ function displayStudySessions(
                 <strong>
                     0m
                 </strong>
+
             </div>
         `;
 
@@ -311,6 +300,8 @@ function displayStudySessions(
 
     }
 
+
+    // Show sessions
 
     todaySessions.forEach(
         function (session) {
@@ -379,43 +370,17 @@ function displayStudySessions(
 
 
 // ================================
-// Open Study Modal
+// Add Session Button
 // ================================
 
-if (
-    openStudyModal &&
-    studyModal
-) {
+if (openStudyPage) {
 
-    openStudyModal.addEventListener(
+    openStudyPage.addEventListener(
         "click",
         function () {
 
-            currentEditingSession =
-                null;
-
-
-            if (studyForm) {
-
-                studyForm.reset();
-
-            }
-
-
-            studyModal.classList.add(
-                "active"
-            );
-
-
-            studyModal.style.display =
-                "flex";
-
-
-            if (studySubject) {
-
-                studySubject.focus();
-
-            }
+            window.location.href =
+                "study.html";
 
         }
     );
@@ -424,7 +389,7 @@ if (
 
 
 // ================================
-// Close Study Modal
+// Close Edit Modal
 // ================================
 
 function closeStudyModalFunction() {
@@ -434,7 +399,6 @@ function closeStudyModalFunction() {
         studyModal.classList.remove(
             "active"
         );
-
 
         studyModal.style.display =
             "none";
@@ -500,7 +464,7 @@ if (studyModal) {
 
 
 // ================================
-// Add / Edit Study Session
+// Save Edited Session
 // ================================
 
 if (studyForm) {
@@ -519,6 +483,15 @@ if (studyForm) {
 
                 window.location.href =
                     "login.html";
+
+                return;
+
+            }
+
+
+            if (
+                currentEditingSession === null
+            ) {
 
                 return;
 
@@ -562,86 +535,33 @@ if (studyForm) {
 
             try {
 
-                let response;
+                const response =
+                    await fetch(
+                        `${STUDY_API_URL}/study/${currentEditingSession}`,
+                        {
+                            method: "PUT",
 
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
 
-                // ================================
-                // Edit
-                // ================================
+                            body:
+                                JSON.stringify({
 
-                if (
-                    currentEditingSession !== null
-                ) {
+                                    userId:
+                                        currentUser.id,
 
-                    response =
-                        await fetch(
-                            `${STUDY_API_URL}/study/${currentEditingSession}`,
-                            {
-                                method: "PUT",
+                                    subject:
+                                        subject,
 
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
+                                    duration:
+                                        duration
 
-                                body:
-                                    JSON.stringify({
+                                })
 
-                                        userId:
-                                            currentUser.id,
-
-                                        subject:
-                                            subject,
-
-                                        duration:
-                                            duration
-
-                                    })
-
-                            }
-                        );
-
-                }
-
-
-                // ================================
-                // Add
-                // ================================
-
-                else {
-
-                    response =
-                        await fetch(
-                            `${STUDY_API_URL}/study`,
-                            {
-                                method: "POST",
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                body:
-                                    JSON.stringify({
-
-                                        userId:
-                                            currentUser.id,
-
-                                        subject:
-                                            subject,
-
-                                        duration:
-                                            duration,
-
-                                        date:
-                                            getStudyToday()
-
-                                    })
-
-                            }
-                        );
-
-                }
+                        }
+                    );
 
 
                 const data =
@@ -652,7 +572,7 @@ if (studyForm) {
 
                     throw new Error(
                         data.message ||
-                        "Study operation failed."
+                        "Failed to update study session."
                     );
 
                 }
@@ -663,11 +583,6 @@ if (studyForm) {
 
                 await loadStudySessions();
 
-
-                /*
-                    Refresh Dashboard data
-                    after adding/editing study.
-                */
 
                 if (
                     typeof loadDashboardData ===
@@ -682,7 +597,7 @@ if (studyForm) {
             } catch (error) {
 
                 console.error(
-                    "Study save error:",
+                    "Study edit error:",
                     error
                 );
 
@@ -701,7 +616,7 @@ if (studyForm) {
 
 
 // ================================
-// Edit / Delete Study Buttons
+// Edit / Delete
 // ================================
 
 if (studyList) {
@@ -710,8 +625,9 @@ if (studyList) {
         "click",
         async function (event) {
 
+
             // ================================
-            // Edit
+            // EDIT
             // ================================
 
             if (
@@ -727,19 +643,6 @@ if (studyList) {
 
 
                 try {
-
-                    if (
-                        !currentUser ||
-                        !currentUser.id
-                    ) {
-
-                        window.location.href =
-                            "login.html";
-
-                        return;
-
-                    }
-
 
                     const userId =
                         encodeURIComponent(
@@ -841,7 +744,7 @@ if (studyList) {
 
 
             // ================================
-            // Delete
+            // DELETE
             // ================================
 
             if (
@@ -870,19 +773,6 @@ if (studyList) {
 
 
                 try {
-
-                    if (
-                        !currentUser ||
-                        !currentUser.id
-                    ) {
-
-                        window.location.href =
-                            "login.html";
-
-                        return;
-
-                    }
-
 
                     const response =
                         await fetch(

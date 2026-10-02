@@ -1,346 +1,170 @@
-/* ================================
-   Settings Page
-================================ */
+const profileForm = document.getElementById("profileForm");
+const profileName = document.getElementById("profileName");
+const profileEmail = document.getElementById("profileEmail");
+
+const themeSelect = document.getElementById("themeSelect");
+
+const passwordForm = document.getElementById("passwordForm");
+const currentPassword = document.getElementById("currentPassword");
+const newPassword = document.getElementById("newPassword");
+const confirmPassword = document.getElementById("confirmPassword");
+
+const logoutButton = document.getElementById("logoutButton");
+
+const currentDate = document.getElementById("currentDate");
+const currentTime = document.getElementById("currentTime");
 
 
-/* ================================
-   Elements
-================================ */
-
-const profileForm =
-    document.getElementById("profileForm");
-
-const profileName =
-    document.getElementById("profileName");
-
-const profileEmail =
-    document.getElementById("profileEmail");
-
-
-const themeSelect =
-    document.getElementById("themeSelect");
-
-
-const passwordForm =
-    document.getElementById("passwordForm");
-
-const currentPassword =
-    document.getElementById("currentPassword");
-
-const newPassword =
-    document.getElementById("newPassword");
-
-const confirmPassword =
-    document.getElementById("confirmPassword");
-
-
-const logoutButton =
-    document.getElementById("logoutButton");
-
-
-/* ================================
-   Date & Time
-================================ */
+/* =================================
+   DATE & TIME
+================================= */
 
 function updateDateTime() {
-
     const now = new Date();
 
-    const dateOptions = {
-        weekday: "long",
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-    };
+    if (currentDate) {
+        currentDate.textContent = now.toLocaleDateString("en-IN", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+    }
 
-    const timeOptions = {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true
-    };
-
-    document.getElementById("currentDate").textContent =
-        now.toLocaleDateString(
-            "en-IN",
-            dateOptions
-        );
-
-    document.getElementById("currentTime").textContent =
-        now.toLocaleTimeString(
-            "en-IN",
-            timeOptions
-        );
+    if (currentTime) {
+        currentTime.textContent = now.toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+    }
 }
 
 updateDateTime();
-
-setInterval(
-    updateDateTime,
-    1000
-);
+setInterval(updateDateTime, 1000);
 
 
-/* ================================
-   Load Profile
-================================ */
+/* =================================
+   PROFILE
+================================= */
 
 function loadProfile() {
+    const savedProfile = JSON.parse(
+        localStorage.getItem("profile") || "{}"
+    );
 
-    const profile =
-        JSON.parse(
-            localStorage.getItem("profile")
-        ) || {};
+    if (profileName) {
+        profileName.value = savedProfile.name || "";
+    }
 
-
-    profileName.value =
-        profile.name || "";
-
-
-    profileEmail.value =
-        profile.email || "";
-
+    if (profileEmail) {
+        profileEmail.value = savedProfile.email || "";
+    }
 }
 
-
-/* ================================
-   Save Profile
-================================ */
-
-profileForm.addEventListener(
-    "submit",
-    function (event) {
-
+if (profileForm) {
+    profileForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-
-        const name =
-            profileName.value.trim();
-
-
-        const email =
-            profileEmail.value.trim();
-
-
-        if (
-            name === "" ||
-            email === ""
-        ) {
-
-            alert(
-                "Please fill all profile fields!"
-            );
-
-            return;
-
-        }
-
-
         const profile = {
-
-            name: name,
-
-            email: email
-
+            name: profileName.value.trim(),
+            email: profileEmail.value.trim()
         };
-
 
         localStorage.setItem(
             "profile",
             JSON.stringify(profile)
         );
 
-
-        alert(
-            "Profile saved successfully!"
-        );
-
-    }
-);
+        alert("Profile saved successfully.");
+    });
+}
 
 
-/* ================================
-   Theme
-================================ */
+/* =================================
+   GLOBAL THEME
+================================= */
 
 function applyTheme(theme) {
-
     if (theme === "light") {
-
-        document.body.classList.add(
-            "light-theme"
-        );
-
+        document.body.classList.add("light-theme");
     } else {
-
-        document.body.classList.remove(
-            "light-theme"
-        );
-
+        document.body.classList.remove("light-theme");
     }
-
 }
-
 
 function loadTheme() {
-
     const savedTheme =
-        localStorage.getItem("theme") ||
-        "dark";
+        localStorage.getItem("theme") || "dark";
 
+    if (themeSelect) {
+        themeSelect.value = savedTheme;
+    }
 
-    themeSelect.value =
-        savedTheme;
-
-
-    applyTheme(
-        savedTheme
-    );
-
+    applyTheme(savedTheme);
 }
 
-
-themeSelect.addEventListener(
-    "change",
-    function () {
-
-        const theme =
-            themeSelect.value;
-
+if (themeSelect) {
+    themeSelect.addEventListener("change", function () {
+        const selectedTheme = themeSelect.value;
 
         localStorage.setItem(
             "theme",
-            theme
+            selectedTheme
         );
 
-
-        applyTheme(
-            theme
-        );
-
-    }
-);
+        applyTheme(selectedTheme);
+    });
+}
 
 
-/* ================================
-   Change Password
-================================ */
+/* =================================
+   PASSWORD
+================================= */
 
-passwordForm.addEventListener(
-    "submit",
-    function (event) {
-
+if (passwordForm) {
+    passwordForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
+        const current = currentPassword.value;
+        const newPass = newPassword.value;
+        const confirm = confirmPassword.value;
 
-        const current =
-            currentPassword.value;
-
-
-        const newPass =
-            newPassword.value;
-
-
-        const confirmPass =
-            confirmPassword.value;
-
-
-        if (
-            current === "" ||
-            newPass === "" ||
-            confirmPass === ""
-        ) {
-
-            alert(
-                "Please fill all password fields!"
-            );
-
+        if (!current || !newPass || !confirm) {
+            alert("Please fill all password fields.");
             return;
-
         }
 
-
-        if (
-            newPass.length < 6
-        ) {
-
-            alert(
-                "New password must be at least 6 characters!"
-            );
-
+        if (newPass !== confirm) {
+            alert("New passwords do not match.");
             return;
-
         }
 
-
-        if (
-            newPass !== confirmPass
-        ) {
-
-            alert(
-                "New passwords do not match!"
-            );
-
-            return;
-
-        }
-
-
-        /*
-           Demo frontend only.
-           Real password verification
-           will be handled by backend later.
-        */
-
-        localStorage.setItem(
-            "demoPassword",
-            newPass
-        );
-
+        localStorage.setItem("demoPassword", newPass);
 
         alert(
-            "Password changed successfully!"
+            "Password changed successfully. Backend authentication will handle real password security later."
         );
 
-
         passwordForm.reset();
-
-    }
-);
-
-
-/* ================================
-   Logout
-================================ */
-
-logoutButton.addEventListener(
-    "click",
-    function () {
-
-        const confirmLogout =
-            confirm(
-                "Are you sure you want to logout?"
-            );
+    });
+}
 
 
-        if (!confirmLogout) {
+/* =================================
+   LOGOUT
+================================= */
 
-            return;
-
-        }
-
-
-        window.location.href =
-            "login.html";
-
-    }
-);
+if (logoutButton) {
+    logoutButton.addEventListener("click", function () {
+        window.location.href = "login.html";
+    });
+}
 
 
-/* ================================
-   Initial Load
-================================ */
+/* =================================
+   INITIAL LOAD
+================================= */
 
 loadProfile();
-
 loadTheme();
