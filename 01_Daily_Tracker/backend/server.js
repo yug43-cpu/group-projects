@@ -13,13 +13,15 @@ app.use(express.json());
 // In-Memory Data
 // ================================
 
+let users = [];
 let tasks = [];
 let studySessions = [];
 let goals = [];
+let journals = [];
 
 
 // ================================
-// Basic APIs
+// BASIC APIs
 // ================================
 
 app.get("/", (req, res) => {
@@ -34,11 +36,258 @@ app.get("/", (req, res) => {
 app.get("/api/test", (req, res) => {
 
     res.json({
+
         success: true,
+
         message: "API is working!"
+
     });
 
 });
+
+
+// ================================
+// AUTHENTICATION - REGISTER API
+// ================================
+
+// Register User
+app.post("/api/register", (req, res) => {
+
+    const {
+        name,
+        email,
+        password
+    } = req.body;
+
+
+    // Validate name
+    if (!name || name.trim() === "") {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Name is required."
+
+        });
+
+    }
+
+
+    // Validate email
+    if (!email || email.trim() === "") {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Email is required."
+
+        });
+
+    }
+
+
+    // Validate password
+    if (!password || password.length < 6) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Password must be at least 6 characters."
+
+        });
+
+    }
+
+
+    const cleanName =
+        name.trim();
+
+    const cleanEmail =
+        email.trim().toLowerCase();
+
+
+    // Check existing user
+    const existingUser =
+        users.find(
+            user => user.email === cleanEmail
+        );
+
+
+    if (existingUser) {
+
+        return res.status(409).json({
+
+            success: false,
+
+            message: "Email is already registered."
+
+        });
+
+    }
+
+
+    // Create user
+    const newUser = {
+
+        id: Date.now(),
+
+        name: cleanName,
+
+        email: cleanEmail,
+
+        password: password
+
+    };
+
+
+    users.push(newUser);
+
+
+    res.status(201).json({
+
+        success: true,
+
+        message: "Registration successful!",
+
+        user: {
+
+            id: newUser.id,
+
+            name: newUser.name,
+
+            email: newUser.email
+
+        }
+
+    });
+
+});
+
+
+// ================================
+// AUTHENTICATION - LOGIN API
+// ================================
+
+// Login User
+app.post("/api/login", (req, res) => {
+
+    const {
+        email,
+        password
+    } = req.body;
+
+
+    // Validate email
+    if (!email || email.trim() === "") {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Email is required."
+
+        });
+
+    }
+
+
+    // Validate password
+    if (!password || password === "") {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Password is required."
+
+        });
+
+    }
+
+
+    const cleanEmail =
+        email.trim().toLowerCase();
+
+
+    // Find user
+    const user =
+        users.find(
+            item => item.email === cleanEmail
+        );
+
+
+    // User not found
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "Invalid email or password."
+
+        });
+
+    }
+
+
+    // Check password
+    if (user.password !== password) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "Invalid email or password."
+
+        });
+
+    }
+
+
+    // Login successful
+    res.json({
+
+        success: true,
+
+        message: "Login successful!",
+
+        user: {
+
+            id: user.id,
+
+            name: user.name,
+
+            email: user.email
+
+        }
+
+    });
+
+});
+
+
+// ================================
+// USER HELPER
+// ================================
+
+function getUserById(userId) {
+
+    const id = Number(userId);
+
+    if (!userId || Number.isNaN(id)) {
+
+        return null;
+
+    }
+
+    return users.find(
+        user => user.id === id
+    );
+
+}
 
 
 // ================================
@@ -49,6 +298,7 @@ app.get("/api/test", (req, res) => {
 app.post("/api/tasks", (req, res) => {
 
     const {
+        userId,
         name,
         priority,
         dueTime,
@@ -56,30 +306,52 @@ app.post("/api/tasks", (req, res) => {
     } = req.body;
 
 
-    if (!name) {
+    // Check user
+    const user =
+        getUserById(userId);
 
-        return res.status(400).json({
+
+    if (!user) {
+
+        return res.status(401).json({
+
             success: false,
-            message: "Task name is required."
+
+            message: "User is not logged in."
+
         });
 
     }
 
 
+    // Validate task name
+    if (!name || name.trim() === "") {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Task name is required."
+
+        });
+
+    }
+
+
+    // Create task
     const newTask = {
 
         id: Date.now(),
 
-        name,
+        userId: user.id,
 
-        priority:
-            priority || "Medium",
+        name: name.trim(),
 
-        dueTime:
-            dueTime || "",
+        priority: priority || "Medium",
 
-        date:
-            date || "",
+        dueTime: dueTime || "",
+
+        date: date || "",
 
         completed: false
 
@@ -93,8 +365,7 @@ app.post("/api/tasks", (req, res) => {
 
         success: true,
 
-        message:
-            "Task added successfully!",
+        message: "Task added successfully!",
 
         task: newTask
 
@@ -106,11 +377,41 @@ app.post("/api/tasks", (req, res) => {
 // Get Tasks
 app.get("/api/tasks", (req, res) => {
 
+    const {
+        userId
+    } = req.query;
+
+
+    // Check user
+    const user =
+        getUserById(userId);
+
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "User is not logged in."
+
+        });
+
+    }
+
+
+    // Get only current user's tasks
+    const userTasks =
+        tasks.filter(
+            task => task.userId === user.id
+        );
+
+
     res.json({
 
         success: true,
 
-        tasks: tasks
+        tasks: userTasks
 
     });
 
@@ -123,10 +424,40 @@ app.put("/api/tasks/:id", (req, res) => {
     const id =
         Number(req.params.id);
 
+    const {
+        userId,
+        name,
+        priority,
+        dueTime,
+        date,
+        completed
+    } = req.body;
 
+
+    // Check user
+    const user =
+        getUserById(userId);
+
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "User is not logged in."
+
+        });
+
+    }
+
+
+    // Find task belonging to current user
     const task =
         tasks.find(
-            task => task.id === id
+            item =>
+                item.id === id &&
+                item.userId === user.id
         );
 
 
@@ -143,46 +474,59 @@ app.put("/api/tasks/:id", (req, res) => {
     }
 
 
-    const {
-        name,
-        priority,
-        dueTime,
-        date,
-        completed
-    } = req.body;
-
-
+    // Update name
     if (name !== undefined) {
 
-        task.name = name;
+        if (name.trim() === "") {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Task name is required."
+
+            });
+
+        }
+
+        task.name =
+            name.trim();
 
     }
 
 
+    // Update priority
     if (priority !== undefined) {
 
-        task.priority = priority;
+        task.priority =
+            priority;
 
     }
 
 
+    // Update due time
     if (dueTime !== undefined) {
 
-        task.dueTime = dueTime;
+        task.dueTime =
+            dueTime;
 
     }
 
 
+    // Update date
     if (date !== undefined) {
 
-        task.date = date;
+        task.date =
+            date;
 
     }
 
 
+    // Update completed status
     if (completed !== undefined) {
 
-        task.completed = completed;
+        task.completed =
+            Boolean(completed);
 
     }
 
@@ -191,8 +535,7 @@ app.put("/api/tasks/:id", (req, res) => {
 
         success: true,
 
-        message:
-            "Task updated successfully!",
+        message: "Task updated successfully!",
 
         task: task
 
@@ -207,10 +550,35 @@ app.delete("/api/tasks/:id", (req, res) => {
     const id =
         Number(req.params.id);
 
+    const {
+        userId
+    } = req.body;
 
+
+    // Check user
+    const user =
+        getUserById(userId);
+
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "User is not logged in."
+
+        });
+
+    }
+
+
+    // Find task belonging to current user
     const taskIndex =
         tasks.findIndex(
-            task => task.id === id
+            item =>
+                item.id === id &&
+                item.userId === user.id
         );
 
 
@@ -238,8 +606,7 @@ app.delete("/api/tasks/:id", (req, res) => {
 
         success: true,
 
-        message:
-            "Task deleted successfully!",
+        message: "Task deleted successfully!",
 
         task: deletedTask
 
@@ -256,51 +623,86 @@ app.delete("/api/tasks/:id", (req, res) => {
 app.post("/api/study", (req, res) => {
 
     const {
+        userId,
         subject,
         duration,
         date
     } = req.body;
 
 
-    if (!subject) {
+    // Check user ID
+    if (!userId) {
 
         return res.status(400).json({
 
             success: false,
 
-            message:
-                "Subject is required."
+            message: "User ID is required."
 
         });
 
     }
 
 
+    // Check user exists
+    const user = getUserById(userId);
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "Invalid user."
+
+        });
+
+    }
+
+
+    // Check subject
+    if (!subject || subject.trim() === "") {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Subject is required."
+
+        });
+
+    }
+
+
+    // Check duration
+    const studyDuration =
+        Number(duration);
+
+
     if (
-        duration === undefined ||
-        Number(duration) <= 0
+        Number.isNaN(studyDuration) ||
+        studyDuration <= 0
     ) {
 
         return res.status(400).json({
 
             success: false,
 
-            message:
-                "Duration must be greater than 0."
+            message: "Duration must be greater than 0."
 
         });
 
     }
 
 
+    // Check date
     if (!date) {
 
         return res.status(400).json({
 
             success: false,
 
-            message:
-                "Date is required."
+            message: "Date is required."
 
         });
 
@@ -311,28 +713,25 @@ app.post("/api/study", (req, res) => {
 
         id: Date.now(),
 
-        subject:
-            subject.trim(),
+        userId: user.id,
 
-        duration:
-            Number(duration),
+        subject: subject.trim(),
+
+        duration: studyDuration,
 
         date: date
 
     };
 
 
-    studySessions.push(
-        newSession
-    );
+    studySessions.push(newSession);
 
 
     res.status(201).json({
 
         success: true,
 
-        message:
-            "Study session added successfully!",
+        message: "Study session added successfully!",
 
         session: newSession
 
@@ -344,12 +743,54 @@ app.post("/api/study", (req, res) => {
 // Get Study Sessions
 app.get("/api/study", (req, res) => {
 
+    const {
+        userId
+    } = req.query;
+
+
+    // Check user ID
+    if (!userId) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "User ID is required."
+
+        });
+
+    }
+
+
+    // Check user exists
+    const user = getUserById(userId);
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "Invalid user."
+
+        });
+
+    }
+
+
+    // Get only this user's study sessions
+    const userSessions =
+        studySessions.filter(
+            session =>
+                session.userId === user.id
+        );
+
+
     res.json({
 
         success: true,
 
-        sessions:
-            studySessions
+        sessions: userSessions
 
     });
 
@@ -362,11 +803,50 @@ app.put("/api/study/:id", (req, res) => {
     const id =
         Number(req.params.id);
 
+    const {
+        userId,
+        subject,
+        duration,
+        date
+    } = req.body;
 
+
+    // Check user ID
+    if (!userId) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "User ID is required."
+
+        });
+
+    }
+
+
+    // Check user exists
+    const user = getUserById(userId);
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "Invalid user."
+
+        });
+
+    }
+
+
+    // Find session belonging to this user
     const session =
         studySessions.find(
-            session =>
-                session.id === id
+            item =>
+                item.id === id &&
+                item.userId === user.id
         );
 
 
@@ -376,38 +856,27 @@ app.put("/api/study/:id", (req, res) => {
 
             success: false,
 
-            message:
-                "Study session not found."
+            message: "Study session not found."
 
         });
 
     }
 
 
-    const {
-        subject,
-        duration,
-        date
-    } = req.body;
-
-
+    // Update subject
     if (subject !== undefined) {
 
-        if (
-            subject.trim() === ""
-        ) {
+        if (subject.trim() === "") {
 
             return res.status(400).json({
 
                 success: false,
 
-                message:
-                    "Subject is required."
+                message: "Subject is required."
 
             });
 
         }
-
 
         session.subject =
             subject.trim();
@@ -415,18 +884,23 @@ app.put("/api/study/:id", (req, res) => {
     }
 
 
+    // Update duration
     if (duration !== undefined) {
 
+        const newDuration =
+            Number(duration);
+
+
         if (
-            Number(duration) <= 0
+            Number.isNaN(newDuration) ||
+            newDuration <= 0
         ) {
 
             return res.status(400).json({
 
                 success: false,
 
-                message:
-                    "Duration must be greater than 0."
+                message: "Duration must be greater than 0."
 
             });
 
@@ -434,11 +908,12 @@ app.put("/api/study/:id", (req, res) => {
 
 
         session.duration =
-            Number(duration);
+            newDuration;
 
     }
 
 
+    // Update date
     if (date !== undefined) {
 
         if (!date) {
@@ -447,8 +922,7 @@ app.put("/api/study/:id", (req, res) => {
 
                 success: false,
 
-                message:
-                    "Date is required."
+                message: "Date is required."
 
             });
 
@@ -465,8 +939,7 @@ app.put("/api/study/:id", (req, res) => {
 
         success: true,
 
-        message:
-            "Study session updated successfully!",
+        message: "Study session updated successfully!",
 
         session: session
 
@@ -481,11 +954,47 @@ app.delete("/api/study/:id", (req, res) => {
     const id =
         Number(req.params.id);
 
+    const {
+        userId
+    } = req.body;
 
+
+    // Check user ID
+    if (!userId) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "User ID is required."
+
+        });
+
+    }
+
+
+    // Check user exists
+    const user = getUserById(userId);
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "Invalid user."
+
+        });
+
+    }
+
+
+    // Find user's session
     const sessionIndex =
         studySessions.findIndex(
-            session =>
-                session.id === id
+            item =>
+                item.id === id &&
+                item.userId === user.id
         );
 
 
@@ -495,8 +1004,7 @@ app.delete("/api/study/:id", (req, res) => {
 
             success: false,
 
-            message:
-                "Study session not found."
+            message: "Study session not found."
 
         });
 
@@ -514,11 +1022,9 @@ app.delete("/api/study/:id", (req, res) => {
 
         success: true,
 
-        message:
-            "Study session deleted successfully!",
+        message: "Study session deleted successfully!",
 
-        session:
-            deletedSession
+        session: deletedSession
 
     });
 
@@ -533,26 +1039,46 @@ app.delete("/api/study/:id", (req, res) => {
 app.post("/api/goals", (req, res) => {
 
     const {
+        userId,
         name,
         progress,
         deadline
     } = req.body;
 
 
-    if (!name || name.trim() === "") {
+    // Check user
+    const user =
+        getUserById(userId);
 
-        return res.status(400).json({
+
+    if (!user) {
+
+        return res.status(401).json({
 
             success: false,
 
-            message:
-                "Goal name is required."
+            message: "User is not logged in."
 
         });
 
     }
 
 
+    // Validate goal name
+    if (!name || name.trim() === "") {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Goal name is required."
+
+        });
+
+    }
+
+
+    // Validate progress
     const goalProgress =
         progress === undefined
             ? 0
@@ -577,18 +1103,18 @@ app.post("/api/goals", (req, res) => {
     }
 
 
+    // Create goal
     const newGoal = {
 
         id: Date.now(),
 
-        name:
-            name.trim(),
+        userId: user.id,
 
-        progress:
-            goalProgress,
+        name: name.trim(),
 
-        deadline:
-            deadline || ""
+        progress: goalProgress,
+
+        deadline: deadline || ""
 
     };
 
@@ -600,43 +1126,105 @@ app.post("/api/goals", (req, res) => {
 
         success: true,
 
-        message:
-            "Goal added successfully!",
+        message: "Goal added successfully!",
 
-        goal:
-            newGoal
+        goal: newGoal
 
     });
 
 });
 
 
+// ================================
 // Get Goals
+// ================================
+
 app.get("/api/goals", (req, res) => {
+
+    const {
+        userId
+    } = req.query;
+
+
+    // Check user
+    const user =
+        getUserById(userId);
+
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "User is not logged in."
+
+        });
+
+    }
+
+
+    // Get only current user's goals
+    const userGoals =
+        goals.filter(
+            goal =>
+                goal.userId === user.id
+        );
+
 
     res.json({
 
         success: true,
 
-        goals:
-            goals
+        goals: userGoals
 
     });
 
 });
 
 
+// ================================
 // Update Goal
+// ================================
+
 app.put("/api/goals/:id", (req, res) => {
 
     const id =
         Number(req.params.id);
 
 
+    const {
+        userId,
+        name,
+        progress,
+        deadline
+    } = req.body;
+
+
+    // Check user
+    const user =
+        getUserById(userId);
+
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "User is not logged in."
+
+        });
+
+    }
+
+
+    // Find goal belonging to current user
     const goal =
         goals.find(
-            goal =>
-                goal.id === id
+            item =>
+                item.id === id &&
+                item.userId === user.id
         );
 
 
@@ -646,33 +1234,23 @@ app.put("/api/goals/:id", (req, res) => {
 
             success: false,
 
-            message:
-                "Goal not found."
+            message: "Goal not found."
 
         });
 
     }
 
 
-    const {
-        name,
-        progress,
-        deadline
-    } = req.body;
-
-
+    // Update name
     if (name !== undefined) {
 
-        if (
-            name.trim() === ""
-        ) {
+        if (name.trim() === "") {
 
             return res.status(400).json({
 
                 success: false,
 
-                message:
-                    "Goal name is required."
+                message: "Goal name is required."
 
             });
 
@@ -685,6 +1263,7 @@ app.put("/api/goals/:id", (req, res) => {
     }
 
 
+    // Update progress
     if (progress !== undefined) {
 
         const newProgress =
@@ -715,6 +1294,7 @@ app.put("/api/goals/:id", (req, res) => {
     }
 
 
+    // Update deadline
     if (deadline !== undefined) {
 
         goal.deadline =
@@ -727,28 +1307,54 @@ app.put("/api/goals/:id", (req, res) => {
 
         success: true,
 
-        message:
-            "Goal updated successfully!",
+        message: "Goal updated successfully!",
 
-        goal:
-            goal
+        goal: goal
 
     });
 
 });
 
 
+// ================================
 // Delete Goal
+// ================================
+
 app.delete("/api/goals/:id", (req, res) => {
 
     const id =
         Number(req.params.id);
 
 
+    const {
+        userId
+    } = req.body;
+
+
+    // Check user
+    const user =
+        getUserById(userId);
+
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "User is not logged in."
+
+        });
+
+    }
+
+
+    // Find goal belonging to current user
     const goalIndex =
         goals.findIndex(
-            goal =>
-                goal.id === id
+            item =>
+                item.id === id &&
+                item.userId === user.id
         );
 
 
@@ -758,8 +1364,7 @@ app.delete("/api/goals/:id", (req, res) => {
 
             success: false,
 
-            message:
-                "Goal not found."
+            message: "Goal not found."
 
         });
 
@@ -777,17 +1382,407 @@ app.delete("/api/goals/:id", (req, res) => {
 
         success: true,
 
-        message:
-            "Goal deleted successfully!",
+        message: "Goal deleted successfully!",
 
-        goal:
-            deletedGoal
+        goal: deletedGoal
 
     });
 
 });
 
 
+// ================================
+// JOURNAL APIs
+// ================================
+
+// Add Journal
+app.post("/api/journals", (req, res) => {
+
+    const {
+        userId,
+        title,
+        date,
+        mood,
+        content
+    } = req.body;
+
+
+    // Check user
+    const user =
+        getUserById(userId);
+
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "User is not logged in."
+
+        });
+
+    }
+
+
+    // Validate title
+    if (!title || title.trim() === "") {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Journal title is required."
+
+        });
+
+    }
+
+
+    // Validate date
+    if (!date) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Journal date is required."
+
+        });
+
+    }
+
+
+    // Validate content
+    if (!content || content.trim() === "") {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: "Journal content is required."
+
+        });
+
+    }
+
+
+    // Create journal
+    const newJournal = {
+
+        id: Date.now(),
+
+        userId: user.id,
+
+        title: title.trim(),
+
+        date: date,
+
+        mood: mood || "🙂",
+
+        content: content.trim()
+
+    };
+
+
+    journals.push(newJournal);
+
+
+    res.status(201).json({
+
+        success: true,
+
+        message: "Journal entry added successfully!",
+
+        journal: newJournal
+
+    });
+
+});
+
+
+// ================================
+// Get Journals
+// ================================
+
+app.get("/api/journals", (req, res) => {
+
+    const {
+        userId
+    } = req.query;
+
+
+    // Check user
+    const user =
+        getUserById(userId);
+
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "User is not logged in."
+
+        });
+
+    }
+
+
+    // Get only current user's journals
+    const userJournals =
+        journals.filter(
+            journal =>
+                journal.userId === user.id
+        );
+
+
+    res.json({
+
+        success: true,
+
+        journals: userJournals
+
+    });
+
+});
+
+
+// ================================
+// Update Journal
+// ================================
+
+app.put("/api/journals/:id", (req, res) => {
+
+    const id =
+        Number(req.params.id);
+
+    const {
+        userId,
+        title,
+        date,
+        mood,
+        content
+    } = req.body;
+
+
+    // Check user
+    const user =
+        getUserById(userId);
+
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "User is not logged in."
+
+        });
+
+    }
+
+
+    // Find journal belonging to current user
+    const journal =
+        journals.find(
+            item =>
+                item.id === id &&
+                item.userId === user.id
+        );
+
+
+    if (!journal) {
+
+        return res.status(404).json({
+
+            success: false,
+
+            message: "Journal entry not found."
+
+        });
+
+    }
+
+
+    // Update title
+    if (title !== undefined) {
+
+        if (title.trim() === "") {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Journal title is required."
+
+            });
+
+        }
+
+        journal.title =
+            title.trim();
+
+    }
+
+
+    // Update date
+    if (date !== undefined) {
+
+        if (!date) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Journal date is required."
+
+            });
+
+        }
+
+        journal.date =
+            date;
+
+    }
+
+
+    // Update mood
+    if (mood !== undefined) {
+
+        journal.mood =
+            mood || "🙂";
+
+    }
+
+
+    // Update content
+    if (content !== undefined) {
+
+        if (content.trim() === "") {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Journal content is required."
+
+            });
+
+        }
+
+        journal.content =
+            content.trim();
+
+    }
+
+
+    res.json({
+
+        success: true,
+
+        message: "Journal entry updated successfully!",
+
+        journal: journal
+
+    });
+
+});
+
+
+// ================================
+// Delete Journal
+// ================================
+
+app.delete("/api/journals/:id", (req, res) => {
+
+    const id =
+        Number(req.params.id);
+
+    const {
+        userId
+    } = req.body;
+
+
+    // Check user
+    const user =
+        getUserById(userId);
+
+
+    if (!user) {
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "User is not logged in."
+
+        });
+
+    }
+
+
+    // Find journal belonging to current user
+    const journalIndex =
+        journals.findIndex(
+            item =>
+                item.id === id &&
+                item.userId === user.id
+        );
+
+
+    if (journalIndex === -1) {
+
+        return res.status(404).json({
+
+            success: false,
+
+            message: "Journal entry not found."
+
+        });
+
+    }
+
+
+    const deletedJournal =
+        journals.splice(
+            journalIndex,
+            1
+        )[0];
+
+
+    res.json({
+
+        success: true,
+
+        message: "Journal entry deleted successfully!",
+
+        journal: deletedJournal
+
+    });
+
+});
+
+
+// ================================
+// 404 API
+// ================================
+
+app.use("/api", (req, res) => {
+
+    res.status(404).json({
+
+        success: false,
+
+        message: "API endpoint not found."
+
+    });
+
+});
+
+ 
 // ================================
 // Start Server
 // ================================
